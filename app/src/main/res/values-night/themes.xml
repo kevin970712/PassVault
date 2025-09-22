@@ -1,0 +1,12 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PassVault" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/grey_800</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/grey_900</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/grey_400</item>
+    </style>
+</resources>
