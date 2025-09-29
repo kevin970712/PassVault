@@ -41,12 +41,12 @@ class AddEditActivity : AppCompatActivity() {
 
                 viewModel.insert(entry)
                 finish()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Toast.makeText(this, "Encryption failed", Toast.LENGTH_SHORT).show()
             }
         }
 
-        binding.btnGenerate.setOnClickListener {
+        binding.cardGeneratePassword.setOnClickListener {
             val et = binding.etPassword
             et.text = Editable.Factory.getInstance().newEditable(PasswordGenerator.generate())
         }
