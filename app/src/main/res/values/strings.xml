@@ -35,4 +35,9 @@
     <string name="add_new_entry">Add new entry</string>
     <string name="password_icon">Password icon</string>
     <string name="more_options">More options</string>
+
+    <string name="generate_password">Generate password</string>
+    <string name="generate_strong_password">Generate strong password</string>
+    <string name="generate_password_description">Create a secure password automatically</string>
+    <string name="show_password">Show password</string>
 </resources>
