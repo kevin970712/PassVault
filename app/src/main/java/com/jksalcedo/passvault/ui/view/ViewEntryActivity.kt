@@ -52,7 +52,7 @@ class ViewEntryActivity : AppCompatActivity() {
             } else {
                 Encryption.decrypt(cipher, iv)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ""
         }
 
