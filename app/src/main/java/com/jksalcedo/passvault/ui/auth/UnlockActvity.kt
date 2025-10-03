@@ -22,7 +22,10 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
         setContentView(binding.root)
 
         // Ensure encryption key exists early in the session
-        try { Encryption.ensureKeyExists() } catch (_: Exception) {}
+        try {
+            Encryption.ensureKeyExists()
+        } catch (_: Exception) {
+        }
 
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
         var storedPin = prefs.getString("pin", null)
@@ -42,7 +45,6 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
-                binding.etPin.error = getString(R.string.pin_incorrect)
                 Toast.makeText(this, getString(R.string.pin_incorrect), Toast.LENGTH_SHORT).show()
             }
         }
@@ -54,7 +56,8 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
             return
         }
         val biometricManager = BiometricManager.from(this)
-        val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK
+        val authenticators =
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK
         val canAuth = biometricManager.canAuthenticate(authenticators)
         if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) {
             binding.btnUseBiometric.visibility = android.view.View.VISIBLE
@@ -66,25 +69,30 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
 
     private fun showBiometricPrompt(authenticators: Int) {
         val executor = ContextCompat.getMainExecutor(this)
-        val prompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                super.onAuthenticationError(errorCode, errString)
-                if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON && errorCode != BiometricPrompt.ERROR_CANCELED) {
-                    Toast.makeText(this@UnlockActivity, errString, Toast.LENGTH_SHORT).show()
+        val prompt =
+            BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON && errorCode != BiometricPrompt.ERROR_CANCELED) {
+                        Toast.makeText(this@UnlockActivity, errString, Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super.onAuthenticationSucceeded(result)
-                startActivity(Intent(this@UnlockActivity, MainActivity::class.java))
-                finish()
-            }
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    startActivity(Intent(this@UnlockActivity, MainActivity::class.java))
+                    finish()
+                }
 
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-                Toast.makeText(this@UnlockActivity, getString(R.string.biometric_failed), Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(
+                        this@UnlockActivity,
+                        getString(R.string.biometric_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.biometric_prompt_title))
