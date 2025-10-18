@@ -8,12 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
-import com.jksalcedo.passvault.utils.PasswordGenerator
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
 class AddEditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
+    var password: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +21,9 @@ class AddEditActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
+
+        val et = binding.etPassword
+        et.text = Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
 
         binding.btnSave.setOnClickListener {
             val rawPassword = binding.etPassword.text.toString()
@@ -47,8 +50,7 @@ class AddEditActivity : AppCompatActivity() {
         }
 
         binding.cardGeneratePassword.setOnClickListener {
-            val et = binding.etPassword
-            et.text = Editable.Factory.getInstance().newEditable(PasswordGenerator.generate())
+            PasswordGenDialog().show(supportFragmentManager, null)
         }
     }
 }
