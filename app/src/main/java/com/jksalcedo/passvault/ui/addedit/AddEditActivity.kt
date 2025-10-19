@@ -2,6 +2,8 @@ package com.jksalcedo.passvault.ui.addedit
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -49,8 +51,18 @@ class AddEditActivity : AppCompatActivity() {
             }
         }
 
+        // password generator custom dialog
         binding.cardGeneratePassword.setOnClickListener {
             PasswordGenDialog().show(supportFragmentManager, null)
+        }
+
+        binding.switchShowPassword.setOnCheckedChangeListener { _, isChecked ->
+            // hide/show password
+            et.transformationMethod =
+                if (isChecked) HideReturnsTransformationMethod.getInstance() else PasswordTransformationMethod.getInstance()
+            // move cursor to the end
+            et.setSelection(et.text?.length ?: 0)
+
         }
     }
 }
