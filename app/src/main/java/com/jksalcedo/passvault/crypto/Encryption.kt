@@ -1,10 +1,11 @@
 package com.jksalcedo.passvault.crypto
 
+import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import androidx.annotation.RequiresApi
 import java.security.KeyStore
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -12,18 +13,17 @@ import javax.crypto.spec.GCMParameterSpec
 
 object Encryption {
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private const val KEY_ALIAS = "my_app_vault_key_v1" // change on key rotation
+    private const val KEY_ALIAS = "passvault_key_v1" // change on key rotation
     private const val AES_MODE = "${KeyProperties.KEY_ALGORITHM_AES}/" +
             "${KeyProperties.BLOCK_MODE_GCM}/" +
             KeyProperties.ENCRYPTION_PADDING_NONE
-
-    private val secureRandom = SecureRandom()
 
     private fun getKeystore(): KeyStore {
         return KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
     }
 
     // Create key if absent
+    @RequiresApi(Build.VERSION_CODES.R)
     fun ensureKeyExists(requireUserAuth: Boolean = false) {
         val ks = getKeystore()
         if (ks.containsAlias(KEY_ALIAS)) return
@@ -40,10 +40,13 @@ object Encryption {
             setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             setRandomizedEncryptionRequired(true)
-            // If you want to require device auth (PIN/biometric) for every use:
+            // require device auth
             if (requireUserAuth) {
                 setUserAuthenticationRequired(true)
-                // setUserAuthenticationValiditySeconds(5) // for short window (optional)
+                setUserAuthenticationParameters(
+                    0,
+                    KeyProperties.AUTH_DEVICE_CREDENTIAL
+                )
             }
             build()
         }
