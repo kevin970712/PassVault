@@ -9,8 +9,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.DialogPasswordGenBinding
-import com.jksalcedo.passvault.utils.ClipboardUtil
 import com.jksalcedo.passvault.utils.PasswordGenerator
+import com.jksalcedo.passvault.utils.Utility
 
 /**
  * safe way to send the generated password back to the Activity
@@ -68,7 +68,7 @@ class PasswordGenDialog : DialogFragment() {
                 if (generatedPassword.isNotEmpty()) {
                     // Send the password back to the Activity
                     listener?.onPasswordGenerated(generatedPassword)
-                    ClipboardUtil.copyToClipboard(requireContext(), "password", generatedPassword)
+                    Utility.copyToClipboard(requireContext(), "password", generatedPassword)
                     Toast.makeText(requireContext(), "Password copied", Toast.LENGTH_SHORT).show()
                     dismiss() // Close the dialog
                 } else {

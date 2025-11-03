@@ -9,7 +9,7 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
-import com.jksalcedo.passvault.utils.ClipboardUtil
+import com.jksalcedo.passvault.utils.Utility
 
 class ViewEntryActivity : AppCompatActivity() {
 
@@ -75,7 +75,7 @@ class ViewEntryActivity : AppCompatActivity() {
 
         binding.btnCopy.setOnClickListener {
             if (plainPassword.isNotEmpty()) {
-                ClipboardUtil.copyToClipboard(this, "password", plainPassword)
+                Utility.copyToClipboard(this, "password", plainPassword)
                 Toast.makeText(this, "Password copied", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "No password to copy", Toast.LENGTH_SHORT).show()
