@@ -1,4 +1,4 @@
-package com.jksalcedo.passvault.ui.add
+package com.jksalcedo.passvault.ui.addedit
 
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +15,7 @@ import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
-class AddActivity : AppCompatActivity(), PasswordDialogListener {
+class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
     private lateinit var etPassword: TextInputEditText

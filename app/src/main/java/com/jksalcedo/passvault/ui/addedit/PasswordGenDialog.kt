@@ -1,4 +1,4 @@
-package com.jksalcedo.passvault.ui.add
+package com.jksalcedo.passvault.ui.addedit
 
 import android.app.Dialog
 import android.content.Context
