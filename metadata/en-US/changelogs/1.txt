@@ -1,0 +1,4 @@
+Initial alpha release!
+* Core features: PIN/Biometric login, add/view passwords, password generator.
+* 100% offline with no internet permissions.
+* Known issue: Edit/Delete functions are not yet implemented.

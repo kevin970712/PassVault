@@ -1,0 +1,9 @@
+PassVault is a secure, lightweight, and 100% offline password manager for Android.
+
+It requests no internet permissions, so your data never leaves your device.
+
+FEATURES:
+- Secure Authentication: Access your vault using a PIN or Biometric (fingerprint) login.
+- Encrypted Storage: All passwords are encrypted at rest using AES-256 and stored securely in a local Room database.
+- 100% Offline-First: The app is fully functional without an internet connection.
+- Password Generation: Create strong, random passwords directly within the app.
