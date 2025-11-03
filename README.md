@@ -15,7 +15,7 @@ PassVault is a lightweight password manager that allows users to securely store 
 ### Planned Features
 - [ ] **Edit** existing password entries
 - [ ] **Delete** existing password entries
-- [ ] "Copy to Clipboard" button for password generator
+- [X] "Copy to Clipboard" button for password generator
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Encrypted Import/Export (for backups)
 
