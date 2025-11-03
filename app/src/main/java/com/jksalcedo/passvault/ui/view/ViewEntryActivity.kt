@@ -2,8 +2,10 @@ package com.jksalcedo.passvault.ui.view
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
@@ -24,6 +26,7 @@ class ViewEntryActivity : AppCompatActivity() {
     private var revealed = false
     private var plainPassword: String = ""
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewEntryBinding.inflate(layoutInflater)
