@@ -4,20 +4,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.data.PasswordEntry
 import java.text.DateFormat
+import java.util.Collections.emptyList
 import java.util.Date
 
 class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
 
-    private var items: List<PasswordEntry> = emptyList()
+    private var _items: MutableLiveData<List<PasswordEntry>> =
+        MutableLiveData<List<PasswordEntry>>(emptyList<PasswordEntry>())
+    val items: LiveData<List<PasswordEntry>> = _items
 
     var onItemClick: ((PasswordEntry) -> Unit)? = null
 
     fun submitList(list: List<PasswordEntry>?) {
-        items = list ?: emptyList()
+        _items.value = (list ?: emptyList())
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -27,13 +33,12 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = items[position]
+        val item = items.value!![position]
         holder.bind(item)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
-        notifyItemInserted(position)
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = items.value!!.size
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)

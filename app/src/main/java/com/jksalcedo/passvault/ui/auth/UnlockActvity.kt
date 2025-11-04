@@ -14,7 +14,7 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
 import com.jksalcedo.passvault.ui.main.MainActivity
 
-class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
+class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
 
     private lateinit var binding: ActivityUnlockBinding
 
@@ -32,21 +32,36 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
 
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
 
-        val input = binding.etPin.text?.toString()?.trim().orEmpty()
-        val cipher = prefs.getString("pin_cipher", null)
-        val iv = prefs.getString("pin_iv", null)
+        val initialCipher = prefs.getString("pin_cipher", null)
+        val initialIv = prefs.getString("pin_iv", null)
 
-        // Decrypt the stored cipher and iv
-        val storedPin = try {
-            Encryption.decrypt(cipher!!, iv!!)
-        } catch (_: Exception) {
-            ""
+        if (initialCipher.isNullOrEmpty() || initialIv.isNullOrBlank()) {
+            val pinDialog = SetPinDialog()
+            pinDialog.isCancelable = false
+            pinDialog.show(supportFragmentManager, "SetPinDialog")
         }
 
         // Setup biometrics if available and a PIN exists
-        setupBiometricIfAvailable(storedPin.isNotEmpty())
+        setupBiometricIfAvailable(!initialCipher.isNullOrEmpty())
 
         binding.btnUnlock.setOnClickListener {
+            // Get the input
+            val input = binding.etPin.text?.toString()?.trim().orEmpty()
+
+            val cipher = prefs.getString("pin_cipher", null)
+            val iv = prefs.getString("pin_iv", null)
+
+            // Decrypt the stored cipher and iv
+            val storedPin = try {
+                if (cipher != null && iv != null) {
+                    Encryption.decrypt(cipherBase64 = cipher, iv)
+                } else {
+                    "" // No PIN is set
+                }
+            } catch (_: Exception) {
+                "" // Decryption failed
+            }
+
             // Compare the decrypted pin to the input pin
             if (input.isNotEmpty() && storedPin == input) {
                 startActivity(Intent(this, MainActivity::class.java))

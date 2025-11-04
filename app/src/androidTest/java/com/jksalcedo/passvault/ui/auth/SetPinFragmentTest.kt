@@ -28,13 +28,13 @@ class SetPinFragmentTest {
     @Before
     fun setup() {
         activityRule.scenario.onActivity { activity ->
-            val fragment = SetPinFragment()
+            val fragment = SetPinDialog()
             fragment.show(activity.supportFragmentManager, "SetPinFragment")
         }
     }
 
     @Test
-    
+
     fun testSuccessfulPinSet() {
         onView(withId(R.id.etNewPin)).perform(typeText("1234"))
         onView(withId(R.id.etConfirmPin)).perform(typeText("1234"))

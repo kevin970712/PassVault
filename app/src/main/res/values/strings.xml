@@ -12,7 +12,7 @@
     <string name="hide">Hide</string>
 
     <!-- Unlock screen -->
-    <string name="unlock_title">Welcome to PassVault</string>
+    <string name="unlock_title">PassVault</string>
     <string name="enter_pin_hint">Enter PIN</string>
     <string name="unlock_button">Unlock</string>
     <string name="biometric_button">Use biometrics</string>
@@ -54,4 +54,5 @@
     <string name="enter_new_pin">Enter new PIN</string>
     <string name="set_master_pin">Set Master PIN</string>
     <string name="cancel">Cancel</string>
+    <string name="click_the_button_to_add_your_first_password">Click the + button to add your first password!</string>
 </resources>
