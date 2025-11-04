@@ -13,7 +13,7 @@ PassVault is a lightweight password manager that allows users to securely store 
 - [x] In-app Password Generator
 
 ### Planned Features
-- [ ] **Edit** existing password entries
+- [X] **Edit** existing password entries
 - [ ] **Delete** existing password entries
 - [X] "Copy to Clipboard" button for password generator
 - [ ] Secure Notes (for storing non-password secrets)
