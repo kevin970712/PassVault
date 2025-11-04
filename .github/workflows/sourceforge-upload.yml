@@ -1,7 +1,5 @@
-# This is a GitHub Action to automate uploading release assets to SourceForge
 name: Upload Release to SourceForge
 
-# This action triggers WHEN publishing a new "Release" on GitHub
 on:
   release:
     types: [published]
@@ -12,27 +10,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Download all release assets
-        # This action downloads the .apk (or other files) attached to the GitHub release
-        uses: cardinalby/download-github-release-assets@v1
-        with:
-          repo: ${{ github.repository }}
-          tag: ${{ github.event.release.tag_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload APK to SourceForge
-        # This action logs into SourceForge and uploads files
-        uses: jcomeau-web/github-action-upload-to-sourceforge@v1
-        with:
-          user-name: ${{ secrets.SF_USERNAME }}
-          user-password: ${{ secrets.SF_PASSWORD }}
+      
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the release assets
+          gh release download ${{ github.event.release.tag_name }} --pattern "*.apk"
+          ls -lah *.apk
+      
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+      
+      - name: Upload to SourceForge via SFTP
+        env:
+          SF_USER: ${{ secrets.SF_USERNAME }}
+          SF_PASS: ${{ secrets.SF_PASSWORD }}
+        run: |
+          # Create directory structure and upload files
+          lftp -c "
+          set sftp:auto-confirm yes;
+          open sftp://$SF_USER:$SF_PASS@frs.sourceforge.net;
+          mkdir -p /home/frs/project/passvault-app/${{ github.event.release.tag_name }};
+          cd /home/frs/project/passvault-app/${{ github.event.release.tag_name }};
+          mput *.apk;
+          "
           
-          # This is your SourceForge project's "unixname" 
-          project-name: 'passvault-app' 
-          
-          # This tells it to upload any file ending in .apk that it just downloaded
-          source-file: '*.apk' 
-          
-          # This creates a new folder on SourceForge named after tag (e.g., /v0.2-alpha/)
-          target-path: '/${{ github.event.release.tag_name }}/'
+          echo "✅ Upload complete to: https://sourceforge.net/projects/passvault-app/files/${{ github.event.release.tag_name }}/"
