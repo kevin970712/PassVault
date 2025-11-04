@@ -71,10 +71,10 @@ class SetPinFragment : DialogFragment() {
             try {
                 Encryption.ensureKeyExists()
 
-                val (encryptedPin, iv) = Encryption.encrypt(pin)
+                val (cipher, iv) = Encryption.encrypt(pin)
                 val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
                 prefs.edit {
-                    putString("pin", encryptedPin)
+                    putString("pin_cipher", cipher)
                     putString("pin_iv", iv)
                 }
 
