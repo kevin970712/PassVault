@@ -10,8 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PasswordViewModel(app: Application) : AndroidViewModel(app) {
-    private val dao = AppDatabase.Companion.getDatabase(app).passwordDao()
+    private val dao = AppDatabase.getDatabase(app).passwordDao()
     val allEntries: LiveData<List<PasswordEntry>> = dao.getAll()
+
+    fun getEntryById(id: Long): LiveData<PasswordEntry> {
+        return dao.getEntryById(id)
+    }
 
     fun insert(entry: PasswordEntry) {
         viewModelScope.launch(Dispatchers.IO) { dao.insert(entry) }

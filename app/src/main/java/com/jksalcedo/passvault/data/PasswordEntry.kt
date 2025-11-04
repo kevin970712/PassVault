@@ -1,8 +1,11 @@
 package com.jksalcedo.passvault.data
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "password_entries")
 data class PasswordEntry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -13,4 +16,4 @@ data class PasswordEntry(
     val notes: String?,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
-)
+) : Parcelable

@@ -11,17 +11,13 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
+import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.utils.Utility
 
 class ViewEntryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewEntryBinding
-
-    private var titleText: String? = null
-    private var usernameText: String? = null
-    private var passwordCipher: String? = null
-    private var passwordIv: String? = null
-    private var notesText: String? = null
+    private var currentEntry: PasswordEntry? = null
 
     private var revealed = false
     private var plainPassword: String = ""
@@ -32,38 +28,41 @@ class ViewEntryActivity : AppCompatActivity() {
         binding = ActivityViewEntryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Read extras
-        titleText = intent.getStringExtra(EXTRA_TITLE)
-        usernameText = intent.getStringExtra(EXTRA_USERNAME)
-        passwordCipher = intent.getStringExtra(EXTRA_PASSWORD_CIPHER)
-        passwordIv = intent.getStringExtra(EXTRA_PASSWORD_IV)
-        notesText = intent.getStringExtra(EXTRA_NOTES)
+        val entryId = intent.getLongExtra(EXTRA_ID, -1)
+        val title = intent.getStringExtra(EXTRA_TITLE)
+        val username = intent.getStringExtra(EXTRA_USERNAME)
+        val passwordCipher = intent.getStringExtra(EXTRA_PASSWORD_CIPHER)
+        val passwordIv = intent.getStringExtra(EXTRA_PASSWORD_IV)
+        val notes = intent.getStringExtra(EXTRA_NOTES)
 
-        if (titleText.isNullOrEmpty() || passwordCipher.isNullOrEmpty()) {
+        if (title.isNullOrEmpty() || passwordCipher.isNullOrEmpty() || passwordIv.isNullOrEmpty()) {
             Toast.makeText(this, "Missing entry data", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
+        currentEntry = PasswordEntry(
+            id = entryId,
+            title = title,
+            username = username,
+            passwordCipher = passwordCipher,
+            passwordIv = passwordIv,
+            notes = notes
+        )
+
         // Decrypt using Encryption
         plainPassword = try {
             Encryption.ensureKeyExists()
-            val cipher = passwordCipher!!
-            val iv = passwordIv
-            if (iv.isNullOrEmpty()) {
-                ""
-            } else {
-                Encryption.decrypt(cipher, iv)
-            }
+            Encryption.decrypt(passwordCipher, passwordIv)
         } catch (_: Exception) {
             ""
         }
 
         // Bind data
-        binding.tvTitle.text = titleText
-        binding.tvUsername.text = usernameText.orEmpty()
+        binding.tvTitle.text = title
+        binding.tvUsername.text = username.orEmpty()
         binding.tvPassword.text = MASKED_PASSWORD
-        binding.tvNotes.text = notesText.orEmpty()
+        binding.tvNotes.text = notes.orEmpty()
 
         binding.btnReveal.setOnClickListener {
             revealed = !revealed
@@ -76,12 +75,19 @@ class ViewEntryActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnCopy.setOnClickListener {
+        binding.btnCopyPassword.setOnClickListener {
             if (plainPassword.isNotEmpty()) {
                 Utility.copyToClipboard(this, "password", plainPassword)
                 Toast.makeText(this, "Password copied", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "No password to copy", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.fabEdit.setOnClickListener {
+            currentEntry?.let {
+                startActivity(AddEditActivity.createIntent(this, it))
+                finish()
             }
         }
     }

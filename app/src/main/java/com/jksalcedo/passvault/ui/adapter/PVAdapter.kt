@@ -18,7 +18,6 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
 
     fun submitList(list: List<PasswordEntry>?) {
         items = list ?: emptyList()
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -31,6 +30,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
         val item = items[position]
         holder.bind(item)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
+        notifyItemInserted(position)
     }
 
     override fun getItemCount(): Int = items.size

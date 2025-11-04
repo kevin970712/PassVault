@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="com.jksalcedo.passvault.ui.auth.TestActivity"
+            android:exported="false" />
+        <activity android:name="com.jksalcedo.passvault.ui.addedit.AddEditActivity" />
+    </application>
+</manifest>

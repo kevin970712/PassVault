@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import com.jksalcedo.passvault.crypto.Encryption
-import com.jksalcedo.passvault.databinding.FragmentSetPinBinding
+import com.jksalcedo.passvault.databinding.DialogSetPinBinding
 import com.jksalcedo.passvault.utils.Utility
 
 /**
@@ -26,7 +26,7 @@ class SetPinFragment : DialogFragment() {
     }
 
     private var listener: OnPinSetListener? = null
-    private var _binding: FragmentSetPinBinding? = null
+    private var _binding: DialogSetPinBinding? = null
     private val binding get() = _binding!!
 
     override fun onAttach(context: Context) {
@@ -40,7 +40,7 @@ class SetPinFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = FragmentSetPinBinding.inflate(layoutInflater)
+        _binding = DialogSetPinBinding.inflate(layoutInflater)
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
