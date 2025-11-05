@@ -1,5 +1,6 @@
 package com.jksalcedo.passvault.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
 
     var onItemClick: ((PasswordEntry) -> Unit)? = null
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<PasswordEntry>?) {
         _items.value = (list ?: emptyList())
         notifyDataSetChanged()

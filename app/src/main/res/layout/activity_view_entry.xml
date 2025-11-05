@@ -296,49 +296,4 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium" />
     </LinearLayout>
-
-    <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/edit"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="6dp">
-
-            <!-- Delete Button -->
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnDelete"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_delete"
-                android:text="@string/delete"
-                android:textColor="#E64A19"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:strokeColor="@android:color/holo_red_dark" />
-
-            <!-- Edit Button -->
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnEdit"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_edit"
-                android:text="@string/delete"
-                android:textColor="#E64A19"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:strokeColor="@android:color/holo_red_dark" />
-        </LinearLayout>
-    </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

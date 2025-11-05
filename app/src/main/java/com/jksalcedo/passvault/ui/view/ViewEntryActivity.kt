@@ -8,18 +8,23 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.utils.Utility
+import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
 class ViewEntryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewEntryBinding
     private var currentEntry: PasswordEntry? = null
+
+    private lateinit var viewModel: PasswordViewModel
 
     private var revealed: Boolean = false
     private var plainPassword: String = ""
@@ -53,6 +58,8 @@ class ViewEntryActivity : AppCompatActivity() {
         val passwordIv = intent.getStringExtra(EXTRA_PASSWORD_IV)
         val notes = intent.getStringExtra(EXTRA_NOTES)
 
+        viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
+
         if (title.isNullOrEmpty() || passwordCipher.isNullOrEmpty() || passwordIv.isNullOrEmpty()) {
             Toast.makeText(this, "Missing entry data", Toast.LENGTH_SHORT).show()
             finish()
@@ -81,7 +88,7 @@ class ViewEntryActivity : AppCompatActivity() {
         binding.tvUsername.text = username.orEmpty()
         binding.tvPassword.text = MASKED_PASSWORD
         binding.tvNotes.text = notes.orEmpty()
-        
+
         binding.btnCopyUsername.setOnClickListener {
             if (username?.isNotEmpty() == true) {
                 Utility.copyToClipboard(this, "username", username)
@@ -128,6 +135,19 @@ class ViewEntryActivity : AppCompatActivity() {
                 startActivity(AddEditActivity.createIntent(this, it))
                 finish()
             }
+        }
+
+        binding.fabDelete.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setPositiveButton("Cancel", null)
+                .setNegativeButton("Delete") { _, _ ->
+                    if (currentEntry != null) viewModel.delete(entry = currentEntry!!)
+                    // Back to Main Screen
+                    onBackPressedDispatcher.onBackPressed()
+                }
+                .setTitle("Delete Confirmation")
+                .setMessage("Proceed to delete this entry?")
+                .show()
         }
     }
 
