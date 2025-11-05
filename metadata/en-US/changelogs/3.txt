@@ -1,0 +1,10 @@
+New Feature
+
+    - Delete: Can now delete entries
+
+Others
+
+    - Added FAB for edit/delete buttons with some animations
+    - Fixed some bugs
+
+Full Changelog: https://github.com/jksalcedo/PassVault/compare/v0.2-alpha...v0.3-alpha

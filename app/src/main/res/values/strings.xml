@@ -55,4 +55,5 @@
     <string name="set_master_pin">Set Master PIN</string>
     <string name="cancel">Cancel</string>
     <string name="click_the_button_to_add_your_first_password">Click the + button to add your first password!</string>
+    <string name="actions">Actions</string>
 </resources>
