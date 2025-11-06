@@ -29,6 +29,8 @@ PassVault is a lightweight password manager that allows users to securely store 
 device. All data is stored locally and sensitive information is encrypted using the Android Keystore
 system. The application does not require internet permissions. User data never leaves the device.
 
+> This app is not a replacement but an alternative to other existing password managers.
+
 ## Core Features
 
 - [x] Secure PIN Authentication
