@@ -22,6 +22,8 @@
     <img src="./metadata/en-US/images/phoneScreenshots/1.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/2.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/3.jpg" alt="PassVault Screenshot" width="250" />
+    <img src="./metadata/en-US/images/phoneScreenshots/4.jpg" alt="PassVault Screenshot" width="250" />
+  <img src="./metadata/en-US/images/phoneScreenshots/5.jpg" alt="PassVault Screenshot" width="250" />
   <br>
   
   <br>
