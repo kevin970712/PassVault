@@ -20,4 +20,20 @@
     <!-- Base colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <!-- Arctic Blue palette -->
+    <color name="arctic_ice">#E8F4F8</color>
+    <color name="frozen_mist">#C5E3ED</color>
+    <color name="arctic_sky">#A8D5E2</color>
+    <color name="winter_blue">#7CB9D1</color>
+    <color name="ice_flow">#5AA5C0</color>
+    <color name="nordic_blue">#4A8FA8</color>
+    <color name="deep_fjord">#3B7A93</color>
+    <color name="polar_night">#2D5F75</color>
+    <color name="aurora_teal">#6ECFBD</color>
+    <color name="northern_lights">#4FB3A0</color>
+
+    <color name="surface_dark_blue">#1f2836</color>
+    <color name="surface_dark_blue_elevated">#202831</color>
+    <color name="surface_dark_blue_high">#272f39</color>
 </resources>

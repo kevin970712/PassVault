@@ -1,9 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
     id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "2.2.21"
 
 }
 
@@ -15,8 +18,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3-alpha"
+        versionCode = 4
+        versionName = "0.4-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,12 +34,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         viewBinding = true
     }
@@ -49,6 +50,12 @@ android {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 dependencies {
@@ -82,4 +89,8 @@ dependencies {
     testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.androidx.espresso.intents)
+
+    implementation(libs.kotlinx.serialization.json)
+    // https://mvnrepository.com/artifact/androidx.preference/preference
+    implementation(libs.androidx.preference)
 }
