@@ -1,0 +1,96 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- General -->
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="General">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="about_app"
+            app:summary="PassVault v1.0.0"
+            app:title="About App" />
+    </PreferenceCategory>
+
+    <!-- Backup & Restore -->
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Backup &amp; Restore">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="export_data"
+            app:summary="Create an encrypted backup of all your entries"
+            app:title="Export Data" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="import_data"
+            app:summary="Restore entries from an encrypted backup file"
+            app:title="Import Data" />
+
+        <ListPreference
+            app:defaultValue="encrypted_json"
+            app:entries="@array/export_format_entries"
+            app:entryValues="@array/export_format_values"
+            app:iconSpaceReserved="false"
+            app:key="export_format"
+            app:title="Export Format"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="auto_backup"
+            app:summary="Automatically create weekly backups"
+            app:title="Automatic Backups" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="last_backup"
+            app:selectable="false"
+            app:summary="Never"
+            app:title="Last Backup" />
+
+    </PreferenceCategory>
+
+    <!-- Data Management -->
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Data Management">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="storage_info"
+            app:summary="View database size and entry count"
+            app:title="Storage Information" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="clear_data"
+            app:summary="Permanently delete all stored entries"
+            app:title="Clear All Data" />
+
+    </PreferenceCategory>
+
+    <!-- Security -->
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Security">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="require_auth_export"
+            app:summary="Verify PIN/biometric before exporting data"
+            app:title="Require Authentication for Export" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="encrypt_backups"
+            app:summary="Protect backup files with additional encryption"
+            app:title="Encrypt Backups" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
