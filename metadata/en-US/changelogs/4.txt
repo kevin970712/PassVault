@@ -1,7 +1,7 @@
 New Feature
 
 - Backup & Restore: Can now export/import data
-- Encrypt Backups: Can encrypt backups with a passkey
+- Encrypt Backups: Can encrypt backups with a password
 
 Others
 

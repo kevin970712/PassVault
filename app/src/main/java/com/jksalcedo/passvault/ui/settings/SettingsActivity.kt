@@ -66,7 +66,7 @@ class SettingsActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
     }
 
-    private fun ensurePasskeyExists(onPasskeyReady: () -> Unit) {
+    private fun ensurePasswordExists(onPasskeyReady: () -> Unit) {
         val sharedPrefs = getSharedPreferences("settings", MODE_PRIVATE)
         val storedPasskey = sharedPrefs.getString("passkey", null)
 
@@ -77,7 +77,7 @@ class SettingsActivity : AppCompatActivity() {
                 .setView(layout)
                 .setCancelable(false)
                 .setTitle(R.string.set_passkey)
-                .setMessage("Create a passkey to encrypt your backup.")
+                .setMessage("Create a password to encrypt your backup.")
                 .setPositiveButton("Save", null)
                 .setNegativeButton("Cancel", null)
                 .create()
@@ -93,17 +93,17 @@ class SettingsActivity : AppCompatActivity() {
 
                     when {
                         newPasskey.isBlank() -> {
-                            passkeyEditText.error = "Passkey cannot be empty"
+                            passkeyEditText.error = "Password cannot be empty"
                         }
 
                         newPasskey != confirmPasskey -> {
-                            confirmPasskeyEditText.error = "Passkeys do not match"
+                            confirmPasskeyEditText.error = "Password do not match"
                         }
 
                         else -> {
                             // Passkeys match and not empty, save it
                             sharedPrefs.edit().putString("passkey", newPasskey).apply()
-                            Toast.makeText(this, "Passkey saved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Password saved", Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
                             onPasskeyReady() // Proceed
                         }
@@ -119,7 +119,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
     fun createFileForExport() {
-        ensurePasskeyExists {
+        ensurePasswordExists {
             val formatter = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
             val fileName = "passvault_backup_${formatter.format(Date())}.json"
 
@@ -165,7 +165,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun openFileForImport() {
-        ensurePasskeyExists {
+        ensurePasswordExists {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*" // Allow selection of any file type

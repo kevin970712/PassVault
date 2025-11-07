@@ -56,7 +56,7 @@
     <string name="cancel">Cancel</string>
     <string name="click_the_button_to_add_your_first_password">Click the + button to add your first password!</string>
     <string name="actions">Actions</string>
-    <string name="confirm_passkey">Confirm Passkey</string>
-    <string name="enter_passkey">Enter Passkey</string>
-    <string name="set_passkey">Set Passkey</string>
+    <string name="confirm_passkey">Confirm Password</string>
+    <string name="enter_passkey">Enter Password</string>
+    <string name="set_passkey">Set Password</string>
 </resources>
