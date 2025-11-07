@@ -14,8 +14,8 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.adapter.PVAdapter
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
+import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
-import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -68,8 +68,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                // TODO - Implement Settings
-                Utility.showToast(this, "Settings not implemented")
+                startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
 

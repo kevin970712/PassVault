@@ -4,8 +4,10 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 @Entity(tableName = "password_entries")
 data class PasswordEntry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
