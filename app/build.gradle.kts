@@ -91,4 +91,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.intents)
 
     implementation(libs.kotlinx.serialization.json)
+    // https://mvnrepository.com/artifact/androidx.preference/preference
+    implementation(libs.androidx.preference)
 }
