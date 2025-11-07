@@ -1,27 +1,37 @@
 <resources>
 
     <style name="Base.Theme.PassVault" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary colors - Neutral/Monochrome -->
-        <item name="colorPrimary">@color/neutral_700</item>
+        <!-- Primary colors - Subtle arctic accent -->
+        <item name="colorPrimary">@color/polar_night</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/frozen_mist</item>
+        <item name="colorOnPrimaryContainer">@color/polar_night</item>
 
-        <!-- Secondary colors -->
-        <item name="colorSecondary">@color/grey_200</item>
-        <item name="colorOnSecondary">@color/neutral_700</item>
+        <item name="colorSecondary">@color/nordic_blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/arctic_sky</item>
+        <item name="colorOnSecondaryContainer">@color/deep_fjord</item>
 
-        <!-- Surface colors - Background should be lighter -->
+        <item name="colorTertiary">@color/northern_lights</item>
+        <item name="colorOnTertiary">@color/black</item>
+        <item name="colorTertiaryContainer">@color/aurora_teal</item>
+        <item name="colorOnTertiaryContainer">@color/black</item>
+
+        <!-- Surface colors - Clean white/light surfaces -->
         <item name="colorSurface">@color/white</item>
-        <item name="colorSurfaceContainer">@color/grey_100</item>
-        <item name="colorSurfaceContainerLow">@color/grey_50</item>
-        <item name="colorSurfaceContainerHigh">@color/grey_200</item>
+        <item name="colorSurfaceContainer">@color/grey_50</item>
+        <item name="colorSurfaceContainerLow">@color/white</item>
+        <item name="colorSurfaceContainerHigh">@color/grey_100</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorOnSurfaceVariant">@color/grey_500</item>
 
-        <!-- Background color -->
+        <!-- Background color - Pure white -->
         <item name="android:colorBackground">@color/white</item>
 
+        <!-- Status bar -->
         <item name="android:statusBarColor">@android:color/transparent</item>
 
+        <!-- Fonts -->
         <item name="fontFamily">@font/worksans_variable</item>
         <item name="android:fontFamily">@font/worksans_variable</item>
     </style>
