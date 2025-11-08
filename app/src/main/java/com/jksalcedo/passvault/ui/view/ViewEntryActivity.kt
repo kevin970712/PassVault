@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
@@ -18,6 +20,8 @@ import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ViewEntryActivity : AppCompatActivity() {
 
@@ -152,12 +156,17 @@ class ViewEntryActivity : AppCompatActivity() {
     }
 
     private fun expandFab() {
+        binding.actions.visibility = View.VISIBLE
         binding.fabActions.startAnimation(clockwiseAnim)
         binding.actions.startAnimation(toTopAnim)
         binding.dim.startAnimation(fadeIn)
     }
 
     private fun collapseFab() {
+        lifecycleScope.launch {
+            delay(300L)
+            binding.actions.visibility = View.GONE
+        }
         binding.fabActions.startAnimation(antiClockwiseAnim)
         binding.actions.startAnimation(toBottomAnim)
         binding.dim.startAnimation(fadeOut)
