@@ -9,12 +9,19 @@ import com.jksalcedo.passvault.data.AppDatabase
 import com.jksalcedo.passvault.data.PasswordDao
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.getOrAwaitValue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(manifest = Config.NONE)
 class UtilityTest {
 
     @get:Rule
@@ -62,7 +69,10 @@ class UtilityTest {
         )
 
         val entries = dao.getAll().getOrAwaitValue()
-        val result = Utility.serializeEntries(entries)
+        val result = Utility.serializeEntries(
+            entries,
+            format = "json"
+        )
 
         print(result)
 
@@ -74,4 +84,36 @@ class UtilityTest {
         assertThat(result).contains("\"notes\":\"some notes\"")
     }
 
+    @Test
+    fun `deserialize entries`() = runTest {
+        val to = listOf(
+            PasswordEntry(
+                id = 1,
+                title = "Entry1",
+                username = "user1",
+                passwordCipher = "c",
+                passwordIv = "iv",
+                notes = null,
+                createdAt = 0L,
+                updatedAt = 0L
+            )
+        )
+        val entry = Utility.serializeEntries(to, "json")
+        val result = Utility.deserializeEntries(entry, "json")
+
+        print(result)
+
+        assertThat(result).contains(
+            PasswordEntry(
+                id = 1,
+                title = "Entry1",
+                username = "user1",
+                passwordCipher = "c",
+                passwordIv = "iv",
+                notes = null,
+                createdAt = 0L,
+                updatedAt = 0L
+            )
+        )
+    }
 }
