@@ -18,8 +18,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.4-alpha"
+        versionCode = 5
+        versionName = "0.4-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +45,23 @@ android {
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            val outputImpl = output as com.android.build.api.variant.impl.VariantOutputImpl
+
+            val project = "PassVault"
+            val version = output.versionName.get()
+            val code = output.versionCode.get()
+            val buildType = variant.buildType
+
+            val apkName = "${project}-v${version}-b${code}-${buildType}.apk"
+
+            outputImpl.outputFileName.set(apkName)
+        }
     }
 }
 
@@ -91,6 +108,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.intents)
 
     implementation(libs.kotlinx.serialization.json)
+    // for csv
+    // https://mvnrepository.com/artifact/de.brudaswen.kotlinx.serialization/kotlinx-serialization-csv
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:3.1.0")
+
     // https://mvnrepository.com/artifact/androidx.preference/preference
     implementation(libs.androidx.preference)
 }
