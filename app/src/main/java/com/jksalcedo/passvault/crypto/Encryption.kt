@@ -17,7 +17,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object Encryption {
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private const val KEY_ALIAS = "passvault_key_v1" // change on key rotation
+    private const val KEY_ALIAS = "passvault_key_v1"
     private const val AES_MODE = "${KeyProperties.KEY_ALGORITHM_AES}/" +
             "${KeyProperties.BLOCK_MODE_GCM}/" +
             KeyProperties.ENCRYPTION_PADDING_NONE
@@ -58,8 +58,9 @@ object Encryption {
                 setUserAuthenticationRequired(true)
                 setUserAuthenticationParameters(
                     0,
-                    KeyProperties.AUTH_DEVICE_CREDENTIAL
+                    KeyProperties.AUTH_BIOMETRIC_STRONG
                 )
+                setIsStrongBoxBacked(true)
             }
             build()
         }
