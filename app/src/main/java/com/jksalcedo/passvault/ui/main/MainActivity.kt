@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.textview.MaterialTextView
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.adapter.PVAdapter
@@ -34,14 +33,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         adapter = PVAdapter()
-        val recycler = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerView)
-        recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = adapter
+        binding.contentMain.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.contentMain.recyclerView.adapter = adapter
 
         adapter.items.observe(this, Observer { items ->
             // Show message on first time
-            val tvMessage = findViewById<MaterialTextView>(R.id.tvMessage)
-            tvMessage.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+            binding.contentMain.tvMessage.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         })
 
         // View the entry
