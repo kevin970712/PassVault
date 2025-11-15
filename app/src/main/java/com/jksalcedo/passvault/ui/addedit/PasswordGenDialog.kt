@@ -24,6 +24,9 @@ class PasswordGenDialog : DialogFragment() {
     private var generatedPassword: String = ""
     private lateinit var binding: DialogPasswordGenBinding
     private var listener: PasswordDialogListener? = null
+    private val prefs by lazy {
+        requireContext().getSharedPreferences("password_gen_prefs", Context.MODE_PRIVATE)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,11 +39,15 @@ class PasswordGenDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DialogPasswordGenBinding.inflate(layoutInflater)
 
-        binding.sbLength.progress = 16 // default
-        binding.tvLength.text = getString(R.string._16)
-        binding.sbUppercase.isChecked = true
-        binding.sbLowercase.isChecked = true
-        binding.sbNumbers.isChecked = true
+        // Load saved values or use defaults
+        val savedLength = prefs.getInt("length", 16)
+        binding.sbLength.progress = savedLength
+        binding.tvLength.text = savedLength.toString()
+
+        binding.sbUppercase.isChecked = prefs.getBoolean("uppercase", true)
+        binding.sbLowercase.isChecked = prefs.getBoolean("lowercase", true)
+        binding.sbNumbers.isChecked = prefs.getBoolean("numbers", true)
+        binding.cbSymbols.isChecked = prefs.getBoolean("symbols", false)
 
         binding.sbLength.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -90,6 +97,15 @@ class PasswordGenDialog : DialogFragment() {
                 val hasLowercase = binding.sbLowercase.isChecked
                 val hasNumber = binding.sbNumbers.isChecked
                 val hasSymbols = binding.cbSymbols.isChecked
+
+                // Save preferences
+                prefs.edit()
+                    .putInt("length", length)
+                    .putBoolean("uppercase", hasUppercase)
+                    .putBoolean("lowercase", hasLowercase)
+                    .putBoolean("numbers", hasNumber)
+                    .putBoolean("symbols", hasSymbols)
+                    .apply()
 
                 // Generate the password
                 generatedPassword = PasswordGenerator.generate(
