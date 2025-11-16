@@ -41,7 +41,7 @@ class AboutFragment : Fragment() {
             "Unknown"
         }
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.setTitle(R.string.manage_backups)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setTitle(R.string.about)
 
         return binding.root
     }
