@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
@@ -38,6 +40,8 @@ class AboutFragment : Fragment() {
         } catch (_: Exception) {
             "Unknown"
         }
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.setTitle(R.string.manage_backups)
 
         return binding.root
     }
