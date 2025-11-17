@@ -35,20 +35,6 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp">
 
-            <!-- Title Card -->
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvMetadata"
-                tools:text="Google Account" />
-
             <!-- Username Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardUsername"
@@ -59,7 +45,7 @@
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle">
+                app:layout_constraintTop_toBottomOf="@id/tvMetadata">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
