@@ -129,7 +129,7 @@ class UtilityTest {
 
         val formattedDate = timestampInMillis.formatTime(zoneId = utc)
 
-        assertThat(formattedDate).isEqualTo("Nov 08 2025")
+        assertThat(formattedDate).isEqualTo("Nov 08 2025 10:30 AM")
     }
 
     @Test
@@ -138,7 +138,7 @@ class UtilityTest {
 
         val formattedDate = epochTimestamp.formatTime(zoneId = utc)
 
-        assertThat(formattedDate).isEqualTo("Jan 01 1970")
+        assertThat(formattedDate).isEqualTo("Jan 01 1970 12:00 AM")
     }
 
     @Test
@@ -148,7 +148,7 @@ class UtilityTest {
 
         val formattedDate = preEpochTimestamp.formatTime(zoneId = utc)
 
-        assertThat(formattedDate).isEqualTo("Dec 25 1969")
+        assertThat(formattedDate).isEqualTo("Dec 25 1969 6:00 PM")
     }
 
     @Test
@@ -158,7 +158,7 @@ class UtilityTest {
 
         val formattedDate = epochTimestamp.formatTime(zoneId = newYorkZone)
 
-        assertThat(formattedDate).isEqualTo("Dec 31 1969")
+        assertThat(formattedDate).isEqualTo("Dec 31 1969 7:00 PM")
     }
 
 }
