@@ -258,9 +258,7 @@ open class SettingsViewModel(application: Application, private val context: Acti
                             inputStream.copyTo(outputStream)
                         }
                     }
-                Utility.showToast(context, "Backup file copied successfully!")
             } catch (e: Exception) {
-                Utility.showToast(context, "Copying backup file failed: $e")
                 e.printStackTrace()
             }
         }
