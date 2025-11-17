@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingHorizontal="64dp"
-        android:text="No backups! \n Enable 'Automatic Backups' to have your first backup tomorrow."
+        android:text="@string/no_backups_enable_automatic_backups_to_have_your_first_backup"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

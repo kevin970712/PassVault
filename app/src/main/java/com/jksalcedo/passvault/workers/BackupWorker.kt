@@ -17,11 +17,10 @@ import java.util.Locale
 
 class BackupWorker(
     appContext: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
+    private val passwordRepository: PasswordRepository = PasswordRepository(appContext),
+    private val preferenceRepository: PreferenceRepository = PreferenceRepository(appContext)
 ) : CoroutineWorker(appContext, workerParams) {
-
-    private val passwordRepository = PasswordRepository(appContext)
-    private val preferenceRepository = PreferenceRepository(appContext)
 
     companion object {
         const val TAG = "BackupWorker"

@@ -3,7 +3,6 @@ package com.jksalcedo.passvault.workers
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.work.ListenableWorker
-import androidx.work.testing.TestListenableWorkerBuilder
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
@@ -23,7 +22,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import java.util.Date
 
 class BackupWorkerTest {
 
@@ -38,6 +36,7 @@ class BackupWorkerTest {
     private lateinit var mockPasswordRepo: PasswordRepository
     private lateinit var mockPreferenceRepo: PreferenceRepository
     private lateinit var backupsDir: File
+    private lateinit var worker: BackupWorker
 
     @Before
     fun setup() {
@@ -62,15 +61,15 @@ class BackupWorkerTest {
     @Test
     fun `doWork returns Success when entries exist`() = runBlocking {
         val fakeEntries = listOf(
-            PasswordEntry(1, "Test", "user", "pass", "iv1", "notes1", Date().time),
+            PasswordEntry(1, "Test", "user", "pass", "iv1", "notes1"),
         )
         coEvery { mockPasswordRepo.getAllEntries() } returns fakeEntries
         coEvery { mockPreferenceRepo.getExportFormat() } returns "json"
         coEvery { mockPreferenceRepo.updateLastBackupTime() } returns Unit
+        coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
+        coEvery { mockPreferenceRepo.getPasskey() } returns ""
 
-        val worker = TestListenableWorkerBuilder<BackupWorker>(context)
-            .setWorkerFactory(TestWorkerFactory(mockPasswordRepo, mockPreferenceRepo))
-            .build()
+        worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()
 
         // Assert
@@ -88,10 +87,10 @@ class BackupWorkerTest {
     @Test
     fun `doWork returns Success when no entries exist`() = runBlocking {
         coEvery { mockPasswordRepo.getAllEntries() } returns emptyList()
+        coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
+        coEvery { mockPreferenceRepo.getPasskey() } returns ""
 
-        val worker = TestListenableWorkerBuilder<BackupWorker>(context)
-            .setWorkerFactory(TestWorkerFactory(mockPasswordRepo, mockPreferenceRepo))
-            .build()
+        worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()
 
         // Assert
@@ -102,10 +101,10 @@ class BackupWorkerTest {
     @Test
     fun `doWork returns Failure when repository throws an exception`() = runBlocking {
         coEvery { mockPasswordRepo.getAllEntries() } throws RuntimeException("Database is corrupted")
+        coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
+        coEvery { mockPreferenceRepo.getPasskey() } returns ""
 
-        val worker = TestListenableWorkerBuilder<BackupWorker>(context)
-            .setWorkerFactory(TestWorkerFactory(mockPasswordRepo, mockPreferenceRepo))
-            .build()
+        worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()
 
         // Assert

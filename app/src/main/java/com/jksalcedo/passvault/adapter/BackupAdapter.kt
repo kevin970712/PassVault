@@ -28,6 +28,18 @@ class BackupAdapter : RecyclerView.Adapter<BackupAdapter.VH>() {
         notifyDataSetChanged()
     }
 
+    fun deleteBackup(item: File) {
+        val currentList = _backupItems.value ?: return
+        val position = currentList.indexOf(item)
+
+        if (position != -1) {
+            val newList = currentList.toMutableList()
+            newList.removeAt(position)
+            _backupItems.value = newList
+            notifyItemRemoved(position)
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_backups, parent, false)
         return VH(view)

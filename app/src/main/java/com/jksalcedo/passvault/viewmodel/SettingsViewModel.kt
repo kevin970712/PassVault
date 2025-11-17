@@ -18,6 +18,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.jksalcedo.passvault.adapter.BackupAdapter
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.AppDatabase
 import com.jksalcedo.passvault.repositories.PreferenceRepository
@@ -36,7 +37,11 @@ import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import javax.crypto.BadPaddingException
 
-open class SettingsViewModel(application: Application, private val context: Activity) :
+open class SettingsViewModel(
+    application: Application,
+    private val context: Activity,
+    private val adapter: BackupAdapter? = null
+) :
     AndroidViewModel(application) {
 
     private val prefsRepository: PreferenceRepository = PreferenceRepository(application)
@@ -262,6 +267,21 @@ open class SettingsViewModel(application: Application, private val context: Acti
                 e.printStackTrace()
             }
         }
+    }
+
+    fun deleteBackup(backupItem: File): Boolean {
+        val backupFile =
+            File(
+                getApplication<Application>().getExternalFilesDir(null),
+                "backups/" + backupItem.name
+            )
+        if (!backupFile.isFile || !backupFile.exists()) {
+            return false
+        }
+
+        backupFile.delete()
+        adapter?.deleteBackup(backupItem)
+        return true
     }
 }
 
