@@ -3,11 +3,13 @@ package com.jksalcedo.passvault.ui.settings
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.BackupAdapter
 import com.jksalcedo.passvault.databinding.FragmentBackupsBinding
+import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
 import java.io.File
@@ -36,7 +39,12 @@ class BackupsFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    settingsViewModel.copyBackupToUri(backupFile, uri)
+                    try {
+                        settingsViewModel.copyBackupToUri(backupFile, uri)
+                        Utility.showToast(requireContext(), "Backup file copied successfully!.")
+                    } catch (_: Exception) {
+                        Utility.showToast(requireContext(), "Process failed.")
+                    }
                 }
             }
         }
@@ -64,10 +72,14 @@ class BackupsFragment : Fragment() {
 
         adapter.onItemClick = { backupItem ->
             backupFile = backupItem
+            var selectedPosition = -1
             MaterialAlertDialogBuilder(this.requireContext())
                 .setTitle(backupItem.nameWithoutExtension)
                 .setSingleChoiceItems(R.array.backup_options, 0) { _, which ->
-                    when (which) {
+                    selectedPosition = which
+                }
+                .setPositiveButton("Proceed") { _, _ ->
+                    when (selectedPosition) {
                         // Restore
                         0 -> {
                             //settingsViewModel.restoreBackup(backupItem)
@@ -79,7 +91,15 @@ class BackupsFragment : Fragment() {
                         }
                         // Delete
                         2 -> {
-                            //settingsViewModel.deleteBackup(backupItem)
+                            try {
+                                settingsViewModel.deleteBackup(backupItem)
+                                Utility.showToast(requireContext(), "Backup file deleted.")
+                            } catch (e: Exception) {
+                                Utility.showToast(
+                                    requireContext(),
+                                    "Error deleting backup file: $e."
+                                )
+                            }
                             // Refresh the list after deleting
                             adapter.setBackups(
                                 settingsViewModel.getInternalBackups()
@@ -88,12 +108,33 @@ class BackupsFragment : Fragment() {
                         }
                         // Share
                         3 -> {
-                            // settingsViewModel.shareBackup(backupItem)
+                            try {
+                                val backupFile =
+                                    File(
+                                        requireActivity().application.getExternalFilesDir(null),
+                                        "backups/" + backupItem.name
+                                    )
+                                val authority = "${requireContext().packageName}.provider"
+                                val contentUri = FileProvider.getUriForFile(
+                                    requireContext(),
+                                    authority,
+                                    backupFile
+                                )
+
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    putExtra(Intent.EXTRA_STREAM, contentUri)
+                                    type = "*/*"
+                                }
+                                startActivity(intent)
+                            } catch (e: Exception) {
+                                Utility.showToast(requireContext(), "Sharing failed: $e")
+                                Log.e(this.toString(), e.toString())
+                            }
                         }
                     }
                 }
                 .show()
-
         }
 
         return binding.root
