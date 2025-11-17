@@ -3,11 +3,13 @@ package com.jksalcedo.passvault.ui.settings
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
@@ -48,6 +50,10 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        setSupportActionBar(findViewById<MaterialToolbar>(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         // Show Preference Fragment
         supportFragmentManager.beginTransaction()
@@ -172,5 +178,15 @@ class SettingsActivity : AppCompatActivity() {
             }
             openFileLauncher.launch(intent)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
