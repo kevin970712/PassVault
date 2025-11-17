@@ -24,7 +24,7 @@ class BackupAdapter : RecyclerView.Adapter<BackupAdapter.VH>() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun setBackups(list: List<File>?) {
-        _backupItems.value = list
+        _backupItems.value = list ?: emptyList()
         notifyDataSetChanged()
     }
 
