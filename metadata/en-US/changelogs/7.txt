@@ -1,0 +1,20 @@
+New Features
+
+- Automatic encrypted backups with BackupWorker
+- Backup management: share, delete, and view backup files
+- Auto-lock on inactivity for enhanced security
+- Password protection for import/export operations
+- Toolbar integration in Settings and entry screens
+
+Improvements
+
+- R8 full mode and ProGuard enabled
+- Repository pattern for data abstraction
+- Lazy initialization of repositories
+- WebP launcher icons for smaller app size
+- Enhanced UI with dividers and improved padding
+
+Technical
+
+- Updated dependencies
+- Removed unused resources and test code
