@@ -18,8 +18,8 @@ import java.util.Locale
 class BackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,
-    private val passwordRepository: PasswordRepository = PasswordRepository(appContext),
-    private val preferenceRepository: PreferenceRepository = PreferenceRepository(appContext)
+    private val passwordRepository: PasswordRepository,
+    private val preferenceRepository: PreferenceRepository
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
