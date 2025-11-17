@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.utils.Utility
@@ -16,22 +17,15 @@ import java.util.Locale
 
 class BackupWorker(
     appContext: Context,
-    workerParams: WorkerParameters,
-    private val passwordRepository: PasswordRepository,
-    private val preferenceRepository: PreferenceRepository
+    workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
+
+    private val passwordRepository = PasswordRepository(appContext)
+    private val preferenceRepository = PreferenceRepository(appContext)
 
     companion object {
         const val TAG = "BackupWorker"
     }
-
-    @Suppress("unused")
-    constructor(appContext: Context, workerParams: WorkerParameters) : this(
-        appContext,
-        workerParams,
-        PasswordRepository(appContext),
-        PreferenceRepository(appContext)
-    )
 
     override suspend fun doWork(): Result {
         return try {
@@ -46,13 +40,25 @@ class BackupWorker(
                 }
 
                 val format = preferenceRepository.getExportFormat()
-                // val encrypt = preferenceRepository.getEncryptBackups()
+                val encryptionEnabled = preferenceRepository.getEncryptBackups()
+                val passkey = preferenceRepository.getPasskey()
 
                 // Serialize data
                 val data = when (format.uppercase()) {
                     "JSON" -> Utility.serializeEntries(entries, format = format)
                     "CSV" -> Utility.serializeEntries(entries, format = format)
                     else -> Utility.serializeEntries(entries, "json") // Default to JSON
+                }
+
+                val contentToWrite = if (encryptionEnabled) {
+                    if (passkey.isNullOrEmpty()) {
+                        Log.e(TAG, "Encryption is enabled but passkey is missing. Skipping backup.")
+                        // Return failure
+                        return@withContext Result.failure()
+                    }
+                    Encryption.encryptFileContent(data, passkey)
+                } else {
+                    data
                 }
 
                 // Create the backup file
@@ -66,7 +72,8 @@ class BackupWorker(
                 val backupFile = File(backupsDir, fileName)
 
                 // Write data to the file
-                backupFile.writeText(data)
+                backupFile.writeText(contentToWrite)
+                Log.d(TAG, "Auto backup successful. File: $fileName")
 
                 preferenceRepository.updateLastBackupTime()
 
