@@ -67,7 +67,7 @@ class BackupWorkerTest {
         coEvery { mockPreferenceRepo.getExportFormat() } returns "json"
         coEvery { mockPreferenceRepo.updateLastBackupTime() } returns Unit
         coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
-        coEvery { mockPreferenceRepo.getPasskey() } returns ""
+        coEvery { mockPreferenceRepo.getPasswordForAutoBackups() } returns ""
 
         worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()
@@ -88,7 +88,7 @@ class BackupWorkerTest {
     fun `doWork returns Success when no entries exist`() = runBlocking {
         coEvery { mockPasswordRepo.getAllEntries() } returns emptyList()
         coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
-        coEvery { mockPreferenceRepo.getPasskey() } returns ""
+        coEvery { mockPreferenceRepo.getPasswordForAutoBackups() } returns ""
 
         worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()
@@ -102,7 +102,7 @@ class BackupWorkerTest {
     fun `doWork returns Failure when repository throws an exception`() = runBlocking {
         coEvery { mockPasswordRepo.getAllEntries() } throws RuntimeException("Database is corrupted")
         coEvery { mockPreferenceRepo.getEncryptBackups() } returns false
-        coEvery { mockPreferenceRepo.getPasskey() } returns ""
+        coEvery { mockPreferenceRepo.getPasswordForAutoBackups() } returns ""
 
         worker = BackupWorker(context, mockk(), mockPasswordRepo, mockPreferenceRepo)
         val result = worker.doWork()

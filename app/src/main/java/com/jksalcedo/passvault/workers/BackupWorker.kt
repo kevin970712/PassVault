@@ -40,7 +40,7 @@ class BackupWorker(
 
                 val format = preferenceRepository.getExportFormat()
                 val encryptionEnabled = preferenceRepository.getEncryptBackups()
-                val passkey = preferenceRepository.getPasskey()
+                val password = preferenceRepository.getPasswordForAutoBackups()
 
                 // Serialize data
                 val data = when (format.uppercase()) {
@@ -50,12 +50,15 @@ class BackupWorker(
                 }
 
                 val contentToWrite = if (encryptionEnabled) {
-                    if (passkey.isNullOrEmpty()) {
-                        Log.e(TAG, "Encryption is enabled but passkey is missing. Skipping backup.")
+                    if (password.isNullOrEmpty()) {
+                        Log.e(
+                            TAG,
+                            "Encryption is enabled but password is missing. Skipping backup."
+                        )
                         // Return failure
                         return@withContext Result.failure()
                     }
-                    Encryption.encryptFileContent(data, passkey)
+                    Encryption.encryptFileContent(data, password)
                 } else {
                     data
                 }
