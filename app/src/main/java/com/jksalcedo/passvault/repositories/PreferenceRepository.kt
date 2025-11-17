@@ -52,8 +52,12 @@ class PreferenceRepository(context: Context) {
         return prefs.getBoolean("encrypt_backups", true)
     }
 
-    fun getPasskey(): String? {
-        return prefs.getString("passkey", null)
+    fun getPasswordForAutoBackups(): String? {
+        return prefs.getString("auto_backup_password", null)
+    }
+
+    fun setPasswordForAutoBackups(password: String) {
+        prefs.edit { putString("auto_backup_password", password) }
     }
 
     fun clear() {

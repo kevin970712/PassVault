@@ -7,11 +7,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
+import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
 import java.text.SimpleDateFormat
@@ -26,12 +26,15 @@ class SettingsActivity : AppCompatActivity() {
 
     private val preferenceRepository by lazy { PreferenceRepository(application) }
 
+    private var password: String? = null
+
     // Launcher for creating (exporting) a file
     private val createFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    settingsViewModel.exportEntries(uri)
+                    settingsViewModel.exportEntries(uri, password = password!!)
+                    password = null
                 }
             }
         }
@@ -41,7 +44,8 @@ class SettingsActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    settingsViewModel.importEntries(uri)
+                    ensurePasswordExists(true) { settingsViewModel.importEntries(uri, password!!) }
+                    password = null
                 }
             }
         }
@@ -103,18 +107,21 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun ensurePasswordExists(onPasskeyReady: () -> Unit) {
-        val sharedPrefs = getSharedPreferences("settings", MODE_PRIVATE)
-        val storedPasskey = sharedPrefs.getString("passkey", null)
-
-        if (storedPasskey.isNullOrEmpty()) {
-            // No passkey found
-            val layout = layoutInflater.inflate(R.layout.dialog_passkey, null)
+    private fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: () -> Unit) {
+        if (password == null) {
+            // No password found
+            val layoutResource =
+                if (isImporting) R.layout.dialog_enter_password else R.layout.dialog_password
+            val layout = layoutInflater.inflate(layoutResource, null)
+            val title =
+                if (isImporting) R.string.enter_backup_file_password else R.string.set_export_password
+            val message =
+                if (isImporting) "Enter the password to decrypt this backup file." else "Create a password to encrypt your backup."
             val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
                 .setView(layout)
                 .setCancelable(false)
-                .setTitle(R.string.set_passkey)
-                .setMessage("Create a password to encrypt your backup.")
+                .setTitle(title)
+                .setMessage(message)
                 .setPositiveButton("Save", null)
                 .setNegativeButton("Cancel", null)
                 .create()
@@ -122,40 +129,48 @@ class SettingsActivity : AppCompatActivity() {
             dialog.setOnShowListener {
                 val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 positiveButton.setOnClickListener {
-                    val passkeyEditText = layout.findViewById<TextInputEditText>(R.id.etPasskey)
-                    val confirmPasskeyEditText =
-                        layout.findViewById<TextInputEditText>(R.id.etConfirmPasskey)
-                    val newPasskey = passkeyEditText.text.toString()
-                    val confirmPasskey = confirmPasskeyEditText.text.toString()
+                    val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
+                    val etConfirmPassword =
+                        layout.findViewById(R.id.et_confirm_password) ?: TextInputEditText(this)
+                    val newPassword = etPassword.text.toString()
+                    val confirmPassword = etConfirmPassword.text ?: ""
 
                     when {
-                        newPasskey.isBlank() -> {
-                            passkeyEditText.error = "Password cannot be empty"
+                        newPassword.isBlank() -> {
+                            etPassword.error = "Password cannot be empty"
                         }
 
-                        newPasskey != confirmPasskey -> {
-                            confirmPasskeyEditText.error = "Password do not match"
+                        newPassword.isNotEmpty() && isImporting -> {
+                            password = newPassword
+                            dialog.dismiss()
+                            onPasswordReady()
+                        }
+
+                        newPassword != confirmPassword.toString() -> {
+                            etConfirmPassword.error = "Password do not match"
                         }
 
                         else -> {
-                            // Passkeys match and not empty, save it
-                            sharedPrefs.edit { putString("passkey", newPasskey) }
-                            Toast.makeText(this, "Password saved", Toast.LENGTH_SHORT).show()
+                            password = newPassword
+                            if (!isImporting) Utility.showToast(
+                                this,
+                                getString(R.string.password_saved)
+                            )
                             dialog.dismiss()
-                            onPasskeyReady() // Proceed
+                            onPasswordReady() // Proceed
                         }
                     }
                 }
             }
             dialog.show()
         } else {
-            // Passkey already exists, proceed
-            onPasskeyReady()
+            // Password already exists, proceed
+            onPasswordReady()
         }
     }
 
     fun createFileForExport() {
-        ensurePasswordExists {
+        ensurePasswordExists(false) {
             val formatter = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
             val exportFormat = preferenceRepository.getExportFormat()
             val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
@@ -170,13 +185,12 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun openFileForImport() {
-        ensurePasswordExists {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "*/*" // Allow selection of any file type for import
-            }
-            openFileLauncher.launch(intent)
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*" // Allow selection of any file type for import
         }
+        openFileLauncher.launch(intent)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -9,6 +9,8 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.BiometricAuthenticator
@@ -135,9 +137,44 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "SettingsFragment",
                 "Switch toggled. Calling setAutoBackups($enabled)"
             )
-            viewModel.setAutoBackups(enabled)
             if (enabled) {
-                Utility.showToast(requireContext(), "Auto backups enabled (Daily)")
+                val layout = layoutInflater.inflate(R.layout.dialog_password, null)
+                val dialog = MaterialAlertDialogBuilder(this.requireContext())
+                    .setTitle("Set password for automatic backups.")
+                    .setMessage("This will be needed when you import or restore automatic backup files..")
+                    .setView(layout)
+                    .setCancelable(false)
+                    .setPositiveButton("Save", null)
+                    .show()
+
+                dialog.setOnShowListener { _ ->
+                    val positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+                    positiveButton.setOnClickListener {
+                        val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
+                        val etConfirmPassword =
+                            layout.findViewById<TextInputEditText>(R.id.et_confirm_password)
+                        val newPassword = etPassword.text.toString()
+                        val confirmPassword = etConfirmPassword.text.toString()
+
+                        when {
+                            newPassword.isBlank() -> {
+                                etPassword.error = "Password cannot be empty"
+                            }
+
+                            newPassword != confirmPassword -> {
+                                etConfirmPassword.error = "Password do not match"
+                            }
+
+                            else -> {
+                                Utility.showToast(requireContext(), "Password saved!")
+                                dialog.dismiss()
+                                viewModel.setAutoBackups(true)
+                                prefsRepository.setPasswordForAutoBackups(newPassword)
+                                Utility.showToast(requireContext(), "Auto backups enabled!")
+                            }
+                        }
+                    }
+                }
                 updateLastBackupSummary()
             } else {
                 Utility.showToast(requireContext(), "Auto backups disabled")

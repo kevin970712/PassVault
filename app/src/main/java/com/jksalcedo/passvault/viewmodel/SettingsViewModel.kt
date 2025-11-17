@@ -138,10 +138,9 @@ open class SettingsViewModel(
         kotlin.system.exitProcess(0)
     }
 
-    fun exportEntries(uri: Uri) {
-        val passkey = prefsRepository.getPasskey()
-        if (passkey.isNullOrEmpty()) {
-            _exportResult.postValue(Result.failure(Exception("Passkey not found.")))
+    fun exportEntries(uri: Uri, password: String) {
+        if (password.isEmpty()) {
+            _exportResult.postValue(Result.failure(Exception("Password not found.")))
             return
         }
 
@@ -157,7 +156,7 @@ open class SettingsViewModel(
                 val isEncryptionEnabled = prefsRepository.getEncryptBackups()
 
                 val contentToWrite = if (isEncryptionEnabled) {
-                    Encryption.encryptFileContent(serializedData, passkey)
+                    Encryption.encryptFileContent(serializedData, password)
                 } else {
                     serializedData
                 }
@@ -170,10 +169,9 @@ open class SettingsViewModel(
         }
     }
 
-    fun importEntries(uri: Uri) {
-        val passkey = prefsRepository.getPasskey()
-        if (passkey.isNullOrEmpty()) {
-            _importResult.postValue(Result.failure(Exception("Passkey not found.")))
+    fun importEntries(uri: Uri, password: String) {
+        if (password.isEmpty()) {
+            _importResult.postValue(Result.failure(Exception("Password not found.")))
             return
         }
 
@@ -184,9 +182,9 @@ open class SettingsViewModel(
 
                 val decryptedJson = if (isEncryptionEnabled) {
                     try {
-                        Encryption.decryptFileContent(fileContent, passkey)
+                        Encryption.decryptFileContent(fileContent, password)
                     } catch (e: BadPaddingException) {
-                        throw Exception("Invalid passkey or corrupt file.", e)
+                        throw Exception("Invalid password or corrupt file.", e)
                     }
                 } else {
                     fileContent

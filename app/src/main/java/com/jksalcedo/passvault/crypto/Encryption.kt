@@ -98,12 +98,12 @@ object Encryption {
         return String(plain, Charsets.UTF_8)
     }
 
-    fun encryptFileContent(plainText: String, passkey: String): String {
+    fun encryptFileContent(plainText: String, password: String): String {
         // Generate a random salt
         val salt = ByteArray(SALT_SIZE_BYTES).apply { SecureRandom().nextBytes(this) }
 
         val keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM)
-        val keySpec = PBEKeySpec(passkey.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BITS)
+        val keySpec = PBEKeySpec(password.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BITS)
         val secretKey = SecretKeySpec(keyFactory.generateSecret(keySpec).encoded, "AES")
 
         // Encrypt the data
@@ -120,14 +120,14 @@ object Encryption {
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
-    fun decryptFileContent(encryptedDataB64: String, passkey: String): String {
+    fun decryptFileContent(encryptedDataB64: String, password: String): String {
         val combined = Base64.decode(encryptedDataB64, Base64.NO_WRAP)
         val salt = combined.copyOfRange(0, SALT_SIZE_BYTES)
         val iv = combined.copyOfRange(SALT_SIZE_BYTES, SALT_SIZE_BYTES + IV_SIZE_BYTES)
         val ciphertext = combined.copyOfRange(SALT_SIZE_BYTES + IV_SIZE_BYTES, combined.size)
 
         val keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM)
-        val keySpec = PBEKeySpec(passkey.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BITS)
+        val keySpec = PBEKeySpec(password.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BITS)
         val secretKey = SecretKeySpec(keyFactory.generateSecret(keySpec).encoded, "AES")
 
         // Decrypt the data
