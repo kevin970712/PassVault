@@ -9,7 +9,10 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.BiometricAuthenticator
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.formatFileSize
@@ -23,6 +26,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private var settingsActivity: SettingsActivity? = null
     private val biometricAuthenticator = BiometricAuthenticator()
+
+    private val prefsRepository: PreferenceRepository by lazy {
+        PreferenceRepository(requireContext())
+    }
     private val viewModel: SettingsViewModel by viewModels {
         SettingsModelFactory(application = requireActivity().application, requireActivity())
     }
@@ -46,10 +53,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupExportAndImport()
         setupExportFormat()
         setupAutoBackups()
+        setupManageBackups()
         setupLastBackup()
         setupStorageInfo()
         setupClearData()
         setupSecurityPreferences()
+    }
+
+    private fun setupManageBackups() {
+        findPreference<Preference>("manage_backups")?.setOnPreferenceClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.settings_fragment_container, BackupsFragment())
+                .addToBackStack(null)
+                .commit()
+            true
+        }
+
     }
 
     private fun setupAboutPreference() {
@@ -76,7 +95,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun handleExportRequest() {
         // Check if the "Require Auth" setting is enabled
-        val requireAuth = viewModel.getRequireAuthForExport()
+        val requireAuth = prefsRepository.getRequireAuthForExport()
 
         if (requireAuth && BiometricAuthenticator.canAuthenticate(requireContext())) {
             //  show the prompt if required
@@ -103,7 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupExportFormat() {
         findPreference<ListPreference>("export_format")?.setOnPreferenceChangeListener { _, newValue ->
             val format = newValue as String
-            viewModel.setExportFormat(format)
+            prefsRepository.setExportFormat(format)
             Utility.showToast(requireContext(), "Export format set to: ${format.uppercase()}")
             true
         }
@@ -111,12 +130,51 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setupAutoBackups() {
         val autoBackupPref = findPreference<SwitchPreferenceCompat>("auto_backups")
-        autoBackupPref?.isChecked = viewModel.getAutoBackups()
+        autoBackupPref?.isChecked = prefsRepository.getAutoBackups()
         autoBackupPref?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
-            viewModel.setAutoBackups(enabled)
+            android.util.Log.d(
+                "SettingsFragment",
+                "Switch toggled. Calling setAutoBackups($enabled)"
+            )
             if (enabled) {
-                Utility.showToast(requireContext(), "Auto backups enabled (Daily)")
+                val layout = layoutInflater.inflate(R.layout.dialog_password, null)
+                val dialog = MaterialAlertDialogBuilder(this.requireContext())
+                    .setTitle("Set password for automatic backups.")
+                    .setMessage("This will be needed when you import or restore automatic backup files..")
+                    .setView(layout)
+                    .setCancelable(false)
+                    .setPositiveButton("Save", null)
+                    .show()
+
+                dialog.setOnShowListener { _ ->
+                    val positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+                    positiveButton.setOnClickListener {
+                        val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
+                        val etConfirmPassword =
+                            layout.findViewById<TextInputEditText>(R.id.et_confirm_password)
+                        val newPassword = etPassword.text.toString()
+                        val confirmPassword = etConfirmPassword.text.toString()
+
+                        when {
+                            newPassword.isBlank() -> {
+                                etPassword.error = "Password cannot be empty"
+                            }
+
+                            newPassword != confirmPassword -> {
+                                etConfirmPassword.error = "Password do not match"
+                            }
+
+                            else -> {
+                                Utility.showToast(requireContext(), "Password saved!")
+                                dialog.dismiss()
+                                viewModel.setAutoBackups(true)
+                                prefsRepository.setPasswordForAutoBackups(newPassword)
+                                Utility.showToast(requireContext(), "Auto backups enabled!")
+                            }
+                        }
+                    }
+                }
                 updateLastBackupSummary()
             } else {
                 Utility.showToast(requireContext(), "Auto backups disabled")
@@ -128,7 +186,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupLastBackup() {
         updateLastBackupSummary()
         findPreference<Preference>("last_backup")?.setOnPreferenceClickListener {
-            val lastBackupTime = viewModel.getLastBackupTime()
+            val lastBackupTime = prefsRepository.getLastBackupTime()
             if (lastBackupTime > 0) {
                 val date = Date(lastBackupTime)
                 val format = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
@@ -146,7 +204,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun updateLastBackupSummary() {
         val lastBackupPref = findPreference<Preference>("last_backup")
-        val lastBackupTime = viewModel.getLastBackupTime()
+        val lastBackupTime = prefsRepository.getLastBackupTime()
         lastBackupPref?.summary = if (lastBackupTime > 0) {
             val date = Date(lastBackupTime)
             val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
@@ -197,9 +255,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setupSecurityPreferences() {
         val requireAuthPref = findPreference<SwitchPreferenceCompat>("require_auth_export")
-        requireAuthPref?.isChecked = viewModel.getRequireAuthForExport()
+        requireAuthPref?.isChecked = prefsRepository.getRequireAuthForExport()
         requireAuthPref?.setOnPreferenceChangeListener { _, newValue ->
-            viewModel.setRequireAuthForExport(newValue as Boolean)
+            prefsRepository.setRequireAuthForExport(newValue as Boolean)
             Utility.showToast(
                 requireContext(),
                 if (newValue) "Authentication required for exports" else "Authentication not required for exports"
@@ -208,9 +266,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         val encryptBackupsPref = findPreference<SwitchPreferenceCompat>("encrypt_backups")
-        encryptBackupsPref?.isChecked = viewModel.getEncryptBackups()
+        encryptBackupsPref?.isChecked = prefsRepository.getEncryptBackups()
         encryptBackupsPref?.setOnPreferenceChangeListener { _, newValue ->
-            viewModel.setEncryptBackups(newValue as Boolean)
+            prefsRepository.setEncryptBackups(newValue as Boolean)
             Utility.showToast(
                 requireContext(),
                 if (newValue) "Backups will be encrypted" else "Backups will not be encrypted"

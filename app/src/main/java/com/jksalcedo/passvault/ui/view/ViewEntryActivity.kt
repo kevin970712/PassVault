@@ -36,9 +36,24 @@ class ViewEntryActivity : AppCompatActivity() {
     private var isExpanded: Boolean = false
 
     private val toTopAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_top) }
-    private val toBottomAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_bottom) }
-    private val clockwiseAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_clockwise) }
-    private val antiClockwiseAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_anti_clockwise) }
+    private val toBottomAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.to_bottom
+        )
+    }
+    private val clockwiseAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_clockwise
+        )
+    }
+    private val antiClockwiseAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_anti_clockwise
+        )
+    }
     private val fadeIn: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_in) }
     private val fadeOut: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_out) }
 
@@ -66,6 +81,8 @@ class ViewEntryActivity : AppCompatActivity() {
             return
         }
 
+        supportActionBar?.title = currentEntry!!.title
+
         currentEntry?.let { entry ->
             plainPassword = try {
                 Encryption.ensureKeyExists()
@@ -74,12 +91,11 @@ class ViewEntryActivity : AppCompatActivity() {
                 ""
             }
 
-            binding.tvTitle.text = entry.title
             binding.tvUsername.text = entry.username.orEmpty()
             binding.tvPassword.text = MASKED_PASSWORD
             binding.tvNotes.text = entry.notes.orEmpty()
             binding.tvMetadata.text =
-                "Created: ${entry.createdAt.formatTime()} - Modified: ${entry.updatedAt.formatTime()}"
+                "Created: ${entry.createdAt.formatTime()}\nModified: ${entry.updatedAt.formatTime()}"
 
             binding.btnCopyUsername.setOnClickListener {
                 if (entry.username?.isNotEmpty() == true) {

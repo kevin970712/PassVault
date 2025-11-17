@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.adapter.PVAdapter
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
-import com.jksalcedo.passvault.ui.adapter.PVAdapter
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
@@ -38,7 +38,8 @@ class MainActivity : AppCompatActivity() {
 
         adapter.items.observe(this, Observer { items ->
             // Show message on first time
-            binding.contentMain.tvMessage.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+            binding.contentMain.tvMessage.visibility =
+                if (items.isEmpty()) View.VISIBLE else View.GONE
         })
 
         // View the entry
