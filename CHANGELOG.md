@@ -1,3 +1,42 @@
+## [0.6.0-beta] - 2025-11-17
+
+### Features
+
+- Add changelog and git-cliff config
+- Update dependencies
+- Enable R8 full mode and add dependency analysis plugin
+- Add BackupWorker for automatic data backup
+- Add Toolbar to Settings screen
+- Encrypt automatic backups
+- Add backup management screen
+- Implement backup file sharing and deletion
+- Add backup deletion and refactor BackupWorker
+- Set entry title in Toolbar and update layout
+- Add automatic app lock on inactivity
+- Require password for import/export operations
+- Enable ProGuard and add new dependencies
+
+### Other
+
+- Convert launcher icons to WebP and remove adaptive icon XML
+- Remove unused resources
+- Use withText instead of withId for button selection in tests
+- Introduce repositories for data abstraction
+- Use PreferenceRepository for settings
+- Set correct title for AboutFragment
+- Correct ActionBar title in AboutFragment
+- Move PVAdapter to a new package
+- Adjust padding and add dividers to entry view
+- Remove toast messages from backup file copy operation
+- Use `onSupportNavigateUp` for back navigation
+- Include time in formatted date string
+- Lazily initialize repositories in Application class
+- Use `getPasswordForAutoBackups` in `BackupWorker`
+
+### Refactor
+
+- Remove unused TestWorkerFactory
+
 ## [0.5.0] - 2025-11-15
 
 ### Features
@@ -9,6 +48,7 @@
 
 - Add Toolbar and Up Navigation to Add/Edit screen
 - Simplify ViewEntryActivity and layout
+
 ## [0.4-beta] - 2025-11-08
 
 ### Features
@@ -19,11 +59,13 @@
 
 - Add database size utility functions
 - Rename APK artifact and update version
+
 ## [0.4-alpha] - 2025-11-07
 
 ### Other
 
 - Rename "Passkey" to "Password" for clarity
+
 ## [0.3-alpha] - 2025-11-06
 
 ### Features
@@ -37,6 +79,7 @@
 - Add delete functionality and confirmation dialog
 - Correct FAB layout and add content descriptions
 - Correct FAB layout and add content descriptions
+
 ## [0.2-alpha] - 2025-11-04
 
 ### Other
@@ -45,4 +88,5 @@
 - Rename `AddActivity` to `AddEditActivity` and move files
 - Implement comprehensive testing and improve Add/Edit functionality
 - Update variable and preference key names for clarity
+
 ## [0.1-alpha] - 2025-11-02
