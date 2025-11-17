@@ -142,7 +142,8 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
     }
 
     override fun onPasswordGenerated(password: String) {
-        binding.etPassword.text = Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
+        binding.etPassword.text =
+            Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
     }
 
     override fun onSupportNavigateUp(): Boolean {

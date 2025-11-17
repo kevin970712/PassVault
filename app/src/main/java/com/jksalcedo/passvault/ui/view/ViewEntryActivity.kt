@@ -90,7 +90,7 @@ class ViewEntryActivity : AppCompatActivity() {
             } catch (_: Exception) {
                 ""
             }
-            
+
             binding.tvUsername.text = entry.username.orEmpty()
             binding.tvPassword.text = MASKED_PASSWORD
             binding.tvNotes.text = entry.notes.orEmpty()
