@@ -23,6 +23,7 @@ import com.jksalcedo.passvault.data.AppDatabase
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.UnlockActivity
 import com.jksalcedo.passvault.utils.Utility
+import com.jksalcedo.passvault.workers.BackupWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,7 +41,7 @@ open class SettingsViewModel(application: Application, private val context: Acti
 
     private val prefsRepository: PreferenceRepository = PreferenceRepository(application)
 
-    private val workManager: WorkManager = WorkManager.getInstance(application.applicationContext)
+    private val workManager by lazy { WorkManager.getInstance(application.applicationContext) }
     private val passwordDao = AppDatabase.getDatabase(application).passwordDao()
 
     private val _exportResult = MutableLiveData<Result<Unit>>()

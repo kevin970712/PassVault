@@ -40,7 +40,7 @@
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:key="auto_backup"
+            app:key="auto_backups"
             app:summary="Automatically create daily backups"
             app:title="Automatic Backups" />
 

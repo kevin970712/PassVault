@@ -51,10 +51,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupExportAndImport()
         setupExportFormat()
         setupAutoBackups()
+        setupManageBackups()
         setupLastBackup()
         setupStorageInfo()
         setupClearData()
         setupSecurityPreferences()
+    }
+
+    private fun setupManageBackups() {
+        findPreference<Preference>("manage_backups")?.setOnPreferenceClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.settings_fragment_container, BackupsFragment())
+                .addToBackStack(null)
+                .commit()
+            true
+        }
+
     }
 
     private fun setupAboutPreference() {
@@ -119,6 +131,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         autoBackupPref?.isChecked = prefsRepository.getAutoBackups()
         autoBackupPref?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
+            android.util.Log.d(
+                "SettingsFragment",
+                "Switch toggled. Calling setAutoBackups($enabled)"
+            )
             viewModel.setAutoBackups(enabled)
             if (enabled) {
                 Utility.showToast(requireContext(), "Auto backups enabled (Daily)")
