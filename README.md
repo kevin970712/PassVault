@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">A secure, offline password manager for Android built with Kotlin.</h4>
+<h4 align="center">A secure, lightweight, & offline password manager for Android built with Kotlin.</h4>
 
 <h4 align="center">
 <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/jksalcedo/PassVault/total?logo=GitHub">
