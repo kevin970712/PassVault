@@ -40,9 +40,15 @@
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:key="auto_backup"
-            app:summary="Automatically create weekly backups"
+            app:key="auto_backups"
+            app:summary="Automatically create daily backups"
             app:title="Automatic Backups" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="manage_backups"
+            app:summary="View, restore, or save copies of automatic backups"
+            app:title="Manage Backups" />
 
         <Preference
             app:iconSpaceReserved="false"

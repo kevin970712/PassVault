@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">A secure, offline password manager for Android built with Kotlin.</h4>
+<h4 align="center">A secure, lightweight, & offline password manager for Android built with Kotlin.</h4>
 
 <h4 align="center">
 <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/jksalcedo/PassVault/total?logo=GitHub">
@@ -22,6 +22,7 @@
     <img src="./metadata/en-US/images/phoneScreenshots/1.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/2.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/3.jpg" alt="PassVault Screenshot" width="250" />
+    <img src="./metadata/en-US/images/phoneScreenshots/6.jpg" alt="PassVault Screenshot" width="250" />
     <img src="./metadata/en-US/images/phoneScreenshots/4.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/5.jpg" alt="PassVault Screenshot" width="250" />
   <br>
@@ -38,23 +39,22 @@ system. The application does not require internet permissions. User data never l
 - [x] Secure PIN Authentication
 - [x] Biometric (Fingerprint) Login
 - [x] Encrypted Database (AES-256)
-- [x] Add New Passwords
-- [x] View Passwords
+- [x] Add, View, Edit, & Delete Passwords
 - [x] In-app Password Generator
+- [X] Encrypted Import/Export (for backups and transfer)
+- [X] Encrypted Automatic Backups
 
 ## Planned Features
 
-- [X] **Edit** existing password entries
-- [X] **Delete** existing password entries
 - [X] "Copy to Clipboard" button for password generator
 - [ ] Secure Notes (for storing non-password secrets)
-- [X] Encrypted Import/Export (for backups and transfer)
 - [ ] Desktop Version
 - [ ] Categories/Labels
+- [ ] Import from KeePass/Bitwarden
 
 ## Download
 
-Download from ![GitHub Releases](https://github.com/jksalcedo/PassVault/releases) or <br>
+Download from ![GitHub Releases](https://github.com/jksalcedo/PassVault/releases) <br>
 [![Download PassVault](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/passvault-app/files/latest/download)
 <br>
 [<img src="https://f-droid.org/badge/get-it-on.png"

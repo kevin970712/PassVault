@@ -1,4 +1,4 @@
-package com.jksalcedo.passvault.ui.adapter
+package com.jksalcedo.passvault.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

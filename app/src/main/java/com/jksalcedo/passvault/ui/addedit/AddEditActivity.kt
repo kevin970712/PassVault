@@ -63,7 +63,10 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
 
         // password generator custom dialog
         binding.cardGeneratePassword.setOnClickListener {
-            PasswordGenDialog().show(supportFragmentManager, "PasswordGenDialog")
+            PasswordGenDialog().apply {
+                isCancelable = false
+                show(supportFragmentManager, "PasswordGenDialog")
+            }
         }
 
         binding.switchShowPassword.setOnCheckedChangeListener { _, isChecked ->
@@ -142,7 +145,8 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
     }
 
     override fun onPasswordGenerated(password: String) {
-        binding.etPassword.text = Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
+        binding.etPassword.text =
+            Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
     }
 
     override fun onSupportNavigateUp(): Boolean {

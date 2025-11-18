@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.androidx.room)
     id("kotlin-parcelize")
     kotlin("plugin.serialization") version "2.2.21"
-
+    id("com.autonomousapps.dependency-analysis")
 }
 
 android {
@@ -18,15 +18,16 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.5.0"
+        versionCode = 8
+        versionName = "0.6.0-beta2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -46,6 +47,27 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
+    packaging {
+        resources.pickFirsts.add("META-INF/com/android/build/gradle/app-metadata.properties")
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/*.kotlin_module"
+        }
+
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 androidComponents {
@@ -64,6 +86,7 @@ androidComponents {
         }
     }
 }
+
 
 room {
     schemaDirectory("$projectDir/schemas")
@@ -85,6 +108,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -110,8 +134,16 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     // for csv
     // https://mvnrepository.com/artifact/de.brudaswen.kotlinx.serialization/kotlinx-serialization-csv
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:3.1.0")
+    implementation(libs.kotlinx.serialization.csv)
 
     // https://mvnrepository.com/artifact/androidx.preference/preference
     implementation(libs.androidx.preference)
+
+    // WorkManager Testing
+    androidTestImplementation(libs.androidx.work.testing) // For instrumented tests
+    testImplementation(libs.androidx.work.work.testing) // For unit tests
+
+    // Mocking library
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
 }

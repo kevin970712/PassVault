@@ -9,10 +9,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
@@ -36,9 +36,24 @@ class ViewEntryActivity : AppCompatActivity() {
     private var isExpanded: Boolean = false
 
     private val toTopAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_top) }
-    private val toBottomAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.to_bottom) }
-    private val clockwiseAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_clockwise) }
-    private val antiClockwiseAnim: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.rotate_anti_clockwise) }
+    private val toBottomAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.to_bottom
+        )
+    }
+    private val clockwiseAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_clockwise
+        )
+    }
+    private val antiClockwiseAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_anti_clockwise
+        )
+    }
     private val fadeIn: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_in) }
     private val fadeOut: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_out) }
 
@@ -66,6 +81,8 @@ class ViewEntryActivity : AppCompatActivity() {
             return
         }
 
+        supportActionBar?.title = currentEntry!!.title
+
         currentEntry?.let { entry ->
             plainPassword = try {
                 Encryption.ensureKeyExists()
@@ -74,12 +91,16 @@ class ViewEntryActivity : AppCompatActivity() {
                 ""
             }
 
-            binding.tvTitle.text = entry.title
             binding.tvUsername.text = entry.username.orEmpty()
             binding.tvPassword.text = MASKED_PASSWORD
             binding.tvNotes.text = entry.notes.orEmpty()
             binding.tvMetadata.text =
-                "Created: ${entry.createdAt.formatTime()} - Modified: ${entry.updatedAt.formatTime()}"
+                buildString {
+                    append("Created: ")
+                    append(entry.createdAt.formatTime())
+                    append("\nModified: ")
+                    append(entry.updatedAt.formatTime())
+                }
 
             binding.btnCopyUsername.setOnClickListener {
                 if (entry.username?.isNotEmpty() == true) {
@@ -126,7 +147,7 @@ class ViewEntryActivity : AppCompatActivity() {
         }
 
         binding.fabDelete.setOnClickListener {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setPositiveButton("Cancel", null)
                 .setNegativeButton("Delete") { _, _ ->
                     currentEntry?.let { viewModel.delete(it) }
