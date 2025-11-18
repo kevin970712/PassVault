@@ -1,5 +1,3 @@
-## [unreleased]
-
 ## [0.6.0-beta2] - 2025-11-18
 
 ### Refactor
@@ -7,6 +5,7 @@
 - Replace SetPinDialog with SetPinFragment for a full-screen UI
 - Improve Password Generator dialog and SharedPreferences usage
 - Improve password dialogs and replace AlertDialog
+
 ## [0.6.0-beta] - 2025-11-17
 
 ### Features
@@ -48,6 +47,7 @@
 ### Refactor
 
 - Remove unused TestWorkerFactory
+
 ## [0.5.0] - 2025-11-15
 
 ### Features
@@ -59,6 +59,7 @@
 
 - Add Toolbar and Up Navigation to Add/Edit screen
 - Simplify ViewEntryActivity and layout
+
 ## [0.4-beta] - 2025-11-08
 
 ### Features
@@ -69,11 +70,13 @@
 
 - Add database size utility functions
 - Rename APK artifact and update version
+
 ## [0.4-alpha] - 2025-11-07
 
 ### Other
 
 - Rename "Passkey" to "Password" for clarity
+
 ## [0.3-alpha] - 2025-11-06
 
 ### Features
@@ -87,6 +90,7 @@
 - Add delete functionality and confirmation dialog
 - Correct FAB layout and add content descriptions
 - Correct FAB layout and add content descriptions
+
 ## [0.2-alpha] - 2025-11-04
 
 ### Other
@@ -95,4 +99,5 @@
 - Rename `AddActivity` to `AddEditActivity` and move files
 - Implement comprehensive testing and improve Add/Edit functionality
 - Update variable and preference key names for clarity
+
 ## [0.1-alpha] - 2025-11-02
