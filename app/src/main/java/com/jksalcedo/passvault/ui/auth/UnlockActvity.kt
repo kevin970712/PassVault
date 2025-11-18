@@ -3,6 +3,7 @@ package com.jksalcedo.passvault.ui.auth
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -12,9 +13,9 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
 import com.jksalcedo.passvault.ui.main.MainActivity
 
-class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
+class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
 
-    private lateinit var binding: ActivityUnlockBinding
+    lateinit var binding: ActivityUnlockBinding
     private val biometricAuthenticator = BiometricAuthenticator()
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -35,9 +36,25 @@ class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
         val initialIv = prefs.getString("pin_iv", null)
 
         if (initialCipher.isNullOrEmpty() || initialIv.isNullOrBlank()) {
-            val pinDialog = SetPinDialog()
-            pinDialog.isCancelable = false
-            pinDialog.show(supportFragmentManager, "SetPinDialog")
+            val setPinFragment = SetPinFragment()
+            binding.clMain.visibility = View.GONE
+            binding.fragmentContainer.visibility = View.VISIBLE
+            this.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, setPinFragment)
+                .commitNow()
+        } else {
+            binding.clMain.visibility = View.VISIBLE
+            binding.fragmentContainer.visibility = View.GONE
+            biometricAuthenticator.showBiometricPrompt(
+                activity = this,
+                onSuccess = {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                },
+                onFailure = { _, errString ->
+                    Toast.makeText(this, errString, Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
         // Setup biometrics if available and a PIN exists
@@ -73,7 +90,7 @@ class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
 
     private fun setupBiometricIfAvailable(hasPin: Boolean) {
         if (!hasPin) {
-            binding.btnUseBiometric.visibility = android.view.View.GONE
+            binding.btnUseBiometric.visibility = View.GONE
             return
         }
         val biometricManager = BiometricManager.from(this)
@@ -81,7 +98,7 @@ class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
             BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK
         val canAuth = biometricManager.canAuthenticate(authenticators)
         if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) {
-            binding.btnUseBiometric.visibility = android.view.View.VISIBLE
+            binding.btnUseBiometric.visibility = View.VISIBLE
             binding.btnUseBiometric.setOnClickListener {
                 biometricAuthenticator.showBiometricPrompt(
                     activity = this,
@@ -95,12 +112,21 @@ class UnlockActivity : AppCompatActivity(), SetPinDialog.OnPinSetListener {
                 )
             }
         } else {
-            binding.btnUseBiometric.visibility = android.view.View.GONE
+            binding.btnUseBiometric.visibility = View.GONE
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        binding.clMain.visibility = View.VISIBLE
+        binding.fragmentContainer.visibility = View.GONE
     }
 
     override fun onPinSet(pin: String) {
         // After setting PIN, re-evaluate biometric availability
+        supportFragmentManager.popBackStack()
+        binding.clMain.visibility = View.VISIBLE
+        binding.fragmentContainer.visibility = View.GONE
         setupBiometricIfAvailable(true)
     }
 }
