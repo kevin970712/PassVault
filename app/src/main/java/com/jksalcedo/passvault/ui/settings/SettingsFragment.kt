@@ -11,6 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.BiometricAuthenticator
@@ -137,49 +138,61 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "SettingsFragment",
                 "Switch toggled. Calling setAutoBackups($enabled)"
             )
-            if (enabled) {
-                val layout = layoutInflater.inflate(R.layout.dialog_password, null)
-                val dialog = MaterialAlertDialogBuilder(this.requireContext())
-                    .setTitle("Set password for automatic backups.")
-                    .setMessage("This will be needed when you import or restore automatic backup files..")
-                    .setView(layout)
-                    .setCancelable(false)
-                    .setPositiveButton("Save", null)
-                    .show()
+            if (!enabled) {
+                viewModel.setAutoBackups(false)
+                Utility.showToast(requireContext(), "Auto backups disabled")
+                return@setOnPreferenceChangeListener true
+            }
 
-                dialog.setOnShowListener { _ ->
-                    val positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
-                    positiveButton.setOnClickListener {
-                        val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
-                        val etConfirmPassword =
-                            layout.findViewById<TextInputEditText>(R.id.et_confirm_password)
-                        val newPassword = etPassword.text.toString()
-                        val confirmPassword = etConfirmPassword.text.toString()
+            val layout = layoutInflater.inflate(R.layout.dialog_set_password, null)
+            val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
+            val etConfirmPassword = layout.findViewById<TextInputEditText>(R.id.et_confirm_password)
+            val til1 = layout.findViewById<TextInputLayout>(R.id.til1)
+            val til2 = layout.findViewById<TextInputLayout>(R.id.til2)
 
-                        when {
-                            newPassword.isBlank() -> {
-                                etPassword.error = "Password cannot be empty"
-                            }
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Set password for automatic backups")
+                .setMessage("This will be needed when you import or restore automatic backup files.")
+                .setView(layout)
+                .setCancelable(false)
+                .setPositiveButton("Save", null)
+                .setNegativeButton("Cancel") { _, _ ->
+                    autoBackupPref.isChecked = false // revert switch
+                }
+                .create()
 
-                            newPassword != confirmPassword -> {
-                                etConfirmPassword.error = "Password do not match"
-                            }
+            dialog.setOnShowListener {
+                val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                positiveButton.setOnClickListener {
+                    val password = etPassword.text.toString()
+                    val confirm = etConfirmPassword.text.toString()
 
-                            else -> {
-                                Utility.showToast(requireContext(), "Password saved!")
-                                dialog.dismiss()
-                                viewModel.setAutoBackups(true)
-                                prefsRepository.setPasswordForAutoBackups(newPassword)
-                                Utility.showToast(requireContext(), "Auto backups enabled!")
-                            }
+                    when {
+                        password.isBlank() -> {
+                            til1.error = "Password cannot be empty"
+                        }
+
+                        password.length < 4 -> {
+                            til1.error = "Password too short"
+                        }
+
+                        password != confirm -> {
+                            til2.error = "Passwords do not match"
+                        }
+
+                        else -> {
+                            prefsRepository.setPasswordForAutoBackups(password)
+                            viewModel.setAutoBackups(true)
+                            autoBackupPref.isChecked = true
+                            Utility.showToast(requireContext(), "Auto backups enabled!")
+                            updateLastBackupSummary()
+                            dialog.dismiss()
                         }
                     }
                 }
-                updateLastBackupSummary()
-            } else {
-                Utility.showToast(requireContext(), "Auto backups disabled")
             }
-            true
+            dialog.show()
+            false
         }
     }
 
