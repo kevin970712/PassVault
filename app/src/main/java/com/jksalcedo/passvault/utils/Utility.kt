@@ -56,7 +56,7 @@ object Utility {
     }
 
     fun Long.formatTime(zoneId: ZoneId = ZoneId.systemDefault()): String = this.let {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy h:mm a", Locale.ENGLISH)
+        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.getDefault())
         return Instant.ofEpochMilli(it).atZone(zoneId).format(formatter)
     }
 }

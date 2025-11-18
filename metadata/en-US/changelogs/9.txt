@@ -1,0 +1,8 @@
+This release focuses on improving stability, compatibility, and localization.
+
+Enhancements
+•Improved Database Stability
+•Broader Biometric Support
+
+Bug Fixes
+•Correct Date Formatting
