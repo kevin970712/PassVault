@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
-import com.jksalcedo.passvault.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jksalcedo.passvault.databinding.DialogPasswordGenBinding
 import com.jksalcedo.passvault.utils.PasswordGenerator
 import com.jksalcedo.passvault.utils.Utility
@@ -59,10 +60,9 @@ class PasswordGenDialog : DialogFragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        val dialog = AlertDialog.Builder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
             .setCancelable(false)
-
             // This button generates the password and shows it, but does nor close the dialog
             .setPositiveButton("Generate", null)
 
@@ -99,13 +99,13 @@ class PasswordGenDialog : DialogFragment() {
                 val hasSymbols = binding.cbSymbols.isChecked
 
                 // Save preferences
-                prefs.edit()
-                    .putInt("length", length)
-                    .putBoolean("uppercase", hasUppercase)
-                    .putBoolean("lowercase", hasLowercase)
-                    .putBoolean("numbers", hasNumber)
-                    .putBoolean("symbols", hasSymbols)
-                    .apply()
+                prefs.edit {
+                    putInt("length", length)
+                        .putBoolean("uppercase", hasUppercase)
+                        .putBoolean("lowercase", hasLowercase)
+                        .putBoolean("numbers", hasNumber)
+                        .putBoolean("symbols", hasSymbols)
+                }
 
                 // Generate the password
                 generatedPassword = PasswordGenerator.generate(
