@@ -21,6 +21,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.Locale
 
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
@@ -161,4 +162,19 @@ class UtilityTest {
         assertThat(formattedDate).isEqualTo("Dec 31 1969 7:00 PM")
     }
 
+    @Test
+    fun `formatTime with different default locale`() {
+        val originalLocale = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.FRENCH)
+            val zonedDateTime = ZonedDateTime.of(2025, 11, 8, 10, 30, 0, 0, utc)
+            val timestampInMillis = zonedDateTime.toInstant().toEpochMilli()
+
+            val formattedDate = timestampInMillis.formatTime(zoneId = utc)
+            
+            assertThat(formattedDate).isEqualTo("nov. 08 2025")
+        } finally {
+            Locale.setDefault(originalLocale)
+        }
+    }
 }
