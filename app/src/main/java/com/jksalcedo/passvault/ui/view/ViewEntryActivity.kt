@@ -9,10 +9,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
@@ -95,7 +95,12 @@ class ViewEntryActivity : AppCompatActivity() {
             binding.tvPassword.text = MASKED_PASSWORD
             binding.tvNotes.text = entry.notes.orEmpty()
             binding.tvMetadata.text =
-                "Created: ${entry.createdAt.formatTime()}\nModified: ${entry.updatedAt.formatTime()}"
+                buildString {
+                    append("Created: ")
+                    append(entry.createdAt.formatTime())
+                    append("\nModified: ")
+                    append(entry.updatedAt.formatTime())
+                }
 
             binding.btnCopyUsername.setOnClickListener {
                 if (entry.username?.isNotEmpty() == true) {
@@ -142,7 +147,7 @@ class ViewEntryActivity : AppCompatActivity() {
         }
 
         binding.fabDelete.setOnClickListener {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setPositiveButton("Cancel", null)
                 .setNegativeButton("Delete") { _, _ ->
                     currentEntry?.let { viewModel.delete(it) }

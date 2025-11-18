@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
@@ -111,13 +112,13 @@ class SettingsActivity : AppCompatActivity() {
         if (password == null) {
             // No password found
             val layoutResource =
-                if (isImporting) R.layout.dialog_enter_password else R.layout.dialog_password
+                if (isImporting) R.layout.dialog_enter_password else R.layout.dialog_set_password
             val layout = layoutInflater.inflate(layoutResource, null)
             val title =
                 if (isImporting) R.string.enter_backup_file_password else R.string.set_export_password
             val message =
                 if (isImporting) "Enter the password to decrypt this backup file." else "Create a password to encrypt your backup."
-            val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            val dialog = MaterialAlertDialogBuilder(this)
                 .setView(layout)
                 .setCancelable(false)
                 .setTitle(title)

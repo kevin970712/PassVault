@@ -1,0 +1,5 @@
+Refactor
+
+- Replace SetPinDialog with SetPinFragment for a full-screen UI
+- Improve Password Generator dialog and SharedPreferences usage
+- Improve password dialogs and replace AlertDialog

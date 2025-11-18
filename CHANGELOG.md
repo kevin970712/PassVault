@@ -1,3 +1,11 @@
+## [0.6.0-beta2] - 2025-11-18
+
+### Refactor
+
+- Replace SetPinDialog with SetPinFragment for a full-screen UI
+- Improve Password Generator dialog and SharedPreferences usage
+- Improve password dialogs and replace AlertDialog
+
 ## [0.6.0-beta] - 2025-11-17
 
 ### Features
@@ -15,6 +23,8 @@
 - Add automatic app lock on inactivity
 - Require password for import/export operations
 - Enable ProGuard and add new dependencies
+- Add changelog and git-cliff config
+- Introduce automatic backups, security enhancements, and UI improvements
 
 ### Other
 
@@ -32,6 +42,7 @@
 - Include time in formatted date string
 - Lazily initialize repositories in Application class
 - Use `getPasswordForAutoBackups` in `BackupWorker`
+- Prevent NullPointerException in BackupAdapter and disable androidx-startup
 
 ### Refactor
 

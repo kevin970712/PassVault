@@ -29,8 +29,10 @@ class SetPinFragmentTest {
     @Before
     fun setup() {
         activityRule.scenario.onActivity { activity ->
-            val fragment = SetPinDialog()
-            fragment.show(activity.supportFragmentManager, "SetPinFragment")
+            val fragment = SetPinFragment()
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commitNow()
         }
     }
 

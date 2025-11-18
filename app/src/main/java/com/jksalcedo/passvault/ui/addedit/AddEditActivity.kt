@@ -63,7 +63,10 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
 
         // password generator custom dialog
         binding.cardGeneratePassword.setOnClickListener {
-            PasswordGenDialog().show(supportFragmentManager, "PasswordGenDialog")
+            PasswordGenDialog().apply {
+                isCancelable = false
+                show(supportFragmentManager, "PasswordGenDialog")
+            }
         }
 
         binding.switchShowPassword.setOnCheckedChangeListener { _, isChecked ->

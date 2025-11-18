@@ -40,7 +40,6 @@
     <string name="delete">Delete</string>
     <string name="copy_password">Copy</string>
     <string name="confirm_pin">Confirm PIN</string>
-    <string name="enter_new_pin">Enter new PIN</string>
     <string name="set_master_pin">Set Master PIN</string>
     <string name="click_the_button_to_add_your_first_password">Click the + button to add your first password!</string>
     <string name="actions">Actions</string>
@@ -53,6 +52,8 @@
     <string name="no_backups_enable_automatic_backups_to_have_your_first_backup">No backups! \n Enable \'Automatic Backups\' to have your first backup.</string>
     <string name="enter_backup_file_password">Enter backup file password</string>
     <string name="password_saved">Password saved!</string>
+    <string name="new_pin">New PIN</string>
+    <string name="save_pin">Save PIN</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
