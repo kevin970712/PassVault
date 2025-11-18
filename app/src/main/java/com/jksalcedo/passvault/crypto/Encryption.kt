@@ -58,7 +58,7 @@ object Encryption {
                 setUserAuthenticationRequired(true)
                 setUserAuthenticationParameters(
                     0,
-                    KeyProperties.AUTH_BIOMETRIC_STRONG
+                    KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_BIOMETRIC_WEAK
                 )
                 setIsStrongBoxBacked(true)
             }

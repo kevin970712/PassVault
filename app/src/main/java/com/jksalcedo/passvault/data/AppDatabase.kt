@@ -18,7 +18,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "passvault_db"
-                ).build().also { INSTANCE = it }
+                ).fallbackToDestructiveMigration(false).build().also { INSTANCE = it }
             }
         }
     }
