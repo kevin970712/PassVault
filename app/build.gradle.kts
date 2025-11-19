@@ -62,6 +62,7 @@ android {
             excludes += "META-INF/NOTICE"
             excludes += "META-INF/NOTICE.txt"
             excludes += "META-INF/*.kotlin_module"
+            excludes += "META-INF/LICENSE.md"
         }
 
         jniLibs {
