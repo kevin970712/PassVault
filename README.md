@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">A secure, lightweight, & offline password manager for Android built with Kotlin.</h4>
+<h4 align="center">A secure, lightweight, and offline password manager for Android built with Kotlin.</h4>
 
 <h4 align="center">
 <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/jksalcedo/PassVault/total?logo=GitHub">
@@ -46,7 +46,6 @@ system. The application does not require internet permissions. User data never l
 
 ## Planned Features
 
-- [X] "Copy to Clipboard" button for password generator
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
 - [ ] Categories/Labels
@@ -54,12 +53,13 @@ system. The application does not require internet permissions. User data never l
 
 ## Download
 
-Download from ![GitHub Releases](https://github.com/jksalcedo/PassVault/releases) <br>
-[![Download PassVault](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/passvault-app/files/latest/download)
+[![Get it on GitHub](https://img.shields.io/badge/Get_it_on-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jksalcedo/PassVault/releases) 
 <br>
-[<img src="https://f-droid.org/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/packages/com.jksalcedo.passvault)
+
+[![Download](https://img.shields.io/badge/Download-SourceForge-brightgreen?style=for-the-badge&logo=sourceforge&logoColor=white)](https://sourceforge.net/projects/passvault-app/files/latest/download)
+<br>
+
+[![F-Droid](https://img.shields.io/badge/F--Droid-Available_on_F--Droid-3465a4?style=for-the-badge&logo=f-droid&logoColor=white)](https://f-droid.org/packages/com.jksalcedo.passvault/)
 
 
 
