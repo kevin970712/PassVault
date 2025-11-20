@@ -1,4 +1,41 @@
+## [0.7.0-beta01]
+
+### Features
+
+- Add support for importing Bitwarden JSON exports
+- Add KeePass DX/XC CSV and KDBX import functionality
+
+### Refactor
+
+- Allow device credential authentication for encryption key
+- Enhance import/export functionality and UI state management
+
+### Documentation
+
+- Update app store metadata with new features
+
+### Miscellaneous Tasks
+
+- Update IDE configurations and build script
+- Update dependencies and clean up IDE configurations
+
+## [0.6.0] - 2025-11-18
+
+### Refactor
+
+- Simplify date format and respect user locale
+- Broaden biometric support and improve database stability
+- Allow device credential as an authentication method
+
+### Miscellaneous Tasks
+
+- Bump version to 0.6.0
+
 ## [0.6.0-beta2] - 2025-11-18
+
+### Other
+
+- V0.6.0-beta2
 
 ### Refactor
 
@@ -10,6 +47,7 @@
 
 ### Features
 
+- Add new screenshot for app listing
 - Add changelog and git-cliff config
 - Update dependencies
 - Enable R8 full mode and add dependency analysis plugin

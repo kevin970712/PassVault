@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "2.2.21"
     id("com.autonomousapps.dependency-analysis")
 }
 
@@ -18,8 +18,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "0.6.0"
+        versionCode = 10
+        versionName = "0.7.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,6 +63,7 @@ android {
             excludes += "META-INF/NOTICE.txt"
             excludes += "META-INF/*.kotlin_module"
             excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
         }
 
         jniLibs {
@@ -141,10 +142,12 @@ dependencies {
     implementation(libs.androidx.preference)
 
     // WorkManager Testing
-    androidTestImplementation(libs.androidx.work.testing) // For instrumented tests
-    testImplementation(libs.androidx.work.work.testing) // For unit tests
+    androidTestImplementation(libs.androidx.work.testing)
+    testImplementation(libs.androidx.work.testing)
 
     // Mocking library
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
+
+    implementation("app.keemobile:kotpass:0.13.0")
 }
