@@ -350,11 +350,38 @@ open class SettingsViewModel(
                 _importUiState.postValue(ImportUiState.Success(entries.size))
             } catch (e: Exception) {
                 Log.e("SettingsViewModel", "Import failed", e)
-                _importUiState.postValue(ImportUiState.Error(e))
+                _importUiState.postValue(ImportUiState.Error(Exception(getFriendlyErrorMessage(e))))
             }
         }
     }
 
+    private fun getFriendlyErrorMessage(e: Throwable): String {
+        return when (e) {
+            is FileNotFoundException -> "File not found or inaccessible."
+            is IllegalArgumentException -> {
+                if (e.message?.contains("Unsupported import type") == true) {
+                    "Unsupported import type selected."
+                } else {
+                    "An error occurred with import settings."
+                }
+            }
+
+            is org.json.JSONException -> {
+                "Invalid file format. Please check if the file is correctly formatted (JSON/CSV)."
+            }
+
+            is Exception -> {
+                when {
+                    e.message?.contains("Decryption failed. Wrong password or not an encrypted file.") == true -> "Decryption failed. Incorrect password or not an encrypted file."
+                    e.message?.contains("Invalid KeePass file or incorrect password.") == true -> "Invalid KeePass file or incorrect password."
+                    e.message?.contains("No entries found or invalid file format.") == true -> "No entries found in the file or invalid file format."
+                    else -> "An unexpected error occurred during import: ${e.localizedMessage ?: e.message ?: "Unknown error"}"
+                }
+            }
+
+            else -> "An unexpected error occurred: ${e.localizedMessage ?: e.message ?: "Unknown error"}"
+        }
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -101,7 +101,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: () -> Unit) {
+    fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: (String) -> Unit) {
         if (password == null) {
             // No password found
             val layoutResource =
@@ -139,7 +139,7 @@ class SettingsActivity : AppCompatActivity() {
                         newPassword.isNotEmpty() && isImporting -> {
                             password = newPassword
                             dialog.dismiss()
-                            onPasswordReady()
+                            onPasswordReady(newPassword)
                         }
 
                         newPassword != confirmPassword.toString() -> {
@@ -153,7 +153,7 @@ class SettingsActivity : AppCompatActivity() {
                                 getString(R.string.password_saved)
                             )
                             dialog.dismiss()
-                            onPasswordReady() // Proceed
+                            onPasswordReady(newPassword) // Proceed
                         }
                     }
                 }
@@ -161,7 +161,7 @@ class SettingsActivity : AppCompatActivity() {
             dialog.show()
         } else {
             // Password already exists, proceed
-            onPasswordReady()
+            password?.let { onPasswordReady(it) }
         }
     }
 

@@ -1,0 +1,11 @@
+Features
+
+- Streamlined KDBX import with a dedicated password field for secure, simple setup.
+- Smarter file picker filtering JSON, CSV, and KDBX formats for quicker selection.
+- Clearer error messages to guide users during import issues.
+
+Bug Fixes
+
+- Improved stability handling invalid files, wrong passwords, and malformed JSON inputs.
+- Removed potential NullPointerException issues the import flow.
+U- I controls now disable correctly during loading to prevent accidental actions.
