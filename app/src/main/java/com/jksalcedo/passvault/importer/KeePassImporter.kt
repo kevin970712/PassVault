@@ -16,7 +16,7 @@ import kotlinx.serialization.decodeFromString
 
 @OptIn(ExperimentalSerializationApi::class)
 class KeePassImporter(
-    val csv: Csv = Csv {
+    private val csv: Csv = Csv {
         hasHeaderRecord = true
         ignoreUnknownColumns = true
         ignoreEmptyLines = true
@@ -28,14 +28,16 @@ class KeePassImporter(
 ) : VaultImporter {
 
     override suspend fun parse(raw: String): List<ImportRecord> {
-        val parsedRows = csv.decodeFromString<List<KeepassRecord>>(raw)
-
-        // Get and decode the database file
-        val db = context.contentResolver.openInputStream(filePath!!)?.use { inputStream ->
-            KeePassDatabase.decode(inputStream, Credentials.from(password!!.toByteArray()))
+        return when (type) {
+            ImportType.KEEPASS_CSV -> parseCsv(raw)
+            ImportType.KEEPASS_KDBX -> parseKdbx()
+            else -> emptyList()
         }
+    }
 
-        return if (type == ImportType.KEEPASS_CSV) {
+    private fun parseCsv(raw: String): List<ImportRecord> {
+        return try {
+            val parsedRows = csv.decodeFromString<List<KeepassRecord>>(raw)
             parsedRows.mapNotNull { row ->
                 val password = row.password.trim()
                 if (password.isEmpty()) return@mapNotNull null
@@ -43,14 +45,14 @@ class KeePassImporter(
                 val keepassRecord = KeepassRecord(
                     title = row.title.trim(),
                     username = row.username.trim(),
-                    password = password.trim(),
+                    password = password,
                     notes = row.notes.trim(),
                     creationTime = row.creationTime,
                     lastModificationTime = row.lastModificationTime
                 )
 
                 ImportRecord(
-                    keepassRecord.title,
+                    title = keepassRecord.title,
                     username = keepassRecord.username,
                     password = keepassRecord.password,
                     notes = keepassRecord.notes,
@@ -58,18 +60,43 @@ class KeePassImporter(
                     updatedAt = keepassRecord.lastModificationTime.toEpochMillis()
                 )
             }
-        } else {
-            db?.content!!.group.entries.map { entry ->
-                ImportRecord(
-                    title = entry.fields.title!!.content,
-                    username = entry.fields.userName!!.content,
-                    password = entry.fields.password!!.content,
-                    notes = entry.fields.notes!!.content,
-                    createdAt = System.currentTimeMillis(),
-                    updatedAt = System.currentTimeMillis()
-                )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
 
+    private fun parseKdbx(): List<ImportRecord> {
+        if (filePath == null || password == null) {
+            return emptyList()
+        }
+        return try {
+            val db = context.contentResolver.openInputStream(filePath)?.use { inputStream ->
+                val credentials = Credentials.from(password.toByteArray())
+                KeePassDatabase.decode(inputStream, credentials)
             }
+            db?.content?.group?.entries?.mapNotNull { entry ->
+                val title = entry.fields.title?.content
+                val username = entry.fields.userName?.content
+                val password = entry.fields.password?.content
+                val notes = entry.fields.notes?.content
+
+                if (title.isNullOrBlank() || password.isNullOrEmpty()) {
+                    return@mapNotNull null
+                }
+
+                ImportRecord(
+                    title = title,
+                    username = username,
+                    password = password,
+                    notes = notes,
+                    createdAt = entry.times?.creationTime?.toEpochMilli(),
+                    updatedAt = entry.times?.lastModificationTime?.toEpochMilli()
+                )
+            } ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
         }
     }
 

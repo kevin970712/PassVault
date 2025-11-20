@@ -29,6 +29,7 @@ class ImportDialog : BottomSheetDialogFragment() {
     }
 
     private lateinit var type: ImportType
+    private var _kdbxPassword: String? = null // Temporary storage for KDBX password
 
     companion object {
         const val TAG = "ImportDialog"
@@ -39,14 +40,18 @@ class ImportDialog : BottomSheetDialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    settingsActivity?.ensurePasswordExists(true) {
-                        settingsViewModel.startImport(
-                            uri,
-                            type,
-                            settingsActivity?.password!!
-                        )
+                    if (type == ImportType.KEEPASS_KDBX && _kdbxPassword != null) {
+                        settingsViewModel.startImport(uri, type, _kdbxPassword!!)
+                        _kdbxPassword = null // Reset after use
+                    } else {
+                        settingsActivity?.ensurePasswordExists(true) { passwordFromActivity ->
+                            settingsViewModel.startImport(
+                                uri,
+                                type,
+                                passwordFromActivity
+                            )
+                        }
                     }
-                    settingsActivity?.password = null
                 }
             }
         }
@@ -68,9 +73,11 @@ class ImportDialog : BottomSheetDialogFragment() {
             setContentView(binding.root)
             setOnShowListener {
                 // Set the default import type
+                updatePasswordVisibility(binding.mrbBitwardenJson.id) // Initial visibility
                 prepareImport(ImportType.BITWARDEN_JSON)
                 val rg = binding.radioGroup
                 rg.setOnCheckedChangeListener { _, checkedId ->
+                    updatePasswordVisibility(checkedId) // Update visibility on change
                     when (checkedId) {
                         binding.mrbBitwardenJson.id -> prepareImport(ImportType.BITWARDEN_JSON)
                         binding.mrbKeepassCsv.id -> prepareImport(ImportType.KEEPASS_CSV)
@@ -86,18 +93,43 @@ class ImportDialog : BottomSheetDialogFragment() {
         return dialog
     }
 
+    private fun updatePasswordVisibility(checkedId: Int) {
+        if (checkedId == binding.mrbKeepassKdbx.id) {
+            binding.tilPassword.visibility = View.VISIBLE
+        } else {
+            binding.tilPassword.visibility = View.GONE
+        }
+    }
+
     private fun prepareImport(importType: ImportType) {
         binding.btProceed.setOnClickListener {
             type = importType
 
-            openFileForImport()
+            // If KDBX, get password directly from input field
+            if (type == ImportType.KEEPASS_KDBX) {
+                _kdbxPassword = binding.etPassword.text.toString()
+                if (_kdbxPassword.isNullOrBlank()) {
+                    Utility.showToast(requireContext(), "KeePass KDBX files require a password.")
+                    return@setOnClickListener
+                }
+                openFileForImport()
+            } else {
+                _kdbxPassword = null
+                openFileForImport()
+            }
         }
     }
 
     private fun openFileForImport() {
+        val mimeType = when (type) {
+            ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
+            ImportType.KEEPASS_CSV -> "text/csv"
+            ImportType.KEEPASS_KDBX -> "application/octet-stream" // Standard MIME type for arbitrary binary data
+        }
+
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*" // Allow selection of any file type for import
+            type = mimeType
         }
         openFileLauncher.launch(intent)
     }
@@ -108,7 +140,9 @@ class ImportDialog : BottomSheetDialogFragment() {
                 is ImportUiState.Loading -> {
                     binding.progressImporter.visibility = View.VISIBLE
                     binding.btProceed.isEnabled = false
-                    binding.radioGroup.isEnabled = false
+                    for (i in 0 until binding.radioGroup.childCount) {
+                        binding.radioGroup.getChildAt(i).isEnabled = false
+                    }
                 }
 
                 is ImportUiState.Success -> {
@@ -123,7 +157,9 @@ class ImportDialog : BottomSheetDialogFragment() {
                 is ImportUiState.Error -> {
                     binding.progressImporter.visibility = View.GONE
                     binding.btProceed.isEnabled = true
-                    binding.radioGroup.isEnabled = true
+                    for (i in 0 until binding.radioGroup.childCount) {
+                        binding.radioGroup.getChildAt(i).isEnabled = true
+                    }
                     Utility.showToast(requireContext(), "Error: ${state.exception.message}")
                 }
 

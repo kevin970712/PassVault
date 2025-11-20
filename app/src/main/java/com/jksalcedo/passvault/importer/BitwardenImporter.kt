@@ -12,19 +12,24 @@ class BitwardenImporter(
 ) : VaultImporter {
 
     override suspend fun parse(raw: String): List<ImportRecord> {
-        val export = json.decodeFromString<BitwardenExport>(raw)
-        return export.items
-            .filter { it.type == 1 && it.login?.password?.isNotBlank() == true }
-            .map { item ->
-                ImportRecord(
-                    title = item.name,
-                    username = item.login?.username,
-                    password = item.login?.password.orEmpty(),
-                    notes = item.notes,
-                    createdAt = item.creationDate?.toEpochMillis(),
-                    updatedAt = item.revisionDate?.toEpochMillis()
-                )
-            }
+        try {
+            val export = json.decodeFromString<BitwardenExport>(raw)
+            return export.items
+                .filter { it.type == 1 && it.login?.password?.isNotBlank() == true }
+                .map { item ->
+                    ImportRecord(
+                        title = item.name,
+                        username = item.login?.username,
+                        password = item.login?.password.orEmpty(),
+                        notes = item.notes,
+                        createdAt = item.creationDate?.toEpochMillis(),
+                        updatedAt = item.revisionDate?.toEpochMillis()
+                    )
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     override fun mapToPasswordEntries(records: List<ImportRecord>) =
