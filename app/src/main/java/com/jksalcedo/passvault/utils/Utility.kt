@@ -4,6 +4,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import com.jksalcedo.passvault.crypto.Encryption
+import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.data.PasswordEntry
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.csv.Csv
@@ -14,6 +16,7 @@ import java.io.File
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
 object Utility {
@@ -58,5 +61,30 @@ object Utility {
     fun Long.formatTime(zoneId: ZoneId = ZoneId.systemDefault()): String = this.let {
         val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.getDefault())
         return Instant.ofEpochMilli(it).atZone(zoneId).format(formatter)
+    }
+
+    fun String?.toEpochMillis(): Long = this.let {
+        if (this.isNullOrBlank()) {
+            return System.currentTimeMillis()
+        }
+        return try {
+            Instant.parse(this).toEpochMilli()
+        } catch (e: DateTimeParseException) {
+            android.util.Log.w("Utility", "Could not parse timestamp: '$this'. $e")
+            System.currentTimeMillis()
+        }
+    }
+
+    fun ImportRecord.toPasswordEntry(): PasswordEntry = this.let {
+        val (cipher, iv) = Encryption.encrypt(it.password)
+        return PasswordEntry(
+            title = title,
+            username = username,
+            passwordCipher = cipher,
+            passwordIv = iv,
+            notes = notes,
+            createdAt = createdAt!!,
+            updatedAt = updatedAt!!
+        )
     }
 }

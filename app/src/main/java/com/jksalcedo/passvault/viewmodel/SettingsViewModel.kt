@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,13 +22,20 @@ import androidx.work.WorkManager
 import com.jksalcedo.passvault.adapter.BackupAdapter
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.AppDatabase
+import com.jksalcedo.passvault.data.ImportRecord
+import com.jksalcedo.passvault.importer.BitwardenImporter
+import com.jksalcedo.passvault.importer.KeePassImporter
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.UnlockActivity
+import com.jksalcedo.passvault.ui.settings.ImportType
+import com.jksalcedo.passvault.ui.settings.ImportUiState
 import com.jksalcedo.passvault.utils.Utility
+import com.jksalcedo.passvault.utils.Utility.toPasswordEntry
 import com.jksalcedo.passvault.workers.BackupWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -35,12 +43,11 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
-import javax.crypto.BadPaddingException
 
 open class SettingsViewModel(
     application: Application,
     private val context: Activity,
-    private val adapter: BackupAdapter? = null
+    private val adapter: BackupAdapter? = null,
 ) :
     AndroidViewModel(application) {
 
@@ -54,6 +61,9 @@ open class SettingsViewModel(
 
     private val _importResult = MutableLiveData<Result<Int>>()
     val importResult: LiveData<Result<Int>> = _importResult
+
+    private val _importUiState = MutableLiveData<ImportUiState>()
+    val importUiState: LiveData<ImportUiState> = _importUiState
 
     companion object {
         private const val AUTO_BACKUP_WORK_TAG = "auto_backup_work"
@@ -138,8 +148,10 @@ open class SettingsViewModel(
         kotlin.system.exitProcess(0)
     }
 
-    fun exportEntries(uri: Uri, password: String) {
-        if (password.isEmpty()) {
+    fun exportEntries(uri: Uri, password: String?) {
+        val isEncryptionEnabled = prefsRepository.getEncryptBackups()
+
+        if (password.isNullOrEmpty() && isEncryptionEnabled) {
             _exportResult.postValue(Result.failure(Exception("Password not found.")))
             return
         }
@@ -153,10 +165,9 @@ open class SettingsViewModel(
 
                 val serializedData =
                     Utility.serializeEntries(entries, prefsRepository.getExportFormat())
-                val isEncryptionEnabled = prefsRepository.getEncryptBackups()
 
                 val contentToWrite = if (isEncryptionEnabled) {
-                    Encryption.encryptFileContent(serializedData, password)
+                    Encryption.encryptFileContent(serializedData, password!!)
                 } else {
                     serializedData
                 }
@@ -170,35 +181,43 @@ open class SettingsViewModel(
     }
 
     fun importEntries(uri: Uri, password: String) {
-        if (password.isEmpty()) {
-            _importResult.postValue(Result.failure(Exception("Password not found.")))
-            return
-        }
-
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val fileContent = readFromFile(uri)
-                val isEncryptionEnabled = prefsRepository.getEncryptBackups()
+                _importUiState.postValue(ImportUiState.Loading)
 
-                val decryptedJson = if (isEncryptionEnabled) {
+                // Read the raw file content
+                val fileContent = readFromFile(uri)
+
+                // Determine if we need to decrypt or use raw content
+                val jsonToParse = if (password.isNotEmpty()) {
                     try {
                         Encryption.decryptFileContent(fileContent, password)
-                    } catch (e: BadPaddingException) {
-                        throw Exception("Invalid password or corrupt file.", e)
+                    } catch (e: Exception) {
+                        throw Exception(
+                            "Decryption failed. Wrong password or not an encrypted file.",
+                            e
+                        )
                     }
                 } else {
                     fileContent
                 }
 
+                //Deserialize
                 val entries =
-                    Utility.deserializeEntries(decryptedJson, prefsRepository.getExportFormat())
-                // Insert on IO thread
-                withContext(Dispatchers.IO) {
-                    entries.forEach { passwordDao.insert(it) }
+                    Utility.deserializeEntries(jsonToParse, prefsRepository.getExportFormat())
+
+                if (entries.isEmpty()) {
+                    throw Exception("No entries found or invalid file format.")
                 }
-                _importResult.postValue(Result.success(entries.size))
+
+                // Insert all into Database
+                entries.forEach { passwordDao.insert(it) }
+
+                _importUiState.postValue(ImportUiState.Success(entries.size))
+
             } catch (e: Exception) {
-                _importResult.postValue(Result.failure(e))
+                e.printStackTrace()
+                _importUiState.postValue(ImportUiState.Error(e))
             }
         }
     }
@@ -215,7 +234,7 @@ open class SettingsViewModel(
         }
     }
 
-    private suspend fun readFromFile(uri: Uri): String = withContext(Dispatchers.IO) {
+    suspend fun readFromFile(uri: Uri): String = withContext(Dispatchers.IO) {
         val stringBuilder = StringBuilder()
         try {
             getApplication<Application>().contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -281,6 +300,61 @@ open class SettingsViewModel(
         adapter?.deleteBackup(backupItem)
         return true
     }
+
+    fun importVault(entries: List<ImportRecord>) {
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    entries.forEach { importRecord ->
+                        passwordDao.insert(importRecord.toPasswordEntry())
+                    }
+                }
+            } catch (_: Exception) {
+
+            }
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun startImport(uri: Uri, type: ImportType, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _importUiState.postValue(ImportUiState.Loading)
+            try {
+                if (type == ImportType.PASSVAULT_JSON) {
+                    importEntries(uri, password)
+                    return@launch
+                }
+
+                val importer = when (type) {
+                    ImportType.KEEPASS_CSV -> KeePassImporter(
+                        type = type,
+                        password = password,
+                        filePath = uri,
+                        context = context
+                    )
+
+                    ImportType.KEEPASS_KDBX -> KeePassImporter(
+                        type = type,
+                        password = password,
+                        filePath = uri,
+                        context = context
+                    )
+
+                    ImportType.BITWARDEN_JSON -> BitwardenImporter()
+                    else -> throw IllegalArgumentException("Unsupported import type")
+                }
+                val content = readFromFile(uri)
+                val entries = importer.parse(content)
+                importVault(entries)
+
+                _importUiState.postValue(ImportUiState.Success(entries.size))
+            } catch (e: Exception) {
+                Log.e("SettingsViewModel", "Import failed", e)
+                _importUiState.postValue(ImportUiState.Error(e))
+            }
+        }
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")

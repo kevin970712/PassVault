@@ -54,6 +54,10 @@
     <string name="password_saved">Password saved!</string>
     <string name="new_pin">New PIN</string>
     <string name="save_pin">Save PIN</string>
+    <string name="bitwarden_json">Bitwarden (JSON)</string>
+    <string name="keepass_csv">KeePass (CSV)</string>
+    <string name="keepass_kdbx">KeePass (KDBX)</string>
+    <string name="passvault_json">PassVault (JSON)</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

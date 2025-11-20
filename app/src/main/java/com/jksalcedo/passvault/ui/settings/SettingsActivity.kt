@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.utils.Utility
@@ -27,25 +28,17 @@ class SettingsActivity : AppCompatActivity() {
 
     private val preferenceRepository by lazy { PreferenceRepository(application) }
 
-    private var password: String? = null
+    var password: String? = null
 
     // Launcher for creating (exporting) a file
     private val createFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    settingsViewModel.exportEntries(uri, password = password!!)
-                    password = null
-                }
-            }
-        }
-
-    // Launcher for opening (importing) a file
-    private val openFileLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    ensurePasswordExists(true) { settingsViewModel.importEntries(uri, password!!) }
+                    settingsViewModel.exportEntries(
+                        uri,
+                        password = password
+                    )
                     password = null
                 }
             }
@@ -108,7 +101,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: () -> Unit) {
+    fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: () -> Unit) {
         if (password == null) {
             // No password found
             val layoutResource =
@@ -117,7 +110,8 @@ class SettingsActivity : AppCompatActivity() {
             val title =
                 if (isImporting) R.string.enter_backup_file_password else R.string.set_export_password
             val message =
-                if (isImporting) "Enter the password to decrypt this backup file." else "Create a password to encrypt your backup."
+                if (isImporting) "Enter the password to decrypt this backup file. \n " +
+                        "If the file is not encrypted, leave this empty and proceed." else "Create a password to encrypt your backup."
             val dialog = MaterialAlertDialogBuilder(this)
                 .setView(layout)
                 .setCancelable(false)
@@ -135,11 +129,12 @@ class SettingsActivity : AppCompatActivity() {
                         layout.findViewById(R.id.et_confirm_password) ?: TextInputEditText(this)
                     val newPassword = etPassword.text.toString()
                     val confirmPassword = etConfirmPassword.text ?: ""
+                    val til2 = layout.findViewById<TextInputLayout>(R.id.til2)
 
                     when {
-                        newPassword.isBlank() -> {
-                            etPassword.error = "Password cannot be empty"
-                        }
+//                        newPassword.isBlank() -> {
+//                            til1.error = "Password cannot be empty"
+//                        }
 
                         newPassword.isNotEmpty() && isImporting -> {
                             password = newPassword
@@ -148,7 +143,7 @@ class SettingsActivity : AppCompatActivity() {
                         }
 
                         newPassword != confirmPassword.toString() -> {
-                            etConfirmPassword.error = "Password do not match"
+                            til2.error = "Password do not match"
                         }
 
                         else -> {
@@ -171,27 +166,22 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun createFileForExport() {
-        ensurePasswordExists(false) {
-            val formatter = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-            val exportFormat = preferenceRepository.getExportFormat()
-            val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
+        val formatter = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val exportFormat = preferenceRepository.getExportFormat()
+        val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
 
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "application/json"
-                putExtra(Intent.EXTRA_TITLE, fileName)
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+        if (preferenceRepository.getEncryptBackups()) {
+            ensurePasswordExists(false) {
+                createFileLauncher.launch(intent)
             }
+        } else {
             createFileLauncher.launch(intent)
         }
-    }
-
-    fun openFileForImport() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*" // Allow selection of any file type for import
-        }
-        openFileLauncher.launch(intent)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
