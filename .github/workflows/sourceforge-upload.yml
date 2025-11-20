@@ -2,7 +2,7 @@ name: Sync to SourceForge
 
 on:
   release:
-    types: [published]
+    types: [published, prereleased, released]
   push:
     branches:
       - master
@@ -59,23 +59,40 @@ jobs:
   # Upload APK files when a release is published
   upload-apk:
     runs-on: ubuntu-latest
-    # Only run this job when a release is published
-    if: github.event_name == 'release' || github.event.inputs.tag_name != ''
+    # Run if it's a release OR if triggered manually
+    if: github.event_name == 'release' || inputs.tag_name != ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Download release assets
+      - name: Download release assets (With Retry)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Get the release tag (from event or manual input)
           TAG="${{ github.event.release.tag_name || inputs.tag_name }}"
-          echo "Downloading assets for tag: $TAG"
+          echo "Target Tag: $TAG"
           
-          # Get the release assets
-          gh release download $TAG --pattern "*.apk"
-          ls -lah *.apk
+          # 🔄 RETRY LOOP: Wait for the other workflow to finish building the APK
+          # Tries 10 times, waiting 30 seconds between attempts (5 minutes total)
+          for i in {1..10}; do
+            echo "Attempt $i: Looking for APKs..."
+            
+            # Try to download. If successful, break the loop.
+            if gh release download $TAG --pattern "*.apk"; then
+              echo "✅ APK downloaded successfully!"
+              ls -lah *.apk
+              break
+            fi
+            
+            echo "⚠️ APK not found yet. Waiting 30 seconds for Build workflow to finish..."
+            sleep 30
+          done
+          
+          # Fail if no APK found after loop
+          if ! ls *.apk 1> /dev/null 2>&1; then
+             echo "❌ Error: No APK found after waiting. Did the Build workflow fail?"
+             exit 1
+          fi
       
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
@@ -85,16 +102,17 @@ jobs:
           SF_USER: ${{ secrets.SF_USERNAME }}
           SF_PASS: ${{ secrets.SF_PASSWORD }}
         run: |
-          # Get the release tag
           TAG="${{ github.event.release.tag_name || inputs.tag_name }}"
           
-          # Create directory structure and upload files
+          echo "🚀 Uploading to SourceForge folder: /home/frs/project/passvault-app/$TAG"
+          
           lftp -c "
           set sftp:auto-confirm yes;
           open sftp://$SF_USER:$SF_PASS@frs.sourceforge.net;
           mkdir -p /home/frs/project/passvault-app/$TAG;
           cd /home/frs/project/passvault-app/$TAG;
           mput *.apk;
+          bye;
           "
           
-          echo "✅ APK uploaded to: https://sourceforge.net/projects/passvault-app/files/$TAG/"
+          echo "✅ Upload Complete: https://sourceforge.net/projects/passvault-app/files/$TAG/"
