@@ -1,9 +1,17 @@
+## [0.7.0] - 2025-11-20
+
+### Refactor
+
+- Enhance import functionality and error handling
+- Simplify and improve import process
+
 ## [0.7.0-beta01] - 2025-11-20
 
 ### Features
 
 - Add support for importing Bitwarden JSON exports
 - Add KeePass DX/XC CSV and KDBX import functionality
+- Add Bitwarden and KeePass import functionality
 
 ### Refactor
 
