@@ -12,7 +12,7 @@
 <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/jksalcedo/PassVault/total?logo=GitHub">
 <img alt="SourceForge Downloads" src="https://img.shields.io/sourceforge/dt/passvault-app?logo=SourceForge">
 <img alt="GitHub License" src="https://img.shields.io/github/license/jksalcedo/PassVault">
-<img alt="GitHub Release" src="https://img.shields.io/github/v/release/jksalcedo/PassVault">
+<img alt="GitHub Release" src="https://img.shields.io/github/v/release/jksalcedo/PassVault?include_prereleases">
 <img src="https://img.shields.io/badge/Kotlin-2.2.21-7f52ff?logo=kotlin&logoColor=white" alt="Kotlin Version">
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/jksalcedo/PassVault?logo=Android">
 
