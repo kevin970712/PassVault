@@ -50,6 +50,10 @@ system. The application does not require internet permissions. User data never l
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
 - [ ] Categories/Labels
+- [ ] QR Code Password Sharing
+- [ ] Password strength scoring
+- [ ] Custom field templates
+- [ ] TOTP generator
 
 ## Download
 
