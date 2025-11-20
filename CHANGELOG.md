@@ -1,4 +1,4 @@
-## [0.7.0-beta01]
+## [0.7.0-beta01] - 2025-11-20
 
 ### Features
 
@@ -7,7 +7,6 @@
 
 ### Refactor
 
-- Allow device credential authentication for encryption key
 - Enhance import/export functionality and UI state management
 
 ### Documentation
@@ -25,7 +24,12 @@
 
 - Simplify date format and respect user locale
 - Broaden biometric support and improve database stability
+- Allow device credential authentication for encryption key
 - Allow device credential as an authentication method
+
+### Documentation
+
+- Update changelog for version 0.6.0-beta2
 
 ### Miscellaneous Tasks
 
