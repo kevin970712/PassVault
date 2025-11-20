@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -16,6 +17,8 @@ import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,7 +42,10 @@ class SettingsActivity : AppCompatActivity() {
                         uri,
                         password = password
                     )
-                    password = null
+                    lifecycleScope.launch {
+                        delay(1000)
+                        password = null
+                    }
                 }
             }
         }
@@ -140,6 +146,10 @@ class SettingsActivity : AppCompatActivity() {
                             password = newPassword
                             dialog.dismiss()
                             onPasswordReady(newPassword)
+                            lifecycleScope.launch {
+                                delay(1000)
+                                password = null
+                            }
                         }
 
                         newPassword != confirmPassword.toString() -> {
@@ -154,14 +164,15 @@ class SettingsActivity : AppCompatActivity() {
                             )
                             dialog.dismiss()
                             onPasswordReady(newPassword) // Proceed
+                            lifecycleScope.launch {
+                                delay(1000)
+                                password = null
+                            }
                         }
                     }
                 }
             }
             dialog.show()
-        } else {
-            // Password already exists, proceed
-            password?.let { onPasswordReady(it) }
         }
     }
 

@@ -62,11 +62,15 @@ open class SettingsViewModel(
     private val _importResult = MutableLiveData<Result<Int>>()
     val importResult: LiveData<Result<Int>> = _importResult
 
-    private val _importUiState = MutableLiveData<ImportUiState>()
+    private val _importUiState = MutableLiveData<ImportUiState>(ImportUiState.Idle)
     val importUiState: LiveData<ImportUiState> = _importUiState
 
     companion object {
         private const val AUTO_BACKUP_WORK_TAG = "auto_backup_work"
+    }
+
+    fun resetImportState() {
+        _importUiState.value = ImportUiState.Idle
     }
 
     fun setAutoBackups(enabled: Boolean) {
@@ -200,6 +204,10 @@ open class SettingsViewModel(
                     }
                 } else {
                     fileContent
+                }
+
+                if (jsonToParse.isBlank()) {
+                    throw Exception("No entries found or invalid file format.")
                 }
 
                 //Deserialize

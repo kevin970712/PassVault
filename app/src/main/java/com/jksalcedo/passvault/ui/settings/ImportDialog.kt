@@ -14,7 +14,6 @@ import com.jksalcedo.passvault.databinding.DialogImportBinding
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
-import kotlinx.serialization.ExperimentalSerializationApi
 
 class ImportDialog : BottomSheetDialogFragment() {
 
@@ -29,27 +28,30 @@ class ImportDialog : BottomSheetDialogFragment() {
     }
 
     private lateinit var type: ImportType
-    private var _kdbxPassword: String? = null // Temporary storage for KDBX password
 
     companion object {
         const val TAG = "ImportDialog"
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     private val openFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    if (type == ImportType.KEEPASS_KDBX && _kdbxPassword != null) {
-                        settingsViewModel.startImport(uri, type, _kdbxPassword!!)
-                        _kdbxPassword = null // Reset after use
-                    } else {
-                        settingsActivity?.ensurePasswordExists(true) { passwordFromActivity ->
-                            settingsViewModel.startImport(
-                                uri,
-                                type,
-                                passwordFromActivity
-                            )
+                    when (type) {
+                        ImportType.KEEPASS_KDBX -> {
+                            settingsActivity?.ensurePasswordExists(true) { password ->
+                                settingsViewModel.startImport(uri, type, password)
+                            }
+                        }
+
+                        ImportType.PASSVAULT_JSON -> {
+                            settingsActivity?.ensurePasswordExists(true) { password ->
+                                settingsViewModel.startImport(uri, type, password)
+                            }
+                        }
+
+                        else -> {
+                            settingsViewModel.startImport(uri, type, "")
                         }
                     }
                 }
@@ -72,12 +74,10 @@ class ImportDialog : BottomSheetDialogFragment() {
             setTitle("Import from file")
             setContentView(binding.root)
             setOnShowListener {
-                // Set the default import type
-                updatePasswordVisibility(binding.mrbBitwardenJson.id) // Initial visibility
+                binding.tilPassword.visibility = View.GONE
                 prepareImport(ImportType.BITWARDEN_JSON)
                 val rg = binding.radioGroup
                 rg.setOnCheckedChangeListener { _, checkedId ->
-                    updatePasswordVisibility(checkedId) // Update visibility on change
                     when (checkedId) {
                         binding.mrbBitwardenJson.id -> prepareImport(ImportType.BITWARDEN_JSON)
                         binding.mrbKeepassCsv.id -> prepareImport(ImportType.KEEPASS_CSV)
@@ -93,30 +93,10 @@ class ImportDialog : BottomSheetDialogFragment() {
         return dialog
     }
 
-    private fun updatePasswordVisibility(checkedId: Int) {
-        if (checkedId == binding.mrbKeepassKdbx.id) {
-            binding.tilPassword.visibility = View.VISIBLE
-        } else {
-            binding.tilPassword.visibility = View.GONE
-        }
-    }
-
     private fun prepareImport(importType: ImportType) {
         binding.btProceed.setOnClickListener {
             type = importType
-
-            // If KDBX, get password directly from input field
-            if (type == ImportType.KEEPASS_KDBX) {
-                _kdbxPassword = binding.etPassword.text.toString()
-                if (_kdbxPassword.isNullOrBlank()) {
-                    Utility.showToast(requireContext(), "KeePass KDBX files require a password.")
-                    return@setOnClickListener
-                }
-                openFileForImport()
-            } else {
-                _kdbxPassword = null
-                openFileForImport()
-            }
+            openFileForImport()
         }
     }
 
@@ -124,12 +104,12 @@ class ImportDialog : BottomSheetDialogFragment() {
         val mimeType = when (type) {
             ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
             ImportType.KEEPASS_CSV -> "text/csv"
-            ImportType.KEEPASS_KDBX -> "application/octet-stream" // Standard MIME type for arbitrary binary data
+            ImportType.KEEPASS_KDBX -> "application/octet-stream"
         }
 
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = mimeType
+            this.type = mimeType
         }
         openFileLauncher.launch(intent)
     }
@@ -151,6 +131,7 @@ class ImportDialog : BottomSheetDialogFragment() {
                         requireContext(),
                         "Successfully imported ${state.count} entries"
                     )
+                    settingsViewModel.resetImportState()
                     dismiss()
                 }
 
@@ -161,10 +142,16 @@ class ImportDialog : BottomSheetDialogFragment() {
                         binding.radioGroup.getChildAt(i).isEnabled = true
                     }
                     Utility.showToast(requireContext(), "Error: ${state.exception.message}")
+                    settingsViewModel.resetImportState()
+                    dismiss()
                 }
 
                 is ImportUiState.Idle -> {
-                    // Do nothing
+                    binding.progressImporter.visibility = View.GONE
+                    binding.btProceed.isEnabled = true
+                    for (i in 0 until binding.radioGroup.childCount) {
+                        binding.radioGroup.getChildAt(i).isEnabled = true
+                    }
                 }
             }
         }
