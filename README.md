@@ -43,13 +43,13 @@ system. The application does not require internet permissions. User data never l
 - [x] In-app Password Generator
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
+- [X] Import from KeePass/Bitwarden
 
 ## Planned Features
 
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
 - [ ] Categories/Labels
-- [ ] Import from KeePass/Bitwarden
 
 ## Download
 
