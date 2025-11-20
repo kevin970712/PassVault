@@ -8,3 +8,7 @@ FEATURES:
 - Encrypted Storage: All passwords are encrypted at rest using AES-256 and stored securely in a local Room database.
 - 100% Offline-First: The app is fully functional without an internet connection.
 - Password Generation: Create strong, random passwords directly within the app.
+- Backups: Import or Export encrypted/unencrypted data
+- Automatic Backups: Automatically backup your database.
+- Third-Party Import: Seamlessly import existing vault from Bitwarden and KeePass.
+- Supports JSON, CSV, and KDBX files.

@@ -2,7 +2,6 @@ package com.jksalcedo.passvault.ui.settings
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
@@ -85,16 +84,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setupExportAndImport() {
         findPreference<Preference>("export_data")?.setOnPreferenceClickListener {
-            handleExportRequest()
+            handleImportExportRequest(Action.EXPORT)
             true
         }
         findPreference<Preference>("import_data")?.setOnPreferenceClickListener {
-            settingsActivity?.openFileForImport()
+            //settingsActivity?.openFileForImport()
+            handleImportExportRequest(Action.IMPORT)
             true
         }
     }
 
-    private fun handleExportRequest() {
+    private fun handleImportExportRequest(action: Action) {
         // Check if the "Require Auth" setting is enabled
         val requireAuth = prefsRepository.getRequireAuthForExport()
 
@@ -103,20 +103,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
             biometricAuthenticator.showBiometricPrompt(
                 fragment = this,
                 onSuccess = {
-                    // proceed with the export
-                    settingsActivity?.createFileForExport()
+                    // proceed
+                    when (action) {
+                        Action.EXPORT -> settingsActivity?.createFileForExport()
+                        Action.IMPORT -> ImportDialog().apply {
+                            show(
+                                settingsActivity!!.supportFragmentManager,
+                                ImportDialog.TAG
+                            )
+                        }
+
+                    }
+
                 },
-                onFailure = { _, errString ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Authentication failed: $errString",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                onFailure = { _, _ -> }
             )
         } else {
             // proceed directly
-            settingsActivity?.createFileForExport()
+            when (action) {
+                Action.EXPORT -> settingsActivity?.createFileForExport()
+                Action.IMPORT -> ImportDialog().apply {
+                    show(
+                        settingsActivity!!.supportFragmentManager,
+                        ImportDialog.TAG
+                    )
+                }
+            }
         }
     }
 
@@ -300,4 +312,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onDetach()
         settingsActivity = null
     }
+}
+
+enum class Action {
+    IMPORT, EXPORT
 }

@@ -1,0 +1,9 @@
+Features
+
+- Add support for importing Bitwarden JSON exports
+- Add KeePass DX/XC CSV and KDBX import functionality
+
+Refactor
+
+- Allow device credential authentication for encryption key
+- Enhance import/export functionality and UI state management

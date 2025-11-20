@@ -1,1 +1,1 @@
-A secure, 100% offline password manager.
+A secure, lightweight, and 100% offline password manager.

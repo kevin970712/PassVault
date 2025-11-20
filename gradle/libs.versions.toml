@@ -24,7 +24,7 @@ archCoreTesting = "2.2.0"
 coroutinesTest = "1.10.2"
 truth = "1.4.5"
 testCore = "1.7.0"
-robolectric = "4.11.1"
+robolectric = "4.16"
 workRuntimeKtx = "2.11.0"
 
 [libraries]
@@ -36,7 +36,6 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
-androidx-work-work-testing = { module = "androidx.work:work-testing", version.ref = "workRuntimeKtx" }
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "workRuntimeKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -65,4 +64,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.2.21-2.0.4" }
 androidx-room = { id = "androidx.room", version.ref = "roomRuntime" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
