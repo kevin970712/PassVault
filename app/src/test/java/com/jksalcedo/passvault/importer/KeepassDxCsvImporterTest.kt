@@ -1,6 +1,6 @@
 package com.jksalcedo.passvault.importer
 
-import com.jksalcedo.passvault.data.KeepassRecord
+import com.jksalcedo.passvault.data.ImportRecord
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
@@ -27,8 +27,8 @@ GitHub,alice,secret123,SomeNotes,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         assertEquals("alice", records[0].username)
         assertEquals("secret123", records[0].password)
         assertEquals("SomeNotes", records[0].notes)
-        assertNotNull(records[0].creationTime)
-        assertNotNull(records[0].lastModificationTime)
+        assertNotNull(records[0].createdAt)
+        assertNotNull(records[0].updatedAt)
     }
 
     @Test
@@ -38,7 +38,7 @@ GitHub,alice,secret123,SomeNotes,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         val importer = KeePassImporter()
         val records = importer.parse(csv)
 
-        assertEquals(emptyList<KeepassRecord>(), records)
+        assertEquals(emptyList<ImportRecord>(), records)
     }
 
     @Test
@@ -50,7 +50,7 @@ Title,UserName,Password,Notes,CreationTime,LastModificationTime
         val importer = KeePassImporter()
         val records = importer.parse(csv)
 
-        assertEquals(emptyList<KeepassRecord>(), records)
+        assertEquals(emptyList<ImportRecord>(), records)
     }
 
     @Test
@@ -117,8 +117,8 @@ GitHub,,secret123,,,
         assertEquals("", records[0].username)
         assertEquals("secret123", records[0].password)
         assertEquals("", records[0].notes)
-        assertNull(records[0].creationTime)
-        assertNull(records[0].lastModificationTime)
+        assertNull(records[0].createdAt)
+        assertNull(records[0].updatedAt)
     }
 
     @Test
