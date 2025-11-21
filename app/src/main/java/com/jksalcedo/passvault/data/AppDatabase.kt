@@ -1,6 +1,7 @@
 package com.jksalcedo.passvault.data
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -20,6 +21,11 @@ abstract class AppDatabase : RoomDatabase() {
                     "passvault_db"
                 ).fallbackToDestructiveMigration(false).build().also { INSTANCE = it }
             }
+        }
+
+        @VisibleForTesting
+        fun initializeForTesting(instance: AppDatabase) {
+            INSTANCE = instance
         }
     }
 }

@@ -124,6 +124,51 @@ class UtilityTest {
     }
 
     @Test
+    fun `serialize and deserialize entries handle uppercase JSON`() = runTest {
+        val entries = listOf(
+            PasswordEntry(
+                id = 10,
+                title = "UpperJson",
+                username = "upper@json.dev",
+                passwordCipher = "cipher",
+                passwordIv = "iv",
+                notes = null,
+                createdAt = 10L,
+                updatedAt = 20L
+            )
+        )
+
+        val payload = Utility.serializeEntries(entries, "JSON")
+        val parsed = Utility.deserializeEntries(payload, "JSON")
+
+        assertThat(parsed).hasSize(1)
+        assertThat(parsed.first().title).isEqualTo("UpperJson")
+    }
+
+    @Test
+    fun `serialize and deserialize entries handle uppercase CSV`() = runTest {
+        val entries = listOf(
+            PasswordEntry(
+                id = 11,
+                title = "UpperCsv",
+                username = "upper@csv.dev",
+                passwordCipher = "cipher",
+                passwordIv = "iv",
+                notes = "csv",
+                createdAt = 30L,
+                updatedAt = 30L
+            )
+        )
+
+        val payload = Utility.serializeEntries(entries, "CSV")
+        val parsed = Utility.deserializeEntries(payload, "CSV")
+
+        assertThat(parsed).hasSize(1)
+        assertThat(parsed.first().title).isEqualTo("UpperCsv")
+        assertThat(parsed.first().notes).isEqualTo("csv")
+    }
+
+    @Test
     fun `formatTime with known timestamp`() {
         val zonedDateTime = ZonedDateTime.of(2025, 11, 8, 10, 30, 0, 0, utc)
         val timestampInMillis = zonedDateTime.toInstant().toEpochMilli() // This gives us our Long
@@ -171,8 +216,8 @@ class UtilityTest {
             val timestampInMillis = zonedDateTime.toInstant().toEpochMilli()
 
             val formattedDate = timestampInMillis.formatTime(zoneId = utc)
-            
-            assertThat(formattedDate).isEqualTo("nov. 08 2025")
+
+            assertThat(formattedDate).isEqualTo("nov. 08 2025 10:30 AM")
         } finally {
             Locale.setDefault(originalLocale)
         }

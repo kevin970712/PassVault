@@ -1,9 +1,28 @@
+## [0.7.1] - 2025-11-21
+
+### Refactor
+
+- Remove unnecessary `@RequiresApi` annotations and add compatibility checks
+- Replace launcher icons with adaptive vector drawables
+- Replace launcher icons with adaptive vector drawables
+- Allow format override during import
+- Enhance serialization, timestamp format, and importer logic
+
 ## [0.7.0] - 2025-11-20
+
+### Features
+
+- Enable manual release workflow and mark all releases as pre-releases
 
 ### Refactor
 
 - Enhance import functionality and error handling
+- Enhance import functionality and error handling
 - Simplify and improve import process
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG for version 0.7.0
 
 ## [0.7.0-beta01] - 2025-11-20
 

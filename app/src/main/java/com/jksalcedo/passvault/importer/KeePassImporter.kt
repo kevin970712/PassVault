@@ -23,8 +23,8 @@ class KeePassImporter(
     },
     private val filePath: Uri? = null,
     private val password: String? = null,
-    private val type: ImportType? = null,
-    private val context: Context
+    private val type: ImportType = ImportType.KEEPASS_CSV,
+    private val context: Context? = null
 ) : VaultImporter {
 
     override suspend fun parse(raw: String): List<ImportRecord> {
@@ -70,8 +70,10 @@ class KeePassImporter(
         if (filePath == null || password == null) {
             return emptyList()
         }
+        val resolverContext = context
+            ?: throw IllegalStateException("Context is required to import KeePass KDBX files")
         return try {
-            val db = context.contentResolver.openInputStream(filePath)?.use { inputStream ->
+            val db = resolverContext.contentResolver.openInputStream(filePath)?.use { inputStream ->
                 val credentials = Credentials.from(password.toByteArray())
                 KeePassDatabase.decode(inputStream, credentials)
             }

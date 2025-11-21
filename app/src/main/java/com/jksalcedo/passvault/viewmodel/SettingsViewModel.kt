@@ -184,7 +184,7 @@ open class SettingsViewModel(
         }
     }
 
-    fun importEntries(uri: Uri, password: String) {
+    fun importEntries(uri: Uri, password: String, formatOverride: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _importUiState.postValue(ImportUiState.Loading)
@@ -211,8 +211,9 @@ open class SettingsViewModel(
                 }
 
                 //Deserialize
+                val format = formatOverride ?: prefsRepository.getExportFormat()
                 val entries =
-                    Utility.deserializeEntries(jsonToParse, prefsRepository.getExportFormat())
+                    Utility.deserializeEntries(jsonToParse, format)
 
                 if (entries.isEmpty()) {
                     throw Exception("No entries found or invalid file format.")
@@ -329,7 +330,7 @@ open class SettingsViewModel(
             _importUiState.postValue(ImportUiState.Loading)
             try {
                 if (type == ImportType.PASSVAULT_JSON) {
-                    importEntries(uri, password)
+                    importEntries(uri, password, formatOverride = "json")
                     return@launch
                 }
 

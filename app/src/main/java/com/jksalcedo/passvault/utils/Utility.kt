@@ -32,12 +32,14 @@ object Utility {
 
     @OptIn(ExperimentalSerializationApi::class)
     fun serializeEntries(list: List<PasswordEntry>, format: String): String {
-        return if (format == "json") Json.encodeToString(list) else Csv.encodeToString(list)
+        val normalized = format.lowercase(Locale.ROOT)
+        return if (normalized == "json") Json.encodeToString(list) else Csv.encodeToString(list)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     fun deserializeEntries(serializedString: String, format: String): List<PasswordEntry> {
-        return if (format == "json") Json.decodeFromString(serializedString) else Csv.decodeFromString(
+        val normalized = format.lowercase(Locale.ROOT)
+        return if (normalized == "json") Json.decodeFromString(serializedString) else Csv.decodeFromString(
             serializedString
         )
     }
@@ -59,7 +61,7 @@ object Utility {
     }
 
     fun Long.formatTime(zoneId: ZoneId = ZoneId.systemDefault()): String = this.let {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.getDefault())
+        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy h:mm a", Locale.getDefault())
         return Instant.ofEpochMilli(it).atZone(zoneId).format(formatter)
     }
 
