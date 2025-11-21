@@ -4,7 +4,6 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import androidx.annotation.RequiresApi
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -36,7 +35,6 @@ object Encryption {
     }
 
     // Create key if absent
-    @RequiresApi(Build.VERSION_CODES.R)
     fun ensureKeyExists(requireUserAuth: Boolean = false) {
         val ks = getKeystore()
         if (ks.containsAlias(KEY_ALIAS)) return
@@ -49,21 +47,23 @@ object Encryption {
         val builder = KeyGenParameterSpec.Builder(
             KEY_ALIAS,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-        ).run {
+        ).apply {
             setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             setRandomizedEncryptionRequired(true)
-            // require device auth
             if (requireUserAuth) {
                 setUserAuthenticationRequired(true)
-                setUserAuthenticationParameters(
-                    0,
-                    KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL
-                )
-                setIsStrongBoxBacked(true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    setUserAuthenticationParameters(
+                        0,
+                        KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL
+                    )
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    setIsStrongBoxBacked(true)
+                }
             }
-            build()
-        }
+        }.build()
 
         keyGenerator.init(builder)
         keyGenerator.generateKey()
