@@ -24,6 +24,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -81,8 +90,11 @@ androidComponents {
             val version = output.versionName.get()
             val code = output.versionCode.get()
             val buildType = variant.buildType
+            val abi = output.filters.find {
+                it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI
+            }?.identifier ?: "universal"
 
-            val apkName = "${project}-v${version}-b${code}-${buildType}.apk"
+            val apkName = "${project}-v${version}-b${code}-${abi}-${buildType}.apk"
 
             outputImpl.outputFileName.set(apkName)
         }
