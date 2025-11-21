@@ -17,6 +17,21 @@
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/jksalcedo/PassVault?logo=Android">
 
 </h4>
+<div align="center">
+  <a href="https://github.com/jksalcedo/PassVault/releases">
+    <img src="https://img.shields.io/badge/Get_it_on-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white" alt="Get it on GitHub" />
+  </a>
+  
+  <a href="https://sourceforge.net/projects/passvault-app/files/latest/download">
+    <img src="https://img.shields.io/badge/Get_it_on-SourceForge-orange?style=for-the-badge&logo=sourceforge&logoColor=white" alt="Get it on SourceForge" />
+  </a>
+
+  <a href="https://f-droid.org/packages/com.jksalcedo.passvault/">
+    <img src="https://img.shields.io/badge/Get_it_on-F--Droid-green?style=for-the-badge&logo=f-droid&logoColor=white" alt="Get it on F-Droid" />
+  </a>
+</div>
+
+
 
 <h1 align="center">
     <img src="./metadata/en-US/images/phoneScreenshots/1.jpg" alt="PassVault Screenshot" width="250" />
@@ -54,17 +69,6 @@ system. The application does not require internet permissions. User data never l
 - [ ] Password strength scoring
 - [ ] Custom field templates
 - [ ] TOTP generator
-
-## Download
-
-[![Get it on GitHub](https://img.shields.io/badge/Get_it_on-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jksalcedo/PassVault/releases) 
-<br>
-
-[![Download](https://img.shields.io/badge/Download-SourceForge-brightgreen?style=for-the-badge&logo=sourceforge&logoColor=white)](https://sourceforge.net/projects/passvault-app/files/latest/download)
-<br>
-
-[![F-Droid](https://img.shields.io/badge/F--Droid-Available_on_F--Droid-3465a4?style=for-the-badge&logo=f-droid&logoColor=white)](https://f-droid.org/packages/com.jksalcedo.passvault/)
-
 
 
 ## Tech Stack & Architecture
