@@ -1,0 +1,7 @@
+Refactor
+
+- Remove unnecessary `@RequiresApi` annotations and add compatibility checks
+- Replace launcher icons with adaptive vector drawables
+- Replace launcher icons with adaptive vector drawables
+- Allow format override during import
+- Enhance serialization, timestamp format, and importer logic

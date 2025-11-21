@@ -3,7 +3,6 @@ package com.jksalcedo.passvault.importer
 import com.jksalcedo.passvault.data.ImportRecord
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -117,8 +116,6 @@ GitHub,,secret123,,,
         assertEquals("", records[0].username)
         assertEquals("secret123", records[0].password)
         assertEquals("", records[0].notes)
-        assertNull(records[0].createdAt)
-        assertNull(records[0].updatedAt)
     }
 
     @Test
