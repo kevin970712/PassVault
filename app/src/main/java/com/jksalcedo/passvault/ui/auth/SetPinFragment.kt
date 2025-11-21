@@ -1,14 +1,12 @@
 package com.jksalcedo.passvault.ui.auth
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import com.jksalcedo.passvault.R
@@ -44,7 +42,6 @@ class SetPinFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,7 +62,6 @@ class SetPinFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun validateAndSavePin() {
         try {
             Encryption.ensureKeyExists()

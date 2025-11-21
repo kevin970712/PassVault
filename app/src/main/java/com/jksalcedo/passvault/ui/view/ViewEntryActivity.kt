@@ -8,7 +8,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -57,7 +56,6 @@ class ViewEntryActivity : AppCompatActivity() {
     private val fadeIn: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_in) }
     private val fadeOut: Animation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_out) }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewEntryBinding.inflate(layoutInflater)

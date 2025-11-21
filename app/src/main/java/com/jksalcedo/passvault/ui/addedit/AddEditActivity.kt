@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.jksalcedo.passvault.crypto.Encryption
@@ -21,7 +20,6 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
     private lateinit var viewModel: PasswordViewModel
     private var currentEntry: PasswordEntry? = null
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditBinding.inflate(layoutInflater)
@@ -93,7 +91,6 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun saveEntry() {
         val title = binding.etTitle.text.toString()
         val username = binding.etUsername.text.toString()
