@@ -1,0 +1,3 @@
+Features
+
+- Enhance backup encryption with Argon2 and refactor restart logic
