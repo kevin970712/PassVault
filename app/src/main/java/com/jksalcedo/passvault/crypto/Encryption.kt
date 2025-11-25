@@ -4,6 +4,8 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.lambdapioneer.argon2kt.Argon2Kt
+import com.lambdapioneer.argon2kt.Argon2Mode
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -80,7 +82,7 @@ object Encryption {
         val cipher = Cipher.getInstance(AES_MODE)
         val key = getSecretKey()
         cipher.init(Cipher.ENCRYPT_MODE, key)
-        val iv = cipher.iv // 12 bytes recommended
+        val iv = cipher.iv
         val ciphertext = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
         val cipherB64 = Base64.encodeToString(ciphertext, Base64.NO_WRAP)
         val ivB64 = Base64.encodeToString(iv, Base64.NO_WRAP)
@@ -98,6 +100,7 @@ object Encryption {
         return String(plain, Charsets.UTF_8)
     }
 
+    @Deprecated("Deprecated in favor of encryptFileContentArgon")
     fun encryptFileContent(plainText: String, password: String): String {
         // Generate a random salt
         val salt = ByteArray(SALT_SIZE_BYTES).apply { SecureRandom().nextBytes(this) }
@@ -120,6 +123,7 @@ object Encryption {
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
+    @Deprecated("Deprecated in favor of decryptFileContentArgon")
     fun decryptFileContent(encryptedDataB64: String, password: String): String {
         val combined = Base64.decode(encryptedDataB64, Base64.NO_WRAP)
         val salt = combined.copyOfRange(0, SALT_SIZE_BYTES)
@@ -129,6 +133,63 @@ object Encryption {
         val keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM)
         val keySpec = PBEKeySpec(password.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BITS)
         val secretKey = SecretKeySpec(keyFactory.generateSecret(keySpec).encoded, "AES")
+
+        // Decrypt the data
+        val cipher = Cipher.getInstance(FILE_ENCRYPTION_ALGORITHM)
+        val gcmSpec = GCMParameterSpec(TAG_LENGTH_BITS, iv)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec)
+        val plain = cipher.doFinal(ciphertext)
+
+        // Return the decrypted string
+        return String(plain, Charsets.UTF_8)
+    }
+
+    fun encryptFileContentArgon(plainText: String, password: ByteArray): String {
+        // Generate a random salt
+        val salt = ByteArray(SALT_SIZE_BYTES).apply { SecureRandom().nextBytes(this) }
+
+        // Hash password with Argon2
+        val argon2 = Argon2Kt()
+        val hashResult = argon2.hash(
+            Argon2Mode.ARGON2_ID,
+            password = password,
+            salt = salt,
+            tCostInIterations = 5,
+            mCostInKibibyte = 65536,
+            hashLengthInBytes = 32
+        )
+        val secretKey = SecretKeySpec(hashResult.rawHashAsByteArray(), "AES")
+
+        // Encrypt the data
+        val cipher = Cipher.getInstance(FILE_ENCRYPTION_ALGORITHM)
+        val iv = ByteArray(IV_SIZE_BYTES).apply { SecureRandom().nextBytes(this) }
+        val gcmSpec = GCMParameterSpec(TAG_LENGTH_BITS, iv)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec)
+        val ciphertext = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
+
+        // Combine salt, IV, and ciphertext into one array for easy storage
+        val combined = salt + iv + ciphertext
+
+        // Return as a single Base64 string
+        return Base64.encodeToString(combined, Base64.NO_WRAP)
+    }
+
+    fun decryptFileContentArgon(encryptedDataB64: String, password: ByteArray): String {
+        val combined = Base64.decode(encryptedDataB64, Base64.NO_WRAP)
+        val salt = combined.copyOfRange(0, SALT_SIZE_BYTES)
+        val iv = combined.copyOfRange(SALT_SIZE_BYTES, SALT_SIZE_BYTES + IV_SIZE_BYTES)
+        val ciphertext = combined.copyOfRange(SALT_SIZE_BYTES + IV_SIZE_BYTES, combined.size)
+
+        val argon2 = Argon2Kt()
+        val hashResult = argon2.hash(
+            Argon2Mode.ARGON2_ID,
+            password = password,
+            salt = salt,
+            tCostInIterations = 5,
+            mCostInKibibyte = 65536,
+            hashLengthInBytes = 32
+        )
+        val secretKey = SecretKeySpec(hashResult.rawHashAsByteArray(), "AES")
 
         // Decrypt the data
         val cipher = Cipher.getInstance(FILE_ENCRYPTION_ALGORITHM)

@@ -58,7 +58,7 @@ class BackupWorker(
                         // Return failure
                         return@withContext Result.failure()
                     }
-                    Encryption.encryptFileContent(data, password)
+                    Encryption.encryptFileContentArgon(data, password.toByteArray())
                 } else {
                     data
                 }

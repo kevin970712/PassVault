@@ -1,8 +1,6 @@
 package com.jksalcedo.passvault.viewmodel
 
-import android.app.Activity
 import android.app.Application
-import android.content.Intent
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
@@ -12,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.work.Constraints
@@ -26,7 +25,6 @@ import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.importer.BitwardenImporter
 import com.jksalcedo.passvault.importer.KeePassImporter
 import com.jksalcedo.passvault.repositories.PreferenceRepository
-import com.jksalcedo.passvault.ui.auth.UnlockActivity
 import com.jksalcedo.passvault.ui.settings.ImportType
 import com.jksalcedo.passvault.ui.settings.ImportUiState
 import com.jksalcedo.passvault.utils.Utility
@@ -46,7 +44,6 @@ import java.util.concurrent.TimeUnit
 
 open class SettingsViewModel(
     application: Application,
-    private val context: Activity,
     private val adapter: BackupAdapter? = null,
 ) :
     AndroidViewModel(application) {
@@ -64,6 +61,10 @@ open class SettingsViewModel(
 
     private val _importUiState = MutableLiveData<ImportUiState>(ImportUiState.Idle)
     val importUiState: LiveData<ImportUiState> = _importUiState
+
+    private val _restartAppEvent = MutableLiveData<Unit?>()
+    val restartAppEvent: LiveData<Unit?> = _restartAppEvent
+
 
     companion object {
         private const val AUTO_BACKUP_WORK_TAG = "auto_backup_work"
@@ -140,16 +141,9 @@ open class SettingsViewModel(
                 File(getApplication<Application>().applicationInfo.dataDir, "shared_prefs")
             prefsDir.listFiles()?.forEach { it.delete() }
             // Restart to reflect changes
-            triggerRestart(context = context)
+            _restartAppEvent.postValue(Unit)
+            _restartAppEvent.value = null
         }
-    }
-
-    fun triggerRestart(context: Activity) {
-        val intent = Intent(context, UnlockActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-        context.finish()
-        kotlin.system.exitProcess(0)
     }
 
     fun exportEntries(uri: Uri, password: String?) {
@@ -160,7 +154,7 @@ open class SettingsViewModel(
             return
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Fetch entries from the database
                 val entries = withContext(Dispatchers.IO) {
@@ -171,7 +165,10 @@ open class SettingsViewModel(
                     Utility.serializeEntries(entries, prefsRepository.getExportFormat())
 
                 val contentToWrite = if (isEncryptionEnabled) {
-                    Encryption.encryptFileContent(serializedData, password!!)
+                    Encryption.encryptFileContentArgon(
+                        serializedData,
+                        password = password!!.toByteArray()
+                    )
                 } else {
                     serializedData
                 }
@@ -195,7 +192,7 @@ open class SettingsViewModel(
                 // Determine if we need to decrypt or use raw content
                 val jsonToParse = if (password.isNotEmpty()) {
                     try {
-                        Encryption.decryptFileContent(fileContent, password)
+                        attemptDecryption(fileContent, password)
                     } catch (e: Exception) {
                         throw Exception(
                             "Decryption failed. Wrong password or not an encrypted file.",
@@ -228,6 +225,25 @@ open class SettingsViewModel(
                 e.printStackTrace()
                 _importUiState.postValue(ImportUiState.Error(e))
             }
+        }
+    }
+
+    private fun attemptDecryption(content: String, password: String): String {
+        // Try the new method first (Argon2)
+        try {
+            return Encryption.decryptFileContentArgon(content, password.toByteArray())
+        } catch (_: Exception) {
+            // This is an old file
+            // Ignore
+        }
+
+        // Old method
+        try {
+            @Suppress("DEPRECATION")
+            return Encryption.decryptFileContent(content, password)
+        } catch (_: Exception) {
+            // Both failed, the password is wrong or the file is corrupt
+            throw Exception("Decryption failed. Invalid password or unknown format.")
         }
     }
 
@@ -339,14 +355,14 @@ open class SettingsViewModel(
                         type = type,
                         password = password,
                         filePath = uri,
-                        context = context
+                        context = application
                     )
 
                     ImportType.KEEPASS_KDBX -> KeePassImporter(
                         type = type,
                         password = password,
                         filePath = uri,
-                        context = context
+                        context = application
                     )
 
                     ImportType.BITWARDEN_JSON -> BitwardenImporter()
@@ -396,9 +412,8 @@ open class SettingsViewModel(
 @Suppress("UNCHECKED_CAST")
 class SettingsModelFactory(
     private val application: Application,
-    private val activity: Activity
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SettingsViewModel(application, activity) as T
+        return SettingsViewModel(application) as T
     }
 }

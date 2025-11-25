@@ -57,11 +57,12 @@ system. The application does not require internet permissions. User data never l
 - [x] Secure PIN Authentication
 - [x] Biometric (Fingerprint) Login
 - [x] Encrypted Database (AES-256)
+- [X] [Argon2Kt](https://github.com/lambdapioneer/argon2kt) for file encryption
 - [x] Add, View, Edit, & Delete Passwords
 - [x] In-app Password Generator
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
-- [X] Import from KeePass/Bitwarden
+- [X] Import from KeePass (using [kotpass](https://github.com/keemobile/kotpass))/Bitwarden
 
 ## Planned Features
 

@@ -1,12 +1,22 @@
+## [0.8.0-beta01] - 2025-11-25
+
+### Features
+
+- Enhance backup encryption with Argon2 and refactor restart logic
+
 ## [0.7.1] - 2025-11-21
+
+### Other
+
+- Configure ABI splits and update APK naming convention
 
 ### Refactor
 
 - Remove unnecessary `@RequiresApi` annotations and add compatibility checks
 - Replace launcher icons with adaptive vector drawables
-- Replace launcher icons with adaptive vector drawables
 - Allow format override during import
 - Enhance serialization, timestamp format, and importer logic
+- Enhance import logic and replace launcher icons
 
 ## [0.7.0] - 2025-11-20
 

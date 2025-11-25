@@ -18,8 +18,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 12
-        versionName = "0.7.1"
+        versionCode = 13
+        versionName = "0.8.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -161,5 +161,8 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
 
-    implementation("app.keemobile:kotpass:0.13.0")
+    implementation(libs.kotpass)
+
+    // Argon2
+    implementation(libs.argon2kt)
 }

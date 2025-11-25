@@ -1,5 +1,6 @@
 [versions]
 agp = "8.13.1"
+argon2kt = "1.6.0"
 biometric = "1.1.0"
 espressoIntents = "3.7.0"
 kotlin = "2.2.21"
@@ -10,6 +11,7 @@ espressoCore = "3.7.0"
 appcompat = "1.7.1"
 kotlinxSerializationCsv = "3.2.0"
 kotlinxSerializationJson = "1.9.0"
+kotpass = "0.13.0"
 material = "1.13.0"
 constraintlayout = "2.2.1"
 mockk = "1.14.6"
@@ -37,12 +39,14 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "workRuntimeKtx" }
+argon2kt = { module = "com.lambdapioneer.argon2kt:argon2kt", version.ref = "argon2kt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlinx-serialization-csv = { module = "de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv", version.ref = "kotlinxSerializationCsv" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotpass = { module = "app.keemobile:kotpass", version.ref = "kotpass" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
