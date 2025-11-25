@@ -6,7 +6,8 @@
   <br>
 </h1>
 
-<h4 align="center">A secure, lightweight, and offline password manager for Android built with Kotlin.</h4>
+<h4 align="center">A secure, lightweight, and offline password manager for Android built with
+Kotlin.</h4>
 
 <h4 align="center">
 <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/jksalcedo/PassVault/total?logo=GitHub">
@@ -21,7 +22,7 @@
   <a href="https://github.com/jksalcedo/PassVault/releases">
     <img src="https://img.shields.io/badge/Get_it_on-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white" alt="Get it on GitHub" />
   </a>
-  
+
   <a href="https://sourceforge.net/projects/passvault-app/files/latest/download">
     <img src="https://img.shields.io/badge/Get_it_on-SourceForge-orange?style=for-the-badge&logo=sourceforge&logoColor=white" alt="Get it on SourceForge" />
   </a>
@@ -41,7 +42,7 @@
     <img src="./metadata/en-US/images/phoneScreenshots/4.jpg" alt="PassVault Screenshot" width="250" />
   <img src="./metadata/en-US/images/phoneScreenshots/5.jpg" alt="PassVault Screenshot" width="250" />
   <br>
-  
+
   <br>
 </h1>
 
@@ -54,11 +55,12 @@ system. The application does not require internet permissions. User data never l
 - [x] Secure PIN Authentication
 - [x] Biometric (Fingerprint) Login
 - [x] Encrypted Database (AES-256)
+- [X] [Argon2Kt](https://github.com/lambdapioneer/argon2kt) for file encryption
 - [x] Add, View, Edit, & Delete Passwords
 - [x] In-app Password Generator
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
-- [X] Import from KeePass/Bitwarden
+- [X] Import from KeePass (using [kotpass](https://github.com/keemobile/kotpass))/Bitwarden
 
 ## Planned Features
 
@@ -69,7 +71,6 @@ system. The application does not require internet permissions. User data never l
 - [ ] Password strength scoring
 - [ ] Custom field templates
 - [ ] TOTP generator
-
 
 ## Tech Stack & Architecture
 
