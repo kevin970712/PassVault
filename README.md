@@ -30,6 +30,8 @@ Kotlin.</h4>
   <a href="https://f-droid.org/packages/com.jksalcedo.passvault/">
     <img src="https://img.shields.io/badge/Get_it_on-F--Droid-green?style=for-the-badge&logo=f-droid&logoColor=white" alt="Get it on F-Droid" />
   </a>
+
+  [![IzzyOnDroid Shield](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.jksalcedo.passvault&label=IzzyOnDroid&style=for-the-badge)](https://apt.izzysoft.de/packages/com.jksalcedo.passvault)
 </div>
 
 
