@@ -22,8 +22,7 @@ class ImportDialog : BottomSheetDialogFragment() {
     private var settingsActivity: SettingsActivity? = null
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsModelFactory(
-            application = requireActivity().application,
-            activity = requireActivity()
+            application = requireActivity().application
         )
     }
 

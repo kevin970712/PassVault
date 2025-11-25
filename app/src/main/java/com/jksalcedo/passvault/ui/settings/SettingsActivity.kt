@@ -14,9 +14,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.repositories.PreferenceRepository
+import com.jksalcedo.passvault.ui.auth.UnlockActivity
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -26,7 +28,7 @@ import java.util.Locale
 class SettingsActivity : AppCompatActivity() {
 
     private val settingsViewModel: SettingsViewModel by viewModels {
-        SettingsModelFactory(application = this.application, this)
+        SettingsModelFactory(application = this.application)
     }
 
     private val preferenceRepository by lazy { PreferenceRepository(application) }
@@ -42,8 +44,8 @@ class SettingsActivity : AppCompatActivity() {
                         uri,
                         password = password
                     )
-                    lifecycleScope.launch {
-                        delay(1000)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(2000)
                         password = null
                     }
                 }
@@ -105,6 +107,20 @@ class SettingsActivity : AppCompatActivity() {
                 }
             )
         }
+
+        settingsViewModel.restartAppEvent.observe(this) { event ->
+            if (event != null) {
+                triggerRestart()
+            }
+        }
+    }
+
+    fun triggerRestart() {
+        val intent = Intent(this, UnlockActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        this.startActivity(intent)
+        this.finish()
+        kotlin.system.exitProcess(0)
     }
 
     fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: (String) -> Unit) {
@@ -133,7 +149,7 @@ class SettingsActivity : AppCompatActivity() {
                     val etPassword = layout.findViewById<TextInputEditText>(R.id.et_password)
                     val etConfirmPassword =
                         layout.findViewById(R.id.et_confirm_password) ?: TextInputEditText(this)
-                    val newPassword = etPassword.text.toString()
+                    val newPassword = etPassword.text.toString().trim()
                     val confirmPassword = etConfirmPassword.text ?: ""
                     val til2 = layout.findViewById<TextInputLayout>(R.id.til2)
 
@@ -152,7 +168,7 @@ class SettingsActivity : AppCompatActivity() {
                             }
                         }
 
-                        newPassword != confirmPassword.toString() -> {
+                        newPassword != confirmPassword.toString().trim() -> {
                             til2.error = "Password do not match"
                         }
 
@@ -164,10 +180,6 @@ class SettingsActivity : AppCompatActivity() {
                             )
                             dialog.dismiss()
                             onPasswordReady(newPassword) // Proceed
-                            lifecycleScope.launch {
-                                delay(1000)
-                                password = null
-                            }
                         }
                     }
                 }
@@ -177,7 +189,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun createFileForExport() {
-        val formatter = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy-MM-dd_HH:mm", Locale.getDefault())
         val exportFormat = preferenceRepository.getExportFormat()
         val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
 
