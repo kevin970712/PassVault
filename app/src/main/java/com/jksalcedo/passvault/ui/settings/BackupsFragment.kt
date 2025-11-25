@@ -29,8 +29,7 @@ class BackupsFragment : Fragment() {
     private lateinit var adapter: BackupAdapter
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsModelFactory(
-            application = requireActivity().application,
-            activity = requireActivity()
+            application = requireActivity().application
         )
     }
     private lateinit var backupFile: File

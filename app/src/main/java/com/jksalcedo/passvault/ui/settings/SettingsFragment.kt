@@ -31,7 +31,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         PreferenceRepository(requireContext())
     }
     private val viewModel: SettingsViewModel by viewModels {
-        SettingsModelFactory(application = requireActivity().application, requireActivity())
+        SettingsModelFactory(application = requireActivity().application)
     }
 
     override fun onAttach(context: Context) {
