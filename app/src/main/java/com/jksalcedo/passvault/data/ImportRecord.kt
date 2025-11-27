@@ -1,5 +1,8 @@
 package com.jksalcedo.passvault.data
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ImportRecord(
     val title: String,
     val username: String?,

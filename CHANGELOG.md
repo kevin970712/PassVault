@@ -1,7 +1,18 @@
+## [0.8.0-beta02] - 2025-11-27
+
+### Features
+
+- Refactor import/export
+
+### Documentation
+
+- Add KDoc comments to classes and public methods
+
 ## [0.8.0-beta01] - 2025-11-25
 
 ### Features
 
+- Update README with additional sections
 - Enhance backup encryption with Argon2 and refactor restart logic
 
 ## [0.7.1] - 2025-11-21

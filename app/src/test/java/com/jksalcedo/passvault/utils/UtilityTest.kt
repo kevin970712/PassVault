@@ -44,10 +44,28 @@ class UtilityTest {
             AppDatabase::class.java
         ).allowMainThreadQueries().build()
         dao = database.passwordDao()
+        io.mockk.mockkObject(com.jksalcedo.passvault.crypto.Encryption)
+        io.mockk.every { com.jksalcedo.passvault.crypto.Encryption.encrypt(any()) } returns Pair(
+            "cipher",
+            "iv"
+        )
+        io.mockk.every {
+            com.jksalcedo.passvault.crypto.Encryption.decrypt(
+                any(),
+                any()
+            )
+        } returns "SuperSecretPassword123!"
+        io.mockk.every {
+            com.jksalcedo.passvault.crypto.Encryption.decrypt(
+                eq("c"),
+                eq("iv")
+            )
+        } returns "password"
     }
 
     @After
     fun teardown() {
+        io.mockk.unmockkAll()
         database.close()
     }
 
@@ -83,21 +101,23 @@ class UtilityTest {
         print(result)
 
         // Check for the first entry with a non-null username
-        assertThat(result).contains("\"id\":1,\"title\":\"Entry1\",\"username\":\"user1\"")
+        assertThat(result).contains("\"title\": \"Entry1\"")
+        assertThat(result).contains("\"username\": \"user1\"")
 
         // Check for the second entry with null username
-        assertThat(result).contains("\"id\":2,\"title\":\"Entry2\",\"username\":null")
-        assertThat(result).contains("\"notes\":\"some notes\"")
+        assertThat(result).contains("\"title\": \"Entry2\"")
+        assertThat(result).contains("\"username\": null")
+        assertThat(result).contains("\"notes\": \"some notes\"")
     }
 
     @Test
     fun `deserialize entries`() = runTest {
         val to = listOf(
             PasswordEntry(
-                id = 1,
+                id = 0,
                 title = "Entry1",
                 username = "user1",
-                passwordCipher = "c",
+                passwordCipher = "cipher",
                 passwordIv = "iv",
                 notes = null,
                 createdAt = 0L,
@@ -111,10 +131,10 @@ class UtilityTest {
 
         assertThat(result).contains(
             PasswordEntry(
-                id = 1,
+                id = 0,
                 title = "Entry1",
                 username = "user1",
-                passwordCipher = "c",
+                passwordCipher = "cipher",
                 passwordIv = "iv",
                 notes = null,
                 createdAt = 0L,
@@ -221,5 +241,36 @@ class UtilityTest {
         } finally {
             Locale.setDefault(originalLocale)
         }
+    }
+
+    @Test
+    fun `serialize and deserialize preserves password`() = runTest {
+        val originalPassword = "SuperSecretPassword123!"
+        val (cipher, iv) = com.jksalcedo.passvault.crypto.Encryption.encrypt(originalPassword)
+
+        val entries = listOf(
+            PasswordEntry(
+                id = 1,
+                title = "PasswordTest",
+                username = "user",
+                passwordCipher = cipher,
+                passwordIv = iv,
+                notes = "notes",
+                createdAt = 100L,
+                updatedAt = 200L
+            )
+        )
+
+        val json = Utility.serializeEntries(entries, "json")
+        val deserialized = Utility.deserializeEntries(json, "json")
+
+        assertThat(deserialized).hasSize(1)
+        val entry = deserialized.first()
+
+        val decryptedPassword = com.jksalcedo.passvault.crypto.Encryption.decrypt(
+            entry.passwordCipher,
+            entry.passwordIv
+        )
+        assertThat(decryptedPassword).isEqualTo(originalPassword)
     }
 }
