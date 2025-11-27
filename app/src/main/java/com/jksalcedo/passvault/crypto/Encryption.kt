@@ -4,6 +4,8 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.jksalcedo.passvault.crypto.Encryption.decryptFileContentArgon
+import com.jksalcedo.passvault.crypto.Encryption.encryptFileContentArgon
 import com.lambdapioneer.argon2kt.Argon2Kt
 import com.lambdapioneer.argon2kt.Argon2Mode
 import java.security.KeyStore
@@ -32,11 +34,18 @@ object Encryption {
     private const val TAG_LENGTH_BITS = 128
     private const val IV_SIZE_BYTES = 12
 
+    /**
+     * Gets the Android KeyStore.
+     * @return The Android KeyStore.
+     */
     private fun getKeystore(): KeyStore {
         return KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
     }
 
     // Create key if absent
+    /**
+     * Creates Android Keystore key
+     */
     fun ensureKeyExists(requireUserAuth: Boolean = false) {
         val ks = getKeystore()
         if (ks.containsAlias(KEY_ALIAS)) return
@@ -71,6 +80,10 @@ object Encryption {
         keyGenerator.generateKey()
     }
 
+    /**
+     * Gets the secret key from the Android KeyStore.
+     * @return The secret key.
+     */
     private fun getSecretKey(): SecretKey {
         val ks = getKeystore()
         val entry = ks.getEntry(KEY_ALIAS, null)
@@ -78,6 +91,13 @@ object Encryption {
         return entry.secretKey
     }
 
+    /**
+     * Encrypts the given plain text or password with the Android Keystore key.
+     *
+     * @param plainText The text to encrypt.
+     * @return the `cipher` and `iv` in Base64 format
+     * @see encryptFileContentArgon
+     */
     fun encrypt(plainText: String): Pair<String /*cipherBase64*/, String /*ivBase64*/> {
         val cipher = Cipher.getInstance(AES_MODE)
         val key = getSecretKey()
@@ -89,6 +109,14 @@ object Encryption {
         return Pair(cipherB64, ivB64)
     }
 
+    /**
+     * Decrypts the given `cipher` and `iv`.
+     *
+     * @param cipherBase64 The `cipher` in Base64 format.
+     * @param ivBase64 The `iv` in Base64 format.
+     * @return The original plain text as String
+     * @see decryptFileContentArgon
+     */
     fun decrypt(cipherBase64: String, ivBase64: String): String {
         val cipher = Cipher.getInstance(AES_MODE)
         val key = getSecretKey()
@@ -100,6 +128,19 @@ object Encryption {
         return String(plain, Charsets.UTF_8)
     }
 
+    /**
+     * Encrypts a given string content using a password. This function is deprecated.
+     *
+     * This function derives an encryption key from the provided password using PBKDF2WithHmacSHA256.
+     * It then encrypts the plain text using AES/GCM/NoPadding. The output is a single
+     * Base64 encoded string containing the salt, initialization vector (IV), and the ciphertext.
+     *
+     * @param plainText The string content to be encrypted.
+     * @param password The password to use for deriving the encryption key.
+     * @return A Base64 encoded string representing the encrypted data (salt + IV + ciphertext).
+     * @see decryptFileContentArgon
+     * @see encryptFileContentArgon
+     */
     @Deprecated("Deprecated in favor of encryptFileContentArgon")
     fun encryptFileContent(plainText: String, password: String): String {
         // Generate a random salt
@@ -123,6 +164,16 @@ object Encryption {
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
+    /**
+     * Decrypts a Base64 encoded string using a password. This function is deprecated.
+     * It uses PBKDF2WithHmacSHA256 for key derivation and AES/GCM for decryption.
+     *
+     * The input string should be a concatenation of salt, IV, and ciphertext.
+     *
+     * @param encryptedDataB64 The Base64 encoded string containing the salt, IV, and ciphertext.
+     * @param password The password used for decryption.
+     * @return The original decrypted plaintext as a String.
+     */
     @Deprecated("Deprecated in favor of decryptFileContentArgon")
     fun decryptFileContent(encryptedDataB64: String, password: String): String {
         val combined = Base64.decode(encryptedDataB64, Base64.NO_WRAP)
@@ -144,6 +195,12 @@ object Encryption {
         return String(plain, Charsets.UTF_8)
     }
 
+    /**
+     * Encrypts a given string content using a password and Argon2.
+     * @param plainText The string content to be encrypted.
+     * @param password The password to use for deriving the encryption key.
+     * @return A Base64 encoded string representing the encrypted data (salt + IV + ciphertext).
+     */
     fun encryptFileContentArgon(plainText: String, password: ByteArray): String {
         // Generate a random salt
         val salt = ByteArray(SALT_SIZE_BYTES).apply { SecureRandom().nextBytes(this) }
@@ -174,6 +231,12 @@ object Encryption {
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
+    /**
+     * Decrypts a Base64 encoded string using a password and Argon2.
+     * @param encryptedDataB64 The Base64 encoded string containing the salt, IV, and ciphertext.
+     * @param password The password used for decryption.
+     * @return The original decrypted plaintext as a String.
+     */
     fun decryptFileContentArgon(encryptedDataB64: String, password: ByteArray): String {
         val combined = Base64.decode(encryptedDataB64, Base64.NO_WRAP)
         val salt = combined.copyOfRange(0, SALT_SIZE_BYTES)

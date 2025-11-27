@@ -14,9 +14,19 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.FragmentSetPinBinding
 import com.jksalcedo.passvault.utils.Utility
 
+/**
+ * A fragment for setting the master PIN.
+ */
 class SetPinFragment : Fragment() {
 
+    /**
+     * A listener for when the PIN is set.
+     */
     interface OnPinSetListener {
+        /**
+         * Called when the PIN is set.
+         * @param pin The PIN that was set.
+         */
         fun onPinSet(pin: String)
     }
 
@@ -62,6 +72,9 @@ class SetPinFragment : Fragment() {
         }
     }
 
+    /**
+     * Validates and saves the PIN.
+     */
     private fun validateAndSavePin() {
         try {
             Encryption.ensureKeyExists()

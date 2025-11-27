@@ -15,6 +15,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * A worker for creating backups.
+ * @param appContext The application context.
+ * @param workerParams The worker parameters.
+ * @param passwordRepository The password repository.
+ * @param preferenceRepository The preference repository.
+ */
 class BackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,

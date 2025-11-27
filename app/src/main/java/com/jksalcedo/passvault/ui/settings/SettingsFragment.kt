@@ -60,6 +60,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupSecurityPreferences()
     }
 
+    /**
+     * Navigates to the BackupsFragment when the "manage_backups" preference is clicked.
+     */
     private fun setupManageBackups() {
         findPreference<Preference>("manage_backups")?.setOnPreferenceClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -71,6 +74,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     }
 
+    /**
+     * Sets up the "about_app" preference to show the app version and navigate to the AboutFragment.
+     */
     private fun setupAboutPreference() {
         findPreference<Preference>("about_app")?.summary = viewModel.getAppVersion()
         findPreference<Preference>("about_app")?.setOnPreferenceClickListener {
@@ -82,6 +88,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the "export_data" and "import_data" preferences to handle import/export actions.
+     */
     private fun setupExportAndImport() {
         findPreference<Preference>("export_data")?.setOnPreferenceClickListener {
             handleImportExportRequest(Action.EXPORT)
@@ -94,6 +103,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Handles the import or export action, showing a biometric prompt if required.
+     * @param action The action to perform (import or export).
+     */
     private fun handleImportExportRequest(action: Action) {
         // Check if the "Require Auth" setting is enabled
         val requireAuth = prefsRepository.getRequireAuthForExport()
@@ -132,6 +145,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the "export_format" preference to allow changing the export format.
+     */
     private fun setupExportFormat() {
         findPreference<ListPreference>("export_format")?.setOnPreferenceChangeListener { _, newValue ->
             val format = newValue as String
@@ -141,6 +157,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the "auto_backups" preference, allowing the user to enable or disable automatic backups.
+     */
     private fun setupAutoBackups() {
         val autoBackupPref = findPreference<SwitchPreferenceCompat>("auto_backups")
         autoBackupPref?.isChecked = prefsRepository.getAutoBackups()
@@ -208,6 +227,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the "last_backup" preference to show the last backup time.
+     */
     private fun setupLastBackup() {
         updateLastBackupSummary()
         findPreference<Preference>("last_backup")?.setOnPreferenceClickListener {
@@ -227,6 +249,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Updates the summary of the "last_backup" preference with the last backup date.
+     */
     private fun updateLastBackupSummary() {
         val lastBackupPref = findPreference<Preference>("last_backup")
         val lastBackupTime = prefsRepository.getLastBackupTime()
@@ -239,6 +264,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the "storage_info" preference to show storage usage details.
+     */
     private fun setupStorageInfo() {
         updateStorageInfoSummary()
         findPreference<Preference>("storage_info")?.setOnPreferenceClickListener {
@@ -256,12 +284,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Updates the summary of the "storage_info" preference with the total storage size.
+     */
     private fun updateStorageInfoSummary() {
         val (dbSize, prefsSize) = viewModel.getStorageInfo()
         val totalSize = dbSize + prefsSize
         findPreference<Preference>("storage_info")?.summary = "Total: ${formatFileSize(totalSize)}"
     }
 
+    /**
+     * Sets up the "clear_data" preference to allow clearing all app data.
+     */
     private fun setupClearData() {
         findPreference<Preference>("clear_data")?.setOnPreferenceClickListener {
             AlertDialog.Builder(requireContext())
@@ -278,6 +312,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Sets up the security-related preferences, such as requiring authentication for exports and encrypting backups.
+     */
     private fun setupSecurityPreferences() {
         val requireAuthPref = findPreference<SwitchPreferenceCompat>("require_auth_export")
         requireAuthPref?.isChecked = prefsRepository.getRequireAuthForExport()

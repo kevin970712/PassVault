@@ -14,7 +14,17 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.csv.Csv
 import kotlinx.serialization.decodeFromString
 
-@OptIn(ExperimentalSerializationApi::class)
+/**
+ * Imports passwords from KeePass CSV or KDBX files.
+ *
+ * @param csv The Csv instance to use for parsing.
+ * @param filePath The path to the KDBX file.
+ * @param password The password for the KDBX file.
+ * @param type The type of import.
+ * @param context The context to use for content resolving.
+ */
+@OptIn
+    (ExperimentalSerializationApi::class)
 class KeePassImporter(
     private val csv: Csv = Csv {
         hasHeaderRecord = true
@@ -27,6 +37,13 @@ class KeePassImporter(
     private val context: Context? = null
 ) : VaultImporter {
 
+    /**
+     * Parses the raw input string.
+     *
+     * @param raw The raw input string to parse.
+     * @return A list of [ImportRecord].
+     * @throws [Exception] if parsing fails.
+     */
     override suspend fun parse(raw: String): List<ImportRecord> {
         return when (type) {
             ImportType.KEEPASS_CSV -> parseCsv(raw)
@@ -35,6 +52,13 @@ class KeePassImporter(
         }
     }
 
+    /**
+     * Parses a CSV string.
+     *
+     * @param raw The CSV string to parse.
+     * @return A list of [ImportRecord].
+     * @throws [Exception] if parsing fails.
+     */
     private fun parseCsv(raw: String): List<ImportRecord> {
         return try {
             val parsedRows = csv.decodeFromString<List<KeepassRecord>>(raw)
@@ -66,6 +90,13 @@ class KeePassImporter(
         }
     }
 
+    /**
+     * Parses a KDBX file.
+     *
+     * @return A list of [ImportRecord].
+     * @throws [IllegalStateException] if context is null.
+     * @throws [Exception] if parsing fails.
+     */
     private fun parseKdbx(): List<ImportRecord> {
         if (filePath == null || password == null) {
             return emptyList()
@@ -102,6 +133,12 @@ class KeePassImporter(
         }
     }
 
+    /**
+     * Maps a list of [ImportRecord] to a list of PasswordEntry.
+     *
+     * @param records The list of [ImportRecord] to map.
+     * @return A list of PasswordEntry.
+     */
     override fun mapToPasswordEntries(records: List<ImportRecord>) =
         records.map {
             it.toPasswordEntry()

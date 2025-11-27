@@ -22,6 +22,9 @@ import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
 import java.io.File
 
+/**
+ * A fragment for managing backups.
+ */
 class BackupsFragment : Fragment() {
 
     private var _binding: FragmentBackupsBinding? = null

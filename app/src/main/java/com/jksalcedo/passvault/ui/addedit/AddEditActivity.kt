@@ -15,6 +15,9 @@ import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
+/**
+ * An activity for adding and editing password entries.
+ */
 class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
@@ -76,6 +79,10 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         }
     }
 
+    /**
+     * Populates the UI with the given password entry.
+     * @param entry The password entry to populate the UI with.
+     */
     private fun populateUi(entry: PasswordEntry) {
         binding.etTitle.setText(entry.title)
         binding.etUsername.setText(entry.username)
@@ -91,6 +98,9 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         }
     }
 
+    /**
+     * Saves the current password entry.
+     */
     private fun saveEntry() {
         val title = binding.etTitle.text.toString()
         val username = binding.etUsername.text.toString()
@@ -155,6 +165,12 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         const val EXTRA_ID = "extra_id"
         const val EXTRA_ENTRY = " extra_entry"
 
+        /**
+         * Creates an intent to start [AddEditActivity].
+         * @param context The context.
+         * @param entry The password entry to edit.
+         * @return An intent to start [AddEditActivity].
+         */
         fun createIntent(context: Context, entry: PasswordEntry? = null): Intent {
             return Intent(context, AddEditActivity::class.java).apply {
                 entry?.let {
