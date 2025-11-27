@@ -33,15 +33,35 @@ object Utility {
     @OptIn(ExperimentalSerializationApi::class)
     fun serializeEntries(list: List<PasswordEntry>, format: String): String {
         val normalized = format.lowercase(Locale.ROOT)
-        return if (normalized == "json") Json.encodeToString(list) else Csv.encodeToString(list)
+        val json = Json { prettyPrint = true }
+        val importRecords = list.map { it.toImportRecord() }
+        return if (normalized == "json") json.encodeToString(importRecords) else Csv.encodeToString(
+            importRecords
+        )
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     fun deserializeEntries(serializedString: String, format: String): List<PasswordEntry> {
         val normalized = format.lowercase(Locale.ROOT)
-        return if (normalized == "json") Json.decodeFromString(serializedString) else Csv.decodeFromString(
-            serializedString
-        )
+        return try {
+            val importRecords: List<ImportRecord> = if (normalized == "json") {
+                Json.decodeFromString(serializedString)
+            } else {
+                Csv.decodeFromString(serializedString)
+            }
+            importRecords.map { it.toPasswordEntry() }
+        } catch (e: Exception) {
+            // Fallback for old format
+            if (normalized == "json") {
+                try {
+                    Json.decodeFromString<List<PasswordEntry>>(serializedString)
+                } catch (e2: Exception) {
+                    throw e2
+                }
+            } else {
+                throw e
+            }
+        }
     }
 
     fun getDatabaseSize(context: Context, dbName: String): Long {
@@ -85,8 +105,24 @@ object Utility {
             passwordCipher = cipher,
             passwordIv = iv,
             notes = notes,
-            createdAt = createdAt!!,
-            updatedAt = updatedAt!!
+            createdAt = createdAt ?: System.currentTimeMillis(),
+            updatedAt = updatedAt ?: System.currentTimeMillis()
+        )
+    }
+
+    private fun PasswordEntry.toImportRecord(): ImportRecord {
+        val password = try {
+            Encryption.decrypt(this.passwordCipher, this.passwordIv)
+        } catch (e: Exception) {
+            throw e
+        }
+        return ImportRecord(
+            title = this.title,
+            username = this.username,
+            password = password,
+            notes = this.notes,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt
         )
     }
 }

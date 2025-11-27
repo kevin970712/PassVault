@@ -112,7 +112,10 @@ class ImportDialog : BottomSheetDialogFragment() {
     private fun openFileForImport() {
         val mimeType = when (type) {
             ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
-            ImportType.KEEPASS_CSV -> "text/csv"
+            ImportType.KEEPASS_CSV -> {
+                "text/csv"
+            }
+
             ImportType.KEEPASS_KDBX -> "application/octet-stream"
         }
 

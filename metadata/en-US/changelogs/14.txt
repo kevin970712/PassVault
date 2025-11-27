@@ -1,0 +1,7 @@
+Features
+
+- Refactor import/export
+
+Documentation
+
+- Add KDoc comments to classes and public methods

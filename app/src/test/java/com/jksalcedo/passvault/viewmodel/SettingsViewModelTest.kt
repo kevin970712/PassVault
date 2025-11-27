@@ -14,9 +14,6 @@ import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.settings.ImportUiState
 import com.jksalcedo.passvault.utils.Utility
-import java.io.File
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -28,6 +25,9 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -53,11 +53,15 @@ class SettingsViewModelTest {
         ).allowMainThreadQueries().build()
         AppDatabase.initializeForTesting(database)
         preferenceRepository = PreferenceRepository(application).apply { clear() }
-        viewModel = SettingsViewModel(application, activity)
+        viewModel = SettingsViewModel(application)
+        io.mockk.mockkObject(com.jksalcedo.passvault.crypto.Encryption)
+        io.mockk.every { com.jksalcedo.passvault.crypto.Encryption.encrypt(any()) } returns Pair("cipher", "iv")
+        io.mockk.every { com.jksalcedo.passvault.crypto.Encryption.decrypt(any(), any()) } returns "password"
     }
 
     @After
     fun tearDown() {
+        io.mockk.unmockkAll()
         database.clearAllTables()
     }
 
