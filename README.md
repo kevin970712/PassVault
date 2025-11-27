@@ -82,7 +82,7 @@ This project follows the MVVM (Model-View-ViewModel) architecture.
 - **UI**: XML Layouts with ViewBinding and Material Design Components
 - **Database**: Room Persistence Library
 - **Architecture**: ViewModel, Repository, LiveData
-- **Security**: Android Keystore, AES/CBC/PKCS7 Encryption
+- **Security**: Android Keystore, AES/CBC/PKCS7 Encryption, Argon2
 
 ## Requirements
 
