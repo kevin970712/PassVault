@@ -44,17 +44,11 @@ jobs:
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
-      - name: Get APK path
-        id: apk-path
-        run: |
-          APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" -type f | head -n 1)
-          echo "path=$APK_PATH" >> $GITHUB_OUTPUT
-          echo "name=$(basename $APK_PATH)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: ncipollo/release-action@v1.20.0
         with:
-          artifacts: ${{ steps.apk-path.outputs.path }}
+          artifacts: "app/build/outputs/apk/release/*.apk"
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
