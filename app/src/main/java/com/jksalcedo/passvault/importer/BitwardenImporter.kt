@@ -7,6 +7,11 @@ import com.jksalcedo.passvault.utils.Utility.toPasswordEntry
 import kotlinx.serialization.json.Json
 
 
+/**
+ * An importer for Bitwarden.
+ * This class is responsible for parsing a JSON export from Bitwarden
+ * and converting it into a list of [ImportRecord] objects.
+ */
 class BitwardenImporter(
     private val json: Json = Json { ignoreUnknownKeys = true }
 ) : VaultImporter {

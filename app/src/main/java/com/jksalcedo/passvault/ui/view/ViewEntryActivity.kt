@@ -23,6 +23,9 @@ import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * An activity for viewing a password entry.
+ */
 class ViewEntryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewEntryBinding
@@ -157,6 +160,10 @@ class ViewEntryActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets the visibility of the FAB menu.
+     * @param expanded True to expand the FAB menu, false to collapse it.
+     */
     private fun setFabVisibility(expanded: Boolean) {
         if (expanded) {
             binding.actions.visibility = View.VISIBLE
@@ -174,6 +181,9 @@ class ViewEntryActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Collapses the FAB menu.
+     */
     private fun collapseFab() {
         setFabVisibility(false)
     }
@@ -187,6 +197,12 @@ class ViewEntryActivity : AppCompatActivity() {
         const val EXTRA_ENTRY = "extra_entry"
         private const val MASKED_PASSWORD = "••••••••"
 
+        /**
+         * Creates an intent to start [ViewEntryActivity].
+         * @param context The context.
+         * @param entry The password entry to view.
+         * @return An intent to start [ViewEntryActivity].
+         */
         fun createIntent(context: Context, entry: PasswordEntry): Intent {
             return Intent(context, ViewEntryActivity::class.java).apply {
                 putExtra(EXTRA_ENTRY, entry)

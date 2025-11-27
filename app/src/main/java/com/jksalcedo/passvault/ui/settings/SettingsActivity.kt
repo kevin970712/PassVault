@@ -25,6 +25,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * An activity for managing app settings.
+ */
 class SettingsActivity : AppCompatActivity() {
 
     private val settingsViewModel: SettingsViewModel by viewModels {
@@ -70,6 +73,9 @@ class SettingsActivity : AppCompatActivity() {
         observeViewModelResults()
     }
 
+    /**
+     * Observes the results of the view model's operations.
+     */
     private fun observeViewModelResults() {
         // Observe export result
         settingsViewModel.exportResult.observe(this) { result ->
@@ -115,6 +121,9 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Triggers a restart of the app.
+     */
     fun triggerRestart() {
         val intent = Intent(this, UnlockActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -123,6 +132,11 @@ class SettingsActivity : AppCompatActivity() {
         kotlin.system.exitProcess(0)
     }
 
+    /**
+     * Ensures that a password exists before performing an action.
+     * @param isImporting True if importing, false if exporting.
+     * @param onPasswordReady A callback to be invoked when the password is ready.
+     */
     fun ensurePasswordExists(isImporting: Boolean, onPasswordReady: (String) -> Unit) {
         if (password == null) {
             // No password found
@@ -188,6 +202,9 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Creates a file for export.
+     */
     fun createFileForExport() {
         val formatter = SimpleDateFormat("yyyy-MM-dd_HH:mm", Locale.getDefault())
         val exportFormat = preferenceRepository.getExportFormat()

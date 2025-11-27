@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.FragmentAboutBinding
 
+/**
+ * A fragment for displaying information about the app.
+ */
 class AboutFragment : Fragment() {
 
     private var _binding: FragmentAboutBinding? = null

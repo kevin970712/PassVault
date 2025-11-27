@@ -20,6 +20,9 @@ interface PasswordDialogListener {
     fun onPasswordGenerated(password: String)
 }
 
+/**
+ * A dialog for generating passwords.
+ */
 class PasswordGenDialog : DialogFragment() {
 
     private var generatedPassword: String = ""

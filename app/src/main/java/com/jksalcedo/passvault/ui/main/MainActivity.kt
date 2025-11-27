@@ -17,6 +17,9 @@ import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
+/**
+ * The main activity of the app.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

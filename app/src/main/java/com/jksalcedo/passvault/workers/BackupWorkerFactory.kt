@@ -7,6 +7,11 @@ import androidx.work.WorkerParameters
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 
+/**
+ * A factory for creating [BackupWorker] instances.
+ * @param passwordRepository The password repository.
+ * @param preferenceRepository The preference repository.
+ */
 class BackupWorkerFactory(
     private val passwordRepository: PasswordRepository,
     private val preferenceRepository: PreferenceRepository

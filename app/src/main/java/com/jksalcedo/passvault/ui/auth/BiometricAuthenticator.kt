@@ -9,6 +9,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.jksalcedo.passvault.R
 
+/**
+ * A class for handling biometric authentication.
+ */
 class BiometricAuthenticator {
 
     companion object {
@@ -20,6 +23,12 @@ class BiometricAuthenticator {
         }
     }
 
+    /**
+     * Shows a biometric prompt.
+     * @param activity The activity to show the prompt in.
+     * @param onSuccess A callback to be invoked when authentication is successful.
+     * @param onFailure A callback to be invoked when authentication fails.
+     */
     fun showBiometricPrompt(
         activity: AppCompatActivity,
         onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
@@ -63,7 +72,12 @@ class BiometricAuthenticator {
         prompt.authenticate(promptInfo)
     }
 
-    // Overload for Fragments for convenience
+    /**
+     * Shows a biometric prompt.
+     * @param fragment The fragment to show the prompt in.
+     * @param onSuccess A callback to be invoked when authentication is successful.
+     * @param onFailure A callback to be invoked when authentication fails.
+     */
     fun showBiometricPrompt(
         fragment: Fragment,
         onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,

@@ -11,6 +11,9 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
 import com.jksalcedo.passvault.ui.main.MainActivity
 
+/**
+ * An activity for unlocking the app.
+ */
 class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
 
     lateinit var binding: ActivityUnlockBinding
@@ -85,6 +88,10 @@ class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
         }
     }
 
+    /**
+     * Sets up the biometric authentication if it is available.
+     * @param hasPin True if a PIN has been set, false otherwise.
+     */
     private fun setupBiometricIfAvailable(hasPin: Boolean) {
         if (!hasPin) {
             binding.btnUseBiometric.visibility = View.GONE

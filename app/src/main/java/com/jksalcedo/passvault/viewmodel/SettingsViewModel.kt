@@ -42,6 +42,11 @@ import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
+/**
+ * ViewModel for settings.
+ * @param application The application.
+ * @param adapter The backup adapter.
+ */
 open class SettingsViewModel(
     application: Application,
     private val adapter: BackupAdapter? = null,
@@ -70,10 +75,17 @@ open class SettingsViewModel(
         private const val AUTO_BACKUP_WORK_TAG = "auto_backup_work"
     }
 
+    /**
+     * Resets the import UI state to Idle.
+     */
     fun resetImportState() {
         _importUiState.value = ImportUiState.Idle
     }
 
+    /**
+     * Enables or disables automatic backups.
+     * @param enabled True to enable, false to disable.
+     */
     fun setAutoBackups(enabled: Boolean) {
         prefsRepository.setAutoBackups(enabled)
         if (enabled) {
@@ -83,6 +95,9 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Schedules a periodic work request for automatic backups.
+     */
     private fun scheduleAutoBackup() {
         val constraints = Constraints.Builder()
             .setRequiresCharging(false)
@@ -103,10 +118,17 @@ open class SettingsViewModel(
         )
     }
 
+    /**
+     * Cancels the automatic backup work request.
+     */
     private fun cancelAutoBackup() {
         workManager.cancelUniqueWork(AUTO_BACKUP_WORK_TAG)
     }
 
+    /**
+     * Gets the app version name.
+     * @return The app version name.
+     */
     fun getAppVersion(): String {
         return try {
             val packageName = getApplication<Application>().packageName
@@ -123,12 +145,19 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Gets the storage info.
+     * @return A pair of longs representing the database size and preferences size.
+     */
     fun getStorageInfo(): Pair<Long, Long> {
         val dbSize = Utility.getDatabaseSize(getApplication(), "passvault_db")
         val prefsSize = getSharedPreferencesSize()
         return Pair(dbSize, prefsSize)
     }
 
+    /**
+     * Clears all app data.
+     */
     fun clearAllData() {
         viewModelScope.launch(Dispatchers.IO) {
             val dbFile = getApplication<Application>().getDatabasePath("passvault_db")
@@ -146,6 +175,11 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Exports entries to a file.
+     * @param uri The URI of the file to export to.
+     * @param password The password to encrypt the file with.
+     */
     fun exportEntries(uri: Uri, password: String?) {
         val isEncryptionEnabled = prefsRepository.getEncryptBackups()
 
@@ -181,6 +215,12 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Imports entries from a file.
+     * @param uri The URI of the file to import from.
+     * @param password The password to decrypt the file with.
+     * @param formatOverride The format of the file to import from.
+     */
     fun importEntries(uri: Uri, password: String, formatOverride: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -228,6 +268,12 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Attempts to decrypt the given content with the given password.
+     * @param content The content to decrypt.
+     * @param password The password to decrypt with.
+     * @return The decrypted content.
+     */
     private fun attemptDecryption(content: String, password: String): String {
         // Try the new method first (Argon2)
         try {
@@ -247,6 +293,11 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Saves the given content to the given URI.
+     * @param content The content to save.
+     * @param uri The URI to save to.
+     */
     private suspend fun saveToFile(content: String, uri: Uri) = withContext(Dispatchers.IO) {
         try {
             getApplication<Application>().contentResolver.openFileDescriptor(uri, "w")?.use {
@@ -259,6 +310,11 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Reads the content of the given URI.
+     * @param uri The URI to read from.
+     * @return The content of the URI.
+     */
     suspend fun readFromFile(uri: Uri): String = withContext(Dispatchers.IO) {
         val stringBuilder = StringBuilder()
         try {
@@ -277,6 +333,10 @@ open class SettingsViewModel(
         stringBuilder.toString()
     }
 
+    /**
+     * Gets the size of the shared preferences.
+     * @return The size of the shared preferences.
+     */
     private fun getSharedPreferencesSize(): Long {
         val prefsDir = File(getApplication<Application>().applicationInfo.dataDir, "shared_prefs")
         if (!prefsDir.exists()) return 0L
@@ -284,7 +344,10 @@ open class SettingsViewModel(
         return prefsDir.listFiles()?.sumOf { it.length() } ?: 0L
     }
 
-    // Returns the list of backup files
+    /**
+     * Gets the internal backups.
+     * @return The list of internal backups.
+     */
     fun getInternalBackups(): List<File> {
         val backupsDir = File(getApplication<Application>().getExternalFilesDir(null), "backups")
         if (!backupsDir.exists() || !backupsDir.isDirectory) {
@@ -294,7 +357,11 @@ open class SettingsViewModel(
         return backupsDir.listFiles()?.sortedByDescending { it.lastModified() } ?: emptyList()
     }
 
-    // Function to copy a backup file to a user-selected path
+    /**
+     * Copies a backup file to a user-selected path.
+     * @param backupFile The backup file to copy.
+     * @param targetUri The target URI to copy to.
+     */
     fun copyBackupToUri(backupFile: File, targetUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -311,6 +378,11 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Deletes a backup file.
+     * @param backupItem The backup file to delete.
+     * @return True if the backup file was deleted successfully, false otherwise.
+     */
     fun deleteBackup(backupItem: File): Boolean {
         val backupFile =
             File(
@@ -326,6 +398,10 @@ open class SettingsViewModel(
         return true
     }
 
+    /**
+     * Imports a vault.
+     * @param entries The entries to import.
+     */
     fun importVault(entries: List<ImportRecord>) {
         viewModelScope.launch {
             try {
@@ -340,6 +416,12 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Starts the import process.
+     * @param uri The URI of the file to import.
+     * @param type The type of import.
+     * @param password The password for the import.
+     */
     @OptIn(ExperimentalSerializationApi::class)
     fun startImport(uri: Uri, type: ImportType, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -380,6 +462,11 @@ open class SettingsViewModel(
         }
     }
 
+    /**
+     * Gets a friendly error message for the given throwable.
+     * @param e The throwable.
+     * @return The friendly error message.
+     */
     private fun getFriendlyErrorMessage(e: Throwable): String {
         return when (e) {
             is FileNotFoundException -> "File not found or inaccessible."
@@ -409,6 +496,10 @@ open class SettingsViewModel(
     }
 }
 
+/**
+ * Factory for creating [SettingsViewModel] instances.
+ * @param application The application.
+ */
 @Suppress("UNCHECKED_CAST")
 class SettingsModelFactory(
     private val application: Application,

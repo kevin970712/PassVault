@@ -15,6 +15,9 @@ import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
 
+/**
+ * A bottom sheet dialog for importing passwords from a file.
+ */
 class ImportDialog : BottomSheetDialogFragment() {
 
     private var _binding: DialogImportBinding? = null
@@ -92,6 +95,10 @@ class ImportDialog : BottomSheetDialogFragment() {
         return dialog
     }
 
+    /**
+     * Prepares the import process based on the selected import type.
+     * @param importType The type of import to prepare for.
+     */
     private fun prepareImport(importType: ImportType) {
         binding.btProceed.setOnClickListener {
             type = importType
@@ -99,6 +106,9 @@ class ImportDialog : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * Opens a file picker for the user to select a file to import.
+     */
     private fun openFileForImport() {
         val mimeType = when (type) {
             ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
@@ -113,6 +123,9 @@ class ImportDialog : BottomSheetDialogFragment() {
         openFileLauncher.launch(intent)
     }
 
+    /**
+     * Observes the import UI state and updates the UI accordingly.
+     */
     private fun observeImportUiState() {
         settingsViewModel.importUiState.observe(this) { state ->
             when (state) {
