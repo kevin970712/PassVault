@@ -1,6 +1,7 @@
 package com.jksalcedo.passvault.ui.settings
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -220,7 +221,35 @@ class SettingsActivity : AppCompatActivity() {
                 createFileLauncher.launch(intent)
             }
         } else {
-            createFileLauncher.launch(intent)
+            val format = preferenceRepository.getExportFormat()
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setTitle("Warning: Unencrypted export")
+                .setMessage(
+                    "This export contain your passwords in plain $format. Anyone with access to this file can read your passwords. " +
+                            "Do not share it or save it to cloud storage. Are you sure?"
+                )
+                .setPositiveButton("Proceed") { _, _ -> }
+                .setNegativeButton("Cancel", null)
+                .create()
+
+            dialog.setOnShowListener {
+                val button = dialog.getButton(Dialog.BUTTON_POSITIVE)
+                button.isEnabled = false
+                lifecycleScope.launch {
+                    button.text = "(3) Proceed"
+                    delay(1000)
+                    button.text = "(2) Proceed"
+                    delay(1000)
+                    button.text = "(1) Proceed"
+                    delay(1000)
+                    button.text = "Proceed"
+                    button.isEnabled = true
+                }
+                button.setOnClickListener {
+                    createFileLauncher.launch(intent)
+                }
+            }
+            dialog.show()
         }
     }
 
