@@ -63,10 +63,12 @@ GitLab,bob,validpass,MoreNotes,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         val importer = KeePassImporter()
         val records = importer.parse(csv)
 
-        // Only the row with valid password should be included
-        assertEquals(1, records.size)
-        assertEquals("GitLab", records[0].title)
-        assertEquals("validpass", records[0].password)
+        // Both rows should be included now
+        assertEquals(2, records.size)
+        assertEquals("GitHub", records[0].title)
+        assertEquals("", records[0].password)
+        assertEquals("GitLab", records[1].title)
+        assertEquals("validpass", records[1].password)
     }
 
     @Test
@@ -80,9 +82,11 @@ GitLab,bob,validpass,MoreNotes,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         val importer = KeePassImporter()
         val records = importer.parse(csv)
 
-        // Only the row with non-empty password should be included
-        assertEquals(1, records.size)
-        assertEquals("GitLab", records[0].title)
+        // Both rows should be included now
+        assertEquals(2, records.size)
+        assertEquals("GitHub", records[0].title)
+        assertEquals("", records[0].password)
+        assertEquals("GitLab", records[1].title)
     }
 
     @Test
@@ -97,8 +101,8 @@ GitLab,bob,validpass,MoreNotes,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         val records = importer.parse(csv)
 
         // Only the row with non-whitespace password should be included
-        assertEquals(1, records.size)
-        assertEquals("GitLab", records[0].title)
+        assertEquals(2, records.size)
+        assertEquals("GitLab", records[1].title)
     }
 
     @Test
@@ -146,7 +150,7 @@ newlines,2007-12-03T10:15:30Z,2007-12-03T10:15:30Z
         val importer = KeePassImporter()
         val records = importer.parse(csv)
 
-        assertEquals(1, records.size)
+        assertEquals(2, records.size)
         assertEquals("Title, with comma", records[0].title)
         assertEquals("user@email.com", records[0].username)
         assertTrue(records[0].password.isNotEmpty())

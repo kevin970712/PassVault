@@ -1,0 +1,14 @@
+Features
+
+- Update README with additional sections
+- Enhance backup encryption with Argon2 and refactor restart logic
+- Enhance backup encryption and refactor restart logic
+- Refactor import/export to use plain text passwords
+
+Bug Fixes
+
+- Allow importing entries with empty passwords
+
+Miscellaneous Tasks
+
+- Simplify APK artifact path in release workflow
