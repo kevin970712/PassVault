@@ -4,6 +4,10 @@
 
 - Allow importing entries with empty passwords
 
+### Feature
+
+- Add warning dialog for unencrypted export
+
 ## [0.8.0-beta02] - 2025-11-27
 
 ### Features
