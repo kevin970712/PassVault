@@ -20,7 +20,7 @@ class BitwardenImporter(
         try {
             val export = json.decodeFromString<BitwardenExport>(raw)
             return export.items
-                .filter { it.type == 1 && it.login?.password?.isNotBlank() == true }
+                .filter { it.type == 1 && (it.name.isNotBlank() || it.login?.password?.isNotBlank() == true) }
                 .map { item ->
                     ImportRecord(
                         title = item.name,

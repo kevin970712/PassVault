@@ -1,4 +1,10 @@
-## [unreleased]
+## [0.8.0] - 2025-11-30
+
+### Bug Fixes
+
+- Allow importing entries with empty passwords
+
+## [0.8.0-beta02] - 2025-11-27
 
 ### Features
 
@@ -11,6 +17,7 @@
 ### Miscellaneous Tasks
 
 - Simplify APK artifact path in release workflow
+
 ## [0.8.0-beta01] - 2025-11-25
 
 ### Features
@@ -19,6 +26,7 @@
 - Enhance backup encryption with Argon2 and refactor restart logic
 - Enhance backup encryption with Argon2 and refactor restart logic
 - Enhance backup encryption and refactor restart logic
+
 ## [0.7.1] - 2025-11-21
 
 ### Other
@@ -34,6 +42,7 @@
 - Allow format override during import
 - Enhance serialization, timestamp format, and importer logic
 - Enhance import logic and replace launcher icons
+
 ## [0.7.0] - 2025-11-20
 
 ### Features
@@ -49,6 +58,7 @@
 ### Miscellaneous Tasks
 
 - Update CHANGELOG for version 0.7.0
+
 ## [0.7.0-beta01] - 2025-11-20
 
 ### Features
@@ -69,6 +79,7 @@
 
 - Update IDE configurations and build script
 - Update dependencies and clean up IDE configurations
+
 ## [0.6.0] - 2025-11-18
 
 ### Refactor
@@ -85,6 +96,7 @@
 ### Miscellaneous Tasks
 
 - Bump version to 0.6.0
+
 ## [0.6.0-beta2] - 2025-11-18
 
 ### Other
@@ -96,6 +108,7 @@
 - Replace SetPinDialog with SetPinFragment for a full-screen UI
 - Improve Password Generator dialog and SharedPreferences usage
 - Improve password dialogs and replace AlertDialog
+
 ## [0.6.0-beta] - 2025-11-17
 
 ### Features
@@ -138,6 +151,7 @@
 ### Refactor
 
 - Remove unused TestWorkerFactory
+
 ## [0.5.0] - 2025-11-15
 
 ### Features
@@ -149,6 +163,7 @@
 
 - Add Toolbar and Up Navigation to Add/Edit screen
 - Simplify ViewEntryActivity and layout
+
 ## [0.4-beta] - 2025-11-08
 
 ### Features
@@ -159,11 +174,13 @@
 
 - Add database size utility functions
 - Rename APK artifact and update version
+
 ## [0.4-alpha] - 2025-11-07
 
 ### Other
 
 - Rename "Passkey" to "Password" for clarity
+
 ## [0.3-alpha] - 2025-11-06
 
 ### Features
@@ -177,6 +194,7 @@
 - Add delete functionality and confirmation dialog
 - Correct FAB layout and add content descriptions
 - Correct FAB layout and add content descriptions
+
 ## [0.2-alpha] - 2025-11-04
 
 ### Other
@@ -185,4 +203,5 @@
 - Rename `AddActivity` to `AddEditActivity` and move files
 - Implement comprehensive testing and improve Add/Edit functionality
 - Update variable and preference key names for clarity
+
 ## [0.1-alpha] - 2025-11-02

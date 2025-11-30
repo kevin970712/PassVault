@@ -64,7 +64,7 @@ class KeePassImporter(
             val parsedRows = csv.decodeFromString<List<KeepassRecord>>(raw)
             parsedRows.mapNotNull { row ->
                 val password = row.password.trim()
-                if (password.isEmpty()) return@mapNotNull null
+                if (password.isEmpty() && row.title.isBlank()) return@mapNotNull null
 
                 val keepassRecord = KeepassRecord(
                     title = row.title.trim(),
@@ -114,14 +114,14 @@ class KeePassImporter(
                 val password = entry.fields.password?.content
                 val notes = entry.fields.notes?.content
 
-                if (title.isNullOrBlank() || password.isNullOrEmpty()) {
+                if (title.isNullOrBlank() && password.isNullOrEmpty()) {
                     return@mapNotNull null
                 }
 
                 ImportRecord(
-                    title = title,
+                    title = title!!,
                     username = username,
-                    password = password,
+                    password = password!!,
                     notes = notes,
                     createdAt = entry.times?.creationTime?.toEpochMilli(),
                     updatedAt = entry.times?.lastModificationTime?.toEpochMilli()
