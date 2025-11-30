@@ -4,6 +4,7 @@ Features
 - Enhance backup encryption with Argon2 and refactor restart logic
 - Enhance backup encryption and refactor restart logic
 - Refactor import/export to use plain text passwords
+- Add warning dialog for unencrypted export
 
 Bug Fixes
 
