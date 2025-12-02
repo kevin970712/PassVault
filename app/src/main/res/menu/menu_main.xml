@@ -7,4 +7,20 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_generator"
+        android:icon="@drawable/ic_key"
+        android:iconTint="@color/black"
+        android:orderInCategory="1000"
+        android:title="@string/generate_password"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="2"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
 </menu>
