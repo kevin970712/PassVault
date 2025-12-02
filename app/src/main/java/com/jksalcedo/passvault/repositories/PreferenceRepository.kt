@@ -35,9 +35,6 @@ class PreferenceRepository(context: Context) {
      */
     fun setAutoBackups(enabled: Boolean) {
         prefs.edit { putBoolean("auto_backups", enabled) }
-        if (enabled) {
-            updateLastBackupTime()
-        }
     }
 
     /**
