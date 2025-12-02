@@ -1,0 +1,2 @@
+- Add search functionality
+- Add password generator to main screen

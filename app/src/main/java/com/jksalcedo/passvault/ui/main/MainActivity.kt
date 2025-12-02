@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
                 }
                 adapter.submitList(result)
             } else {
-                adapter.submitList(viewModel.allEntries.value)
+                viewModel.allEntries.value?.let { adapter.submitList(it) }
             }
         }
     }
@@ -113,7 +113,9 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
             }
 
             R.id.action_generator -> {
-                PasswordGenDialog().show(supportFragmentManager, null)
+                val dialog = PasswordGenDialog()
+                dialog.isCancelable = false
+                dialog.show(supportFragmentManager, null)
                 true
             }
 
@@ -122,7 +124,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
     }
 
     override fun onPasswordGenerated(password: String) {
-        
+        // No need to handle
     }
 
 }

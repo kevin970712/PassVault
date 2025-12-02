@@ -82,7 +82,7 @@ class ViewEntryActivity : AppCompatActivity() {
             return
         }
 
-        supportActionBar?.title = currentEntry!!.title
+        supportActionBar?.title = currentEntry?.title.orEmpty()
 
         currentEntry?.let { entry ->
             plainPassword = try {

@@ -35,12 +35,12 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = items.value!![position]
+        val item = items.value?.getOrNull(position) ?: return
         holder.bind(item)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
     }
 
-    override fun getItemCount(): Int = items.value!!.size
+    override fun getItemCount(): Int = items.value?.size ?: 0
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)

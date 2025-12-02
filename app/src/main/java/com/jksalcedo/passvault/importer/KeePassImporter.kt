@@ -114,14 +114,15 @@ class KeePassImporter(
                 val password = entry.fields.password?.content
                 val notes = entry.fields.notes?.content
 
+                // Skip entries that have both empty title AND empty password
                 if (title.isNullOrBlank() && password.isNullOrEmpty()) {
                     return@mapNotNull null
                 }
 
                 ImportRecord(
-                    title = title!!,
+                    title = title.orEmpty(),
                     username = username,
-                    password = password!!,
+                    password = password.orEmpty(),
                     notes = notes,
                     createdAt = entry.times?.creationTime?.toEpochMilli(),
                     updatedAt = entry.times?.lastModificationTime?.toEpochMilli()
