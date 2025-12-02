@@ -17,6 +17,8 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
+import com.jksalcedo.passvault.ui.addedit.PasswordDialogListener
+import com.jksalcedo.passvault.ui.addedit.PasswordGenDialog
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
@@ -27,7 +29,7 @@ import kotlinx.coroutines.withContext
 /**
  * The main activity of the app.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PasswordDialogListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: PVAdapter
@@ -110,8 +112,17 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.action_generator -> {
+                PasswordGenDialog().show(supportFragmentManager, null)
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPasswordGenerated(password: String) {
+        
     }
 
 }
