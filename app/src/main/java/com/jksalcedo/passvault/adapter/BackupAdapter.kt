@@ -46,12 +46,12 @@ class BackupAdapter : RecyclerView.Adapter<BackupAdapter.VH>() {
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = backupItems.value!![position]
+        val item = backupItems.value?.getOrNull(position) ?: return
         holder.bind(item)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
     }
 
-    override fun getItemCount(): Int = backupItems.value!!.size
+    override fun getItemCount(): Int = backupItems.value?.size ?: 0
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val backupName = itemView.findViewById<TextView>(R.id.tvTitle)
