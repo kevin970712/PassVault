@@ -58,6 +58,7 @@
     <string name="keepass_csv">KeePass (CSV)</string>
     <string name="keepass_kdbx">KeePass (KDBX)</string>
     <string name="passvault_json">PassVault (JSON)</string>
+    <string name="search">Search</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
