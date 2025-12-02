@@ -29,26 +29,28 @@ class Application() : Application(),
         preferenceRepository = PreferenceRepository(this.applicationContext)
         workerFactory = BackupWorkerFactory(passwordRepository, preferenceRepository)
 
+        // Initialize interaction time to prevent auto-lock on first app launch
+        lastInteractionTime = System.currentTimeMillis()
+
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityResumed(activity: Activity) {
-                // Check if need to lock when an activity resumes
+                // Check if app should be locked due to inactivity
                 if (lastInteractionTime > 0 &&
                     System.currentTimeMillis() - lastInteractionTime >= IDLE_TIMEOUT_MS &&
-                    activity !is UnlockActivity && !activity.isFinishing && !activity.isDestroyed
+                    activity !is UnlockActivity &&
+                    !activity.isFinishing &&
+                    !activity.isDestroyed
                 ) {
-
+                    // Lock the app by launching UnlockActivity
                     val intent = Intent(activity, UnlockActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     activity.startActivity(intent)
                     activity.finish()
                 }
-
-                // Update time
-                lastInteractionTime = System.currentTimeMillis()
             }
 
             override fun onActivityPaused(activity: Activity) {
-                // Record the time when user leaves
+                // Record the time when user leaves the app
                 lastInteractionTime = System.currentTimeMillis()
             }
 
