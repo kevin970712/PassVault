@@ -1,12 +1,15 @@
+## [0.9.0] - 2025-12-02
+
+### Features
+
+- Add search functionality
+- Add password generator to main screen
+
 ## [0.8.0] - 2025-11-30
 
 ### Bug Fixes
 
 - Allow importing entries with empty passwords
-
-### Feature
-
-- Add warning dialog for unencrypted export
 
 ## [0.8.0-beta02] - 2025-11-27
 
@@ -20,6 +23,7 @@
 
 ### Miscellaneous Tasks
 
+- Simplify APK artifact path in release workflow
 - Simplify APK artifact path in release workflow
 
 ## [0.8.0-beta01] - 2025-11-25

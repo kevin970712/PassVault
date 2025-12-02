@@ -34,7 +34,7 @@ class Application() : Application(),
                 // Check if need to lock when an activity resumes
                 if (lastInteractionTime > 0 &&
                     System.currentTimeMillis() - lastInteractionTime >= IDLE_TIMEOUT_MS &&
-                    activity !is UnlockActivity
+                    activity !is UnlockActivity && !activity.isFinishing && !activity.isDestroyed
                 ) {
 
                     val intent = Intent(activity, UnlockActivity::class.java)
