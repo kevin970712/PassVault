@@ -28,4 +28,8 @@ class PasswordViewModel(app: Application) : AndroidViewModel(app) {
     fun delete(entry: PasswordEntry) {
         viewModelScope.launch(Dispatchers.IO) { passwordRepository.delete(entry) }
     }
+
+    suspend fun search(query: String): List<PasswordEntry> {
+        return passwordRepository.search(query)
+    }
 }

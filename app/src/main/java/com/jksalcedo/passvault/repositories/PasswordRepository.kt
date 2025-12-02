@@ -62,4 +62,7 @@ class PasswordRepository(context: Context) {
         passwordDao.delete(entry)
     }
 
+    suspend fun search(query: String): List<PasswordEntry> {
+        return passwordDao.search("%$query%")
+    }
 }
