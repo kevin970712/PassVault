@@ -1,3 +1,20 @@
+## [0.9.1] - 2025-12-03
+
+### Bug Fixes
+
+- Prevent UnlockActivity from showing on a finishing activity
+- Improve null safety and handling of empty data
+- Enhance auto-lock feature
+
+### Refactor
+
+- Remove automatic last backup time update
+- Improve password generator dialog behavior
+
+### Miscellaneous Tasks
+
+- Fix typo in UnlockActivity filename
+
 ## [0.9.0] - 2025-12-02
 
 ### Features
@@ -6,6 +23,10 @@
 - Add password generator to main screen
 
 ## [0.8.0] - 2025-11-30
+
+### Features
+
+- Add warning dialog for unencrypted export
 
 ### Bug Fixes
 
