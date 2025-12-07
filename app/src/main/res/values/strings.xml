@@ -62,6 +62,7 @@
     <string name="email">Email</string>
     <string name="url">URL</string>
     <string name="category">Category</string>
+    <string name="open">Open</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

@@ -1,5 +1,6 @@
 package com.jksalcedo.passvault.ui.view
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,6 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -159,11 +161,18 @@ class ViewEntryActivity : AppCompatActivity() {
                 }
             }
 
-            // Copy URL
-            binding.btnCopyUrl.setOnClickListener {
-                entry.url?.let {
-                    Utility.copyToClipboard(this, "url", it)
-                    Toast.makeText(this, "URL copied", Toast.LENGTH_SHORT).show()
+            // Open URL in browser
+            binding.btnOpenUrl.setOnClickListener {
+                entry.url?.let { url ->
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        if (!url.startsWith("http")) "https://$url".toUri() else url.toUri()
+                    )
+                    try {
+                        startActivity(intent)
+                    } catch (_: ActivityNotFoundException) {
+                        Toast.makeText(this, "No browser found", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

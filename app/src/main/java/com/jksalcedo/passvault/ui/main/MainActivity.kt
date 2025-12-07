@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
 
         setSupportActionBar(binding.toolbar)
 
-        adapter = PVAdapter()
+        adapter = PVAdapter(this)
         binding.contentMain.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.contentMain.recyclerView.adapter = adapter
 
