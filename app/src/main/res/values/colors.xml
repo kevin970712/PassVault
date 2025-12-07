@@ -33,4 +33,11 @@
     <color name="category_personal">#AB47BC</color>       <!-- Purple -->
     <color name="category_finance">#66BB6A</color>        <!-- Green -->
     <color name="category_entertainment">#EC407A</color>  <!-- Pink -->
+
+    <!-- Password Strength Colors -->
+    <color name="strength_very_weak">#F44336</color>      <!-- Red -->
+    <color name="strength_weak">#FF9800</color>           <!-- Orange -->
+    <color name="strength_fair">#FFC107</color>           <!-- Amber -->
+    <color name="strength_good">#8BC34A</color>           <!-- Light Green -->
+    <color name="strength_strong">#4CAF50</color>         <!-- Green -->
 </resources>

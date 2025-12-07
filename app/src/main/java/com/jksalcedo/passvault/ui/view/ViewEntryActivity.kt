@@ -10,6 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
+import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.formatTime
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
@@ -175,6 +177,23 @@ class ViewEntryActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            // Display password strength
+            val strengthResult = PasswordStrengthAnalyzer.analyze(plainPassword)
+            val strengthLabel = PasswordStrengthAnalyzer.getStrengthLabel(strengthResult.level)
+            binding.chipPasswordStrength.text = strengthLabel
+
+            val colorResId = when (strengthResult.level) {
+                PasswordStrengthAnalyzer.StrengthLevel.VERY_WEAK -> R.color.strength_very_weak
+                PasswordStrengthAnalyzer.StrengthLevel.WEAK -> R.color.strength_weak
+                PasswordStrengthAnalyzer.StrengthLevel.FAIR -> R.color.strength_fair
+                PasswordStrengthAnalyzer.StrengthLevel.GOOD -> R.color.strength_good
+                PasswordStrengthAnalyzer.StrengthLevel.STRONG -> R.color.strength_strong
+            }
+            binding.chipPasswordStrength.setChipBackgroundColorResource(colorResId)
+            binding.chipPasswordStrength.setTextColor(
+                ContextCompat.getColor(this, android.R.color.white)
+            )
         }
 
         binding.btnReveal.setOnClickListener {

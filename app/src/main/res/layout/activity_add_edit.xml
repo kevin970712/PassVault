@@ -103,6 +103,43 @@
                     android:paddingVertical="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Password Strength Indicator -->
+            <LinearLayout
+                android:id="@+id/layoutPasswordStrength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvPasswordStrength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/password_strength"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressPasswordStrength"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    app:indicatorColor="@color/grey_500"
+                    app:trackCornerRadius="4dp"
+                    app:trackThickness="8dp" />
+
+                <TextView
+                    android:id="@+id/tvStrengthFeedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/grey_500"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
             <!-- Generate Password Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGeneratePassword"

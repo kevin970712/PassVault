@@ -71,6 +71,14 @@
     <string name="finance">Finance</string>
     <string name="entertainment">Entertainment</string>
 
+    <!-- Password Strength -->
+    <string name="password_strength">Password Strength</string>
+    <string name="strength_very_weak">Very Weak</string>
+    <string name="strength_weak">Weak</string>
+    <string name="strength_fair">Fair</string>
+    <string name="strength_good">Good</string>
+    <string name="strength_strong">Strong</string>
+
     <string-array name="backup_options">
         <item>Restore</item>
         <item>Save and Copy</item>
