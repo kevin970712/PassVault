@@ -5,11 +5,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
+
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
@@ -62,20 +63,12 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             saveEntry()
         }
 
-        // password generator custom dialog
-        binding.cardGeneratePassword.setOnClickListener {
+        // Password generator button
+        binding.btnGeneratePassword.setOnClickListener {
             PasswordGenDialog().apply {
                 isCancelable = false
                 show(supportFragmentManager, "PasswordGenDialog")
             }
-        }
-
-        binding.switchShowPassword.setOnCheckedChangeListener { _, isChecked ->
-            // hide/show password
-            binding.etPassword.transformationMethod =
-                if (isChecked) HideReturnsTransformationMethod.getInstance() else PasswordTransformationMethod.getInstance()
-            // move cursor to the end
-            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
         }
     }
 
@@ -96,27 +89,42 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             binding.etPassword.setText("")
             Toast.makeText(this, "Failed to decrypt password", Toast.LENGTH_SHORT).show()
         }
+
+        val categories = resources.getStringArray(R.array.category_options)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+
+        binding.etCategory.setAdapter(adapter)
+
+        binding.etCategory.setText(entry.category ?: "General", false)
     }
 
     /**
      * Saves the current password entry.
      */
     private fun saveEntry() {
+        // Clear previous errors
+        binding.tilTitle.error = null
+        binding.tilUsername.error = null
+        binding.tilPassword.error = null
+
         val title = binding.etTitle.text.toString()
         val username = binding.etUsername.text.toString()
         val rawPassword = binding.etPassword.text.toString()
         val notes = binding.etNotes.text.toString()
+        val category = binding.etCategory.text.toString()
+        val email = binding.etEmail.text.toString()
+        val url = binding.etUrl.text.toString()
 
         if (title.isEmpty()) {
-            binding.etTitle.error = "Title cannot be empty!"
+            binding.tilTitle.error = "Title cannot be empty!"
             return
         }
         if (rawPassword.isEmpty()) {
-            binding.etPassword.error = "Password cannot be empty!"
+            binding.tilPassword.error = "Password cannot be empty!"
             return
         }
         if (username.isEmpty()) {
-            binding.etUsername.error = "Username cannot be empty!"
+            binding.tilUsername.error = "Username cannot be empty!"
             return
         }
 
@@ -130,6 +138,9 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
                 passwordCipher = cipherText,
                 passwordIv = iv,
                 notes = notes,
+                email = email,
+                url = url,
+                category = category,
                 updatedAt = System.currentTimeMillis()
             ) ?: PasswordEntry(
                 title = title,
@@ -137,6 +148,9 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
                 passwordCipher = cipherText,
                 passwordIv = iv,
                 notes = notes,
+                email = email,
+                url = url,
+                category = category,
                 updatedAt = System.currentTimeMillis()
             )
 

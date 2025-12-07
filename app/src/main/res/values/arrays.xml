@@ -9,4 +9,13 @@
         <item>json</item>
         <item>csv</item>
     </string-array>
+
+    <string-array name="category_options">
+        <item>General</item>
+        <item>Social</item>
+        <item>Work</item>
+        <item>Personal</item>
+        <item>Finance</item>
+        <item>Entertainment</item>
+    </string-array>
 </resources>

@@ -12,3 +12,4 @@ FEATURES:
 - Automatic Backups: Automatically backup your database.
 - Third-Party Import: Seamlessly import existing vault from Bitwarden and KeePass.
 - Supports JSON, CSV, and KDBX files.
+- Entry Categories

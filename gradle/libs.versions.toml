@@ -28,6 +28,7 @@ truth = "1.4.5"
 testCore = "1.7.0"
 robolectric = "4.16"
 workRuntimeKtx = "2.11.0"
+sqliteKtx = "2.6.2"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -60,6 +61,7 @@ truth = { module = "com.google.truth:truth", version.ref = "truth" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "testCore" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version.ref = "sqliteKtx" }
 
 
 [plugins]

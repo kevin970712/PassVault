@@ -92,9 +92,41 @@ class ViewEntryActivity : AppCompatActivity() {
                 ""
             }
 
-            binding.tvUsername.text = entry.username.orEmpty()
+            // Username field
+            if (entry.username.isNullOrEmpty()) {
+                binding.cardUsername.visibility = View.GONE
+            } else {
+                binding.cardUsername.visibility = View.VISIBLE
+                binding.tvUsername.text = entry.username
+            }
+
+            // Password field (always shown)
             binding.tvPassword.text = MASKED_PASSWORD
-            binding.tvNotes.text = entry.notes.orEmpty()
+
+            // Email field
+            if (entry.email.isNullOrEmpty()) {
+                binding.cardEmail.visibility = View.GONE
+            } else {
+                binding.cardEmail.visibility = View.VISIBLE
+                binding.tvEmail.text = entry.email
+            }
+
+            // URL field
+            if (entry.url.isNullOrEmpty()) {
+                binding.cardUrl.visibility = View.GONE
+            } else {
+                binding.cardUrl.visibility = View.VISIBLE
+                binding.tvUrl.text = entry.url
+            }
+
+            // Notes field
+            if (entry.notes.isNullOrEmpty()) {
+                binding.cardNotes.visibility = View.GONE
+            } else {
+                binding.cardNotes.visibility = View.VISIBLE
+                binding.tvNotes.text = entry.notes
+            }
+
             binding.tvMetadata.text =
                 buildString {
                     append("Created: ")
@@ -103,12 +135,45 @@ class ViewEntryActivity : AppCompatActivity() {
                     append(entry.updatedAt.formatTime())
                 }
 
+            // Set category chip with color
+            val category = entry.category ?: "General"
+            binding.tvCategoryChip.text = category.uppercase()
+
+            val colorRes = when (category) {
+                "General" -> R.color.category_general
+                "Social" -> R.color.category_social
+                "Work" -> R.color.category_work
+                "Personal" -> R.color.category_personal
+                "Finance" -> R.color.category_finance
+                "Entertainment" -> R.color.category_entertainment
+                else -> R.color.category_general
+            }
+
+            val color = getColor(colorRes)
+            binding.tvCategoryChip.setTextColor(color)
+            binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
+
+            // Copy username
             binding.btnCopyUsername.setOnClickListener {
-                if (entry.username?.isNotEmpty() == true) {
-                    Utility.copyToClipboard(this, "username", entry.username)
+                entry.username?.let {
+                    Utility.copyToClipboard(this, "username", it)
                     Toast.makeText(this, "Username copied", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "No username to copy", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            // Copy email
+            binding.btnCopyEmail.setOnClickListener {
+                entry.email?.let {
+                    Utility.copyToClipboard(this, "email", it)
+                    Toast.makeText(this, "Email copied", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            // Copy URL
+            binding.btnCopyUrl.setOnClickListener {
+                entry.url?.let {
+                    Utility.copyToClipboard(this, "url", it)
+                    Toast.makeText(this, "URL copied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
