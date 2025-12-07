@@ -1,0 +1,5 @@
+- Add categories
+- Add URL field
+- Add Email field
+- Improve Entry fields
+- Enhance some UIs
