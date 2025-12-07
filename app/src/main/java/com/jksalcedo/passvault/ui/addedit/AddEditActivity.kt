@@ -96,6 +96,8 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         binding.etCategory.setAdapter(adapter)
 
         binding.etCategory.setText(entry.category ?: "General", false)
+        binding.etEmail.setText(entry.email)
+        binding.etUrl.setText(entry.url)
     }
 
     /**
