@@ -1,0 +1,5 @@
+- Add URL field to password entries
+- Pre-fill email and URL fields on edit
+- Add email and URL validation
+- Add button to open URL in browser
+- Add category filter functionality

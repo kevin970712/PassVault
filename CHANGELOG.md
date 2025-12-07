@@ -1,15 +1,26 @@
+## [unreleased]
+
+### Features
+
+- Add URL field to password entries
+- Pre-fill email and URL fields on edit
+- Add email and URL validation
+- Add button to open URL in browser
+- Add category filter functionality
+
+### Other
+
+- Remove leading space in EXTRA_ENTRY constant
+
+### Refactor
+
+- Centralize category color logic
+
 ## [1.0.0-beta01] - 2025-12-07
 
 ### Features
 
-- Add categories
-- Add URL field
-- Add Email field
-
-### Improvements
-
-- Entry fields
-- Some UIs
+- Add categories and enhance entry fields
 
 ## [0.9.1] - 2025-12-02
 
@@ -20,6 +31,7 @@
 ### Bug Fixes
 
 - Prevent UnlockActivity from showing on a finishing activity
+- Improve null safety and handling of empty data
 - Improve null safety and handling of empty data
 
 ### Refactor
@@ -42,6 +54,7 @@
 
 ### Features
 
+- Add warning dialog for unencrypted export
 - Add warning dialog for unencrypted export
 
 ### Bug Fixes
