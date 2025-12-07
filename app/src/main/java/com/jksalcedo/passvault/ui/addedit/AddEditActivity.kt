@@ -177,7 +177,7 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
 
     companion object {
         const val EXTRA_ID = "extra_id"
-        const val EXTRA_ENTRY = " extra_entry"
+        const val EXTRA_ENTRY = "extra_entry"
 
         /**
          * Creates an intent to start [AddEditActivity].
