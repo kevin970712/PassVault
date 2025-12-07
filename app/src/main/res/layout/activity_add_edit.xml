@@ -43,20 +43,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Title Field -->
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.Material3.LabelLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/title"
-                android:textColor="?attr/colorOnSurface" />
-
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:hint="@null"
+                android:hint="@string/title"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -70,20 +62,12 @@
                     android:paddingVertical="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Username Field -->
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.Material3.LabelLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/username"
-                android:textColor="?attr/colorOnSurface" />
-
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:hint="@null"
+                android:hint="@string/username"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -97,26 +81,18 @@
                     android:paddingVertical="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password Field with End Icon -->
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.Material3.LabelLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/password"
-                android:textColor="?attr/colorOnSurface" />
-
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:hint="@null"
+                android:hint="@string/password"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusTopStart="12dp"
-                app:endIconContentDescription="@string/generate_password"
-                app:passwordToggleEnabled="false">
+                app:endIconMode="password_toggle"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
@@ -127,92 +103,78 @@
                     android:paddingVertical="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Generate Password Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardGeneratePassword"
+            <!-- Generate Password Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGeneratePassword"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="?attr/colorSurfaceContainer"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/sparkles"
-                        app:tint="?attr/colorOnSurfaceVariant" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/generate_strong_password"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="@string/generate_password_description"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_right"
-                        app:tint="?attr/colorOnSurfaceVariant" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Toggle for Visibility -->
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switchShowPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:paddingVertical="8dp"
-                android:text="@string/show_password"
-                android:textSize="15sp" />
-
-            <!-- Notes Field -->
-            <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.Material3.LabelLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/notes"
-                android:textColor="?attr/colorOnSurface" />
+                android:layout_marginBottom="20dp"
+                android:text="@string/generate_password"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_key" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@null"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/email"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:paddingVertical="16dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/url"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:paddingVertical="16dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_category"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/category"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/etCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:paddingVertical="12dp"
+                    app:simpleItems="@array/category_options" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/notes"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"

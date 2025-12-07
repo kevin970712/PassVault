@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textview.MaterialTextView
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.data.PasswordEntry
 import java.text.DateFormat
@@ -46,6 +47,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         private val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         private val tvUpdatedAt: TextView = itemView.findViewById(R.id.tvUpdatedAt)
+        private val tvCategory: MaterialTextView = itemView.findViewById(R.id.tvCategoryChip)
 
         fun bind(entry: PasswordEntry) {
             tvTitle.text = entry.title
@@ -54,6 +56,24 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
             tvUpdatedAt.text = buildString {
                 append(dateText)
             }
+
+            val category = entry.category ?: "General"
+            tvCategory.text = category.uppercase()
+
+            // Apply category color
+            val colorRes = when (category) {
+                "General" -> R.color.category_general
+                "Social" -> R.color.category_social
+                "Work" -> R.color.category_work
+                "Personal" -> R.color.category_personal
+                "Finance" -> R.color.category_finance
+                "Entertainment" -> R.color.category_entertainment
+                else -> R.color.category_general
+            }
+
+            val color = itemView.context.getColor(colorRes)
+            tvCategory.setTextColor(color)
+            tvCategory.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
         }
     }
 }

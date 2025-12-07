@@ -42,14 +42,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:cardElevation="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvMetadata">
+                app:layout_constraintTop_toBottomOf="@+id/tvCategoryChip"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="16dp">
 
                     <TextView
@@ -98,10 +99,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:cardElevation="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardUsername">
+                app:layout_constraintTop_toBottomOf="@id/cardUsername"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -158,6 +160,120 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Email Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardPassword"
+                app:strokeWidth="0dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvEmailLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/email"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/btnCopyEmail"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvEmailLabel"
+                        tools:text="user@example.com" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btnCopyEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        android:text="@string/copy_password"
+                        app:layout_constraintBottom_toBottomOf="@id/tvEmail"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvEmail" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- URL Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardUrl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardEmail"
+                app:strokeWidth="0dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvUrlLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/url"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvUrl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/btnCopyUrl"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvUrlLabel"
+                        tools:text="https://example.com" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btnCopyUrl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        android:text="@string/copy_password"
+                        app:layout_constraintBottom_toBottomOf="@id/tvUrl"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvUrl" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Notes Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNotes"
@@ -165,10 +281,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
+                app:cardElevation="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardPassword">
+                app:layout_constraintTop_toBottomOf="@id/cardUrl"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -201,32 +318,32 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/divider1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/tvMetadata"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="center|end"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCategoryChip"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider1"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Created: Jan 15, 2024 • Modified: Nov 3, 2025" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
+            <!-- Category Chip -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvCategoryChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_surface"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvMetadata" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="FINANCE" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -59,6 +59,9 @@
     <string name="keepass_kdbx">KeePass (KDBX)</string>
     <string name="passvault_json">PassVault (JSON)</string>
     <string name="search">Search</string>
+    <string name="email">Email</string>
+    <string name="url">URL</string>
+    <string name="category">Category</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
