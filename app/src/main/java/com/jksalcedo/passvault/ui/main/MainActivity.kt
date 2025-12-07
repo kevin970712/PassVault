@@ -60,13 +60,70 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
         }
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
-        viewModel.allEntries.observe(this) { list ->
+        viewModel.filteredEntries.observe(this) { list ->
             adapter.submitList(list)
         }
 
         // Add entry
         binding.fabAdd.setOnClickListener {
             startActivity(Intent(this, AddEditActivity::class.java))
+        }
+
+        // Filter Category
+        binding.chipGroupCategories.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+
+            val category = when (checkedIds[0]) {
+                R.id.chipAll -> null
+                R.id.chipGeneral -> "General"
+                R.id.chipSocial -> "Social"
+                R.id.chipWork -> "Work"
+                R.id.chipPersonal -> "Personal"
+                R.id.chipFinance -> "Finance"
+                R.id.chipEntertainment -> "Entertainment"
+                else -> null
+            }
+
+            viewModel.filterByCategory(category)
+
+            // Update counts
+            viewModel.allEntries.value?.let { entries ->
+                binding.chipAll.text = buildString {
+                    append("All (")
+                    append(entries.size)
+                    append(")")
+                }
+                binding.chipGeneral.text = buildString {
+                    append("General (")
+                    append(entries.count { it.category == "General" })
+                    append(")")
+                }
+                binding.chipSocial.text = buildString {
+                    append("Social (")
+                    append(entries.count { it.category == "Social" })
+                    append(")")
+                }
+                binding.chipWork.text = buildString {
+                    append("Work (")
+                    append(entries.count { it.category == "Work" })
+                    append(")")
+                }
+                binding.chipPersonal.text = buildString {
+                    append("Personal (")
+                    append(entries.count { it.category == "Personal" })
+                    append(")")
+                }
+                binding.chipFinance.text = buildString {
+                    append("Finance (")
+                    append(entries.count { it.category == "Finance" })
+                    append(")")
+                }
+                binding.chipEntertainment.text = buildString {
+                    append("Entertainment (")
+                    append(entries.count { it.category == "Entertainment" })
+                    append(")")
+                }
+            }
         }
     }
 
@@ -78,7 +135,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
                 }
                 adapter.submitList(result)
             } else {
-                viewModel.allEntries.value?.let { adapter.submitList(it) }
+                viewModel.filteredEntries.value?.let { adapter.submitList(it) }
             }
         }
     }

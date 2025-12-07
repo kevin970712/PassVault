@@ -65,4 +65,8 @@ class PasswordRepository(context: Context) {
     suspend fun search(query: String): List<PasswordEntry> {
         return passwordDao.search("%$query%")
     }
+
+    fun getEntriesByCategory(category: String): LiveData<List<PasswordEntry>> {
+        return passwordDao.getEntriesByCategory(category)
+    }
 }
