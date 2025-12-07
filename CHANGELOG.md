@@ -1,10 +1,26 @@
-## [0.9.1] - 2025-12-03
+## [1.0.0-beta01] - 2025-12-07
+
+### Features
+
+- Add categories
+- Add URL field
+- Add Email field
+
+### Improvements
+
+- Entry fields
+- Some UIs
+
+## [0.9.1] - 2025-12-02
+
+### Features
+
+- Prevent auto-lock on first launch and when resuming
 
 ### Bug Fixes
 
 - Prevent UnlockActivity from showing on a finishing activity
 - Improve null safety and handling of empty data
-- Enhance auto-lock feature
 
 ### Refactor
 

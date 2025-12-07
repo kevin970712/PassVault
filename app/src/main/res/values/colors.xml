@@ -25,4 +25,12 @@
     <color name="surface_dark_blue">#1f2836</color>
     <color name="surface_dark_blue_elevated">#202831</color>
     <color name="surface_dark_blue_high">#272f39</color>
+
+    <!-- Category Chip Colors -->
+    <color name="category_general">#9E9E9E</color>        <!-- Grey -->
+    <color name="category_social">#42A5F5</color>         <!-- Blue -->
+    <color name="category_work">#FF7043</color>           <!-- Deep Orange -->
+    <color name="category_personal">#AB47BC</color>       <!-- Purple -->
+    <color name="category_finance">#66BB6A</color>        <!-- Green -->
+    <color name="category_entertainment">#EC407A</color>  <!-- Pink -->
 </resources>

@@ -18,8 +18,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
-        versionName = "0.9.1"
+        versionCode = 17
+        versionName = "1.0.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -123,6 +123,7 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.sqlite.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

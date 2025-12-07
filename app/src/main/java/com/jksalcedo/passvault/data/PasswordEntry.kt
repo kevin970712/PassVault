@@ -16,6 +16,9 @@ data class PasswordEntry(
     val passwordCipher: String,
     val passwordIv: String,
     val notes: String?,
+    val email: String? = null,
+    val url: String? = null,
+    val category: String? = "General",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) : Parcelable
