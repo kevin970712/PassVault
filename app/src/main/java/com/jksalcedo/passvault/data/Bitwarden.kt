@@ -16,7 +16,13 @@ data class BitwardenItem(
 @Serializable
 data class BitwardenLogin(
     val username: String? = null,
-    val password: String? = null
+    val password: String? = null,
+    val uris: List<BitwardenUris?>
+)
+
+@Serializable
+data class BitwardenUris(
+    val uri: String
 )
 
 @Serializable

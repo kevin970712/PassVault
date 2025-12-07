@@ -104,6 +104,9 @@ object Utility {
             username = username,
             passwordCipher = cipher,
             passwordIv = iv,
+            email = email,
+            url = url,
+            category = category,
             notes = notes,
             createdAt = createdAt ?: System.currentTimeMillis(),
             updatedAt = updatedAt ?: System.currentTimeMillis()
@@ -120,6 +123,9 @@ object Utility {
             title = this.title,
             username = this.username,
             password = password,
+            email = this.email,
+            url = this.url,
+            category = this.category,
             notes = this.notes,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt

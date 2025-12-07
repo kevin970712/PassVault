@@ -70,6 +70,7 @@ class KeePassImporter(
                     title = row.title.trim(),
                     username = row.username.trim(),
                     password = password,
+                    url = row.url,
                     notes = row.notes.trim(),
                     creationTime = row.creationTime,
                     lastModificationTime = row.lastModificationTime
@@ -79,6 +80,7 @@ class KeePassImporter(
                     title = keepassRecord.title,
                     username = keepassRecord.username,
                     password = keepassRecord.password,
+                    url = keepassRecord.url,
                     notes = keepassRecord.notes,
                     createdAt = keepassRecord.creationTime.toEpochMillis(),
                     updatedAt = keepassRecord.lastModificationTime.toEpochMillis()
@@ -112,6 +114,7 @@ class KeePassImporter(
                 val title = entry.fields.title?.content
                 val username = entry.fields.userName?.content
                 val password = entry.fields.password?.content
+                val url = entry.fields.url?.content
                 val notes = entry.fields.notes?.content
 
                 // Skip entries that have both empty title AND empty password
@@ -123,6 +126,7 @@ class KeePassImporter(
                     title = title.orEmpty(),
                     username = username,
                     password = password.orEmpty(),
+                    url = url,
                     notes = notes,
                     createdAt = entry.times?.creationTime?.toEpochMilli(),
                     updatedAt = entry.times?.lastModificationTime?.toEpochMilli()

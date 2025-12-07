@@ -11,6 +11,8 @@ data class KeepassRecord(
     val username: String = "",
     @SerialName("Password")
     val password: String = "",
+    @SerialName("URL")
+    val url: String = "",
     @SerialName("Notes")
     val notes: String = "",
     @SerialName("CreationTime")
