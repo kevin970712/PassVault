@@ -130,6 +130,16 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             return
         }
 
+        if (email.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Invalid email format"
+            return
+        }
+
+        if (url.isNotEmpty() && !android.util.Patterns.WEB_URL.matcher(url).matches()) {
+            binding.tilUrl.error = "Invalid URL format"
+            return
+        }
+
         try {
             Encryption.ensureKeyExists()
             val (cipherText, iv) = Encryption.encrypt(rawPassword)
