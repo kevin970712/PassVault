@@ -1,6 +1,7 @@
 package com.jksalcedo.passvault.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.data.PasswordEntry
+import com.jksalcedo.passvault.utils.Utility
 import java.text.DateFormat
 import java.util.Collections.emptyList
 import java.util.Date
 
-class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
+class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
 
     private var _items: MutableLiveData<List<PasswordEntry>> =
         MutableLiveData<List<PasswordEntry>>(emptyList<PasswordEntry>())
@@ -32,7 +34,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_password_entry, parent, false)
-        return VH(view)
+        return VH(view, context)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -43,7 +45,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
 
     override fun getItemCount(): Int = items.value?.size ?: 0
 
-    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class VH(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         private val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         private val tvUpdatedAt: TextView = itemView.findViewById(R.id.tvUpdatedAt)
@@ -61,17 +63,7 @@ class PVAdapter : RecyclerView.Adapter<PVAdapter.VH>() {
             tvCategory.text = category.uppercase()
 
             // Apply category color
-            val colorRes = when (category) {
-                "General" -> R.color.category_general
-                "Social" -> R.color.category_social
-                "Work" -> R.color.category_work
-                "Personal" -> R.color.category_personal
-                "Finance" -> R.color.category_finance
-                "Entertainment" -> R.color.category_entertainment
-                else -> R.color.category_general
-            }
-
-            val color = itemView.context.getColor(colorRes)
+            val color = Utility.getCategoryColor(context = context, entry.category)
             tvCategory.setTextColor(color)
             tvCategory.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
         }

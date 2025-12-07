@@ -139,17 +139,7 @@ class ViewEntryActivity : AppCompatActivity() {
             val category = entry.category ?: "General"
             binding.tvCategoryChip.text = category.uppercase()
 
-            val colorRes = when (category) {
-                "General" -> R.color.category_general
-                "Social" -> R.color.category_social
-                "Work" -> R.color.category_work
-                "Personal" -> R.color.category_personal
-                "Finance" -> R.color.category_finance
-                "Entertainment" -> R.color.category_entertainment
-                else -> R.color.category_general
-            }
-
-            val color = getColor(colorRes)
+            val color = Utility.getCategoryColor(this, entry.category)
             binding.tvCategoryChip.setTextColor(color)
             binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
 
