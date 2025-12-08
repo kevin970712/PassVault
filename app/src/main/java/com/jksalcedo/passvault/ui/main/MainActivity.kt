@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
+import com.jksalcedo.passvault.data.SortOption
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.ui.addedit.PasswordDialogListener
@@ -173,6 +174,31 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
                 val dialog = PasswordGenDialog()
                 dialog.isCancelable = false
                 dialog.show(supportFragmentManager, null)
+                true
+            }
+
+            R.id.sort_name_asc -> {
+                viewModel.setSortOption(SortOption.NAME_ASC)
+                true
+            }
+
+            R.id.sort_name_desc -> {
+                viewModel.setSortOption(SortOption.NAME_DESC)
+                true
+            }
+
+            R.id.sort_date_created -> {
+                viewModel.setSortOption(SortOption.DATE_CREATED_DESC)
+                true
+            }
+
+            R.id.sort_date_modified -> {
+                viewModel.setSortOption(SortOption.DATE_MODIFIED_DESC)
+                true
+            }
+
+            R.id.sort_category -> {
+                viewModel.setSortOption(SortOption.CATEGORY_ASC)
                 true
             }
 

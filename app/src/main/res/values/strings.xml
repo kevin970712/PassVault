@@ -80,6 +80,11 @@
     <string name="strength_strong">Strong</string>
     <string name="choose_import_file_type">Choose import file type</string>
     <string name="passvault_csv">PassVault (CSV)</string>
+    <string name="sort">Sort</string>
+    <string name="name_a_z">Name (A-Z)</string>
+    <string name="name_z_a">Name (Z-A)</string>
+    <string name="date_created_newest">Date Created (Newest)</string>
+    <string name="recently_modified">Recently Modified</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
