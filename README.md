@@ -31,7 +31,7 @@ Kotlin.</h4>
     <img src="https://img.shields.io/badge/Get_it_on-F--Droid-green?style=for-the-badge&logo=f-droid&logoColor=white" alt="Get it on F-Droid" />
   </a>
 
-  [![IzzyOnDroid Shield](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.jksalcedo.passvault&label=IzzyOnDroid&style=for-the-badge)](https://apt.izzysoft.de/packages/com.jksalcedo.passvault)
+[![IzzyOnDroid Shield](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.jksalcedo.passvault&label=IzzyOnDroid&style=for-the-badge)](https://apt.izzysoft.de/packages/com.jksalcedo.passvault)
 </div>
 
 
@@ -63,12 +63,12 @@ system. The application does not require internet permissions. User data never l
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
 - [X] Import from KeePass (using [kotpass](https://github.com/keemobile/kotpass))/Bitwarden
+- [X] Categories/Labels
 
 ## Planned Features
 
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
-- [ ] Categories/Labels
 - [ ] QR Code Password Sharing
 - [ ] Password strength scoring
 - [ ] Custom field templates

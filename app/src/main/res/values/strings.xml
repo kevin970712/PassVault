@@ -63,6 +63,13 @@
     <string name="url">URL</string>
     <string name="category">Category</string>
     <string name="open">Open</string>
+    <string name="all">All</string>
+    <string name="general">General</string>
+    <string name="social">Social</string>
+    <string name="work">Work</string>
+    <string name="personal">Personal</string>
+    <string name="finance">Finance</string>
+    <string name="entertainment">Entertainment</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
