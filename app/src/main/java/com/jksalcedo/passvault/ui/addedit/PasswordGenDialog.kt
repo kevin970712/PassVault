@@ -6,11 +6,14 @@ import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.databinding.DialogPasswordGenBinding
 import com.jksalcedo.passvault.utils.PasswordGenerator
+import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.utils.Utility
 
 /**
@@ -122,17 +125,46 @@ class PasswordGenDialog : DialogFragment() {
                 // Update the UI
                 if (generatedPassword.isNotEmpty()) {
                     binding.tvPassword.text = generatedPassword
+                    updatePasswordStrength(generatedPassword)
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "Select at least one character type",
                         Toast.LENGTH_SHORT
                     ).show()
+                    binding.chipPasswordStrength.visibility = android.view.View.GONE
                 }
             }
         }
 
         return dialog
+    }
+
+    /**
+     * Updates the password strength indicator.
+     */
+    private fun updatePasswordStrength(password: String) {
+        if (password.isEmpty()) {
+            binding.chipPasswordStrength.visibility = android.view.View.GONE
+            return
+        }
+
+        binding.chipPasswordStrength.visibility = android.view.View.VISIBLE
+        val result = PasswordStrengthAnalyzer.analyze(password)
+        val strengthLabel = PasswordStrengthAnalyzer.getStrengthLabel(result.level)
+        binding.chipPasswordStrength.text = strengthLabel
+
+        val colorResId = when (result.level) {
+            PasswordStrengthAnalyzer.StrengthLevel.VERY_WEAK -> R.color.strength_very_weak
+            PasswordStrengthAnalyzer.StrengthLevel.WEAK -> R.color.strength_weak
+            PasswordStrengthAnalyzer.StrengthLevel.FAIR -> R.color.strength_fair
+            PasswordStrengthAnalyzer.StrengthLevel.GOOD -> R.color.strength_good
+            PasswordStrengthAnalyzer.StrengthLevel.STRONG -> R.color.strength_strong
+        }
+        binding.chipPasswordStrength.setChipBackgroundColorResource(colorResId)
+        binding.chipPasswordStrength.setTextColor(
+            ContextCompat.getColor(requireContext(), android.R.color.white)
+        )
     }
 
     /**

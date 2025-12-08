@@ -5,15 +5,18 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-
+import android.text.TextWatcher
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
+import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
 /**
@@ -70,6 +73,15 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
                 show(supportFragmentManager, "PasswordGenDialog")
             }
         }
+
+        // Password strength analyzer
+        binding.etPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                updatePasswordStrength(s?.toString() ?: "")
+            }
+        })
     }
 
     /**
@@ -177,9 +189,46 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         }
     }
 
+    /**
+     * Updates the password strength indicator based on the current password.
+     */
+    private fun updatePasswordStrength(password: String) {
+        if (password.isEmpty()) {
+            binding.layoutPasswordStrength.visibility = View.GONE
+            return
+        }
+
+        binding.layoutPasswordStrength.visibility = View.VISIBLE
+        val result = PasswordStrengthAnalyzer.analyze(password)
+
+        // Update progress bar
+        binding.progressPasswordStrength.setProgress(result.score, true)
+
+        // Update color based on strength level
+        val colorResId = when (result.level) {
+            PasswordStrengthAnalyzer.StrengthLevel.VERY_WEAK -> R.color.strength_very_weak
+            PasswordStrengthAnalyzer.StrengthLevel.WEAK -> R.color.strength_weak
+            PasswordStrengthAnalyzer.StrengthLevel.FAIR -> R.color.strength_fair
+            PasswordStrengthAnalyzer.StrengthLevel.GOOD -> R.color.strength_good
+            PasswordStrengthAnalyzer.StrengthLevel.STRONG -> R.color.strength_strong
+        }
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.progressPasswordStrength.setIndicatorColor(color)
+
+        // Update label
+        val strengthLabel = PasswordStrengthAnalyzer.getStrengthLabel(result.level)
+        binding.tvPasswordStrength.text = "Password Strength: $strengthLabel"
+        binding.tvPasswordStrength.setTextColor(color)
+
+        // Update feedback
+        binding.tvStrengthFeedback.text = result.feedback.firstOrNull() ?: ""
+        binding.tvStrengthFeedback.setTextColor(color)
+    }
+
     override fun onPasswordGenerated(password: String) {
         binding.etPassword.text =
             Editable.Factory.getInstance().newEditable((password.ifEmpty { "" }))
+        updatePasswordStrength(password)
     }
 
     override fun onSupportNavigateUp(): Boolean {
