@@ -7,6 +7,10 @@
 - Add email and URL validation
 - Add button to open URL in browser
 - Add category filter functionality
+- Add category filter, and other enhancements
+- Add password strength analyzer
+- Improve export/import robustness and add Keystore validation
+- Add sorting functionality for password entries
 
 ### Other
 
@@ -15,6 +19,10 @@
 ### Refactor
 
 - Centralize category color logic
+
+### Styling
+
+- Update Store screenshot
 
 ## [1.0.0-beta01] - 2025-12-07
 

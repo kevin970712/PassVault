@@ -109,6 +109,18 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Gets the current sort option for the password list.
+     * @return The current sort option as a String.
+     */
+    fun getSortOption(): String {
+        return prefs.getString("sort_option", "NAME_ASC") ?: "NAME_ASC"
+    }
+    
+    fun setSortOption(sortOption: String) {
+        prefs.edit { putString("sort_option", sortOption) }
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

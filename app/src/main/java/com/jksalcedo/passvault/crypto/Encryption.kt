@@ -4,6 +4,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import com.jksalcedo.passvault.crypto.Encryption.decryptFileContentArgon
 import com.jksalcedo.passvault.crypto.Encryption.encryptFileContentArgon
 import com.lambdapioneer.argon2kt.Argon2Kt
@@ -126,6 +127,37 @@ object Encryption {
         val ciphertext = Base64.decode(cipherBase64, Base64.NO_WRAP)
         val plain = cipher.doFinal(ciphertext)
         return String(plain, Charsets.UTF_8)
+    }
+
+    /**
+     * Tests if the Android Keystore key is valid by performing a test encryption/decryption.
+     * @return True if the keystore key is valid and can encrypt/decrypt, false otherwise.
+     */
+    fun isKeystoreValid(): Boolean {
+        return try {
+            val testString = "keystore_validation_test"
+            val (cipher, iv) = encrypt(testString)
+            val decrypted = decrypt(cipher, iv)
+            decrypted == testString
+        } catch (e: Exception) {
+            Log.e("Encryption", e.message.toString())
+            false
+        }
+    }
+
+    /**
+     * Tests if a specific entry can be decrypted with the current keystore key.
+     * @param cipherBase64 The cipher text in Base64 format.
+     * @param ivBase64 The IV in Base64 format.
+     * @return True if the entry can be decrypted successfully, false otherwise.
+     */
+    fun canDecryptEntry(cipherBase64: String, ivBase64: String): Boolean {
+        return try {
+            decrypt(cipherBase64, ivBase64)
+            true
+        } catch (_: Exception) {
+            false
+        }
     }
 
     /**
