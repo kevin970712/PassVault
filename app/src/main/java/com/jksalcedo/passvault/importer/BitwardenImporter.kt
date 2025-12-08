@@ -26,6 +26,9 @@ class BitwardenImporter(
                         title = item.name,
                         username = item.login?.username,
                         password = item.login?.password.orEmpty(),
+                        email = null,
+                        url = item.login?.uris?.first()?.uri,
+                        category = null,
                         notes = item.notes,
                         createdAt = item.creationDate?.toEpochMillis(),
                         updatedAt = item.revisionDate?.toEpochMillis()

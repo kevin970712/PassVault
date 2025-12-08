@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.data.PasswordEntry
@@ -104,6 +105,9 @@ object Utility {
             username = username,
             passwordCipher = cipher,
             passwordIv = iv,
+            email = email,
+            url = url,
+            category = category,
             notes = notes,
             createdAt = createdAt ?: System.currentTimeMillis(),
             updatedAt = updatedAt ?: System.currentTimeMillis()
@@ -120,9 +124,25 @@ object Utility {
             title = this.title,
             username = this.username,
             password = password,
+            email = this.email,
+            url = this.url,
+            category = this.category,
             notes = this.notes,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt
         )
+    }
+
+    fun getCategoryColor(context: Context, category: String?): Int {
+        val colorRes = when (category) {
+            "General" -> R.color.category_general
+            "Social" -> R.color.category_social
+            "Work" -> R.color.category_work
+            "Personal" -> R.color.category_personal
+            "Finance" -> R.color.category_finance
+            "Entertainment" -> R.color.category_entertainment
+            else -> R.color.category_general
+        }
+        return context.getColor(colorRes)
     }
 }

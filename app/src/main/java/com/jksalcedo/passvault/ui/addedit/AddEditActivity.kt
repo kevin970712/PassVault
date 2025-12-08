@@ -96,6 +96,8 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         binding.etCategory.setAdapter(adapter)
 
         binding.etCategory.setText(entry.category ?: "General", false)
+        binding.etEmail.setText(entry.email)
+        binding.etUrl.setText(entry.url)
     }
 
     /**
@@ -125,6 +127,16 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         }
         if (username.isEmpty()) {
             binding.tilUsername.error = "Username cannot be empty!"
+            return
+        }
+
+        if (email.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Invalid email format"
+            return
+        }
+
+        if (url.isNotEmpty() && !android.util.Patterns.WEB_URL.matcher(url).matches()) {
+            binding.tilUrl.error = "Invalid URL format"
             return
         }
 
@@ -177,7 +189,7 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
 
     companion object {
         const val EXTRA_ID = "extra_id"
-        const val EXTRA_ENTRY = " extra_entry"
+        const val EXTRA_ENTRY = "extra_entry"
 
         /**
          * Creates an intent to start [AddEditActivity].
