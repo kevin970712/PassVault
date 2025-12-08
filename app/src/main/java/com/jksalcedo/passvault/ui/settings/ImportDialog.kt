@@ -46,7 +46,7 @@ class ImportDialog : BottomSheetDialogFragment() {
                             }
                         }
 
-                        ImportType.PASSVAULT_JSON -> {
+                        ImportType.PASSVAULT_JSON, ImportType.PASSVAULT_CSV -> {
                             settingsActivity?.ensurePasswordExists(true) { password ->
                                 settingsViewModel.startImport(uri, type, password)
                             }
@@ -77,7 +77,7 @@ class ImportDialog : BottomSheetDialogFragment() {
             setContentView(binding.root)
             setOnShowListener {
                 binding.tilPassword.visibility = View.GONE
-                prepareImport(ImportType.BITWARDEN_JSON)
+                prepareImport(ImportType.PASSVAULT_JSON)
                 val rg = binding.radioGroup
                 rg.setOnCheckedChangeListener { _, checkedId ->
                     when (checkedId) {
@@ -85,6 +85,7 @@ class ImportDialog : BottomSheetDialogFragment() {
                         binding.mrbKeepassCsv.id -> prepareImport(ImportType.KEEPASS_CSV)
                         binding.mrbKeepassKdbx.id -> prepareImport(ImportType.KEEPASS_KDBX)
                         binding.mrbPassvaultJson.id -> prepareImport(ImportType.PASSVAULT_JSON)
+                        binding.mrbPassvaultCsv.id -> prepareImport(ImportType.PASSVAULT_CSV)
                     }
                 }
             }
@@ -112,7 +113,7 @@ class ImportDialog : BottomSheetDialogFragment() {
     private fun openFileForImport() {
         val mimeType = when (type) {
             ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
-            ImportType.KEEPASS_CSV -> {
+            ImportType.KEEPASS_CSV, ImportType.PASSVAULT_CSV -> {
                 "text/csv"
             }
 
@@ -179,8 +180,9 @@ class ImportDialog : BottomSheetDialogFragment() {
 }
 
 enum class ImportType {
+    PASSVAULT_JSON,
+    PASSVAULT_CSV,
     BITWARDEN_JSON,
     KEEPASS_CSV,
-    KEEPASS_KDBX,
-    PASSVAULT_JSON
+    KEEPASS_KDBX
 }

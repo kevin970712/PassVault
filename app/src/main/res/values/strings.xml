@@ -78,6 +78,8 @@
     <string name="strength_fair">Fair</string>
     <string name="strength_good">Good</string>
     <string name="strength_strong">Strong</string>
+    <string name="choose_import_file_type">Choose import file type</string>
+    <string name="passvault_csv">PassVault (CSV)</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

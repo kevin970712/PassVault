@@ -275,7 +275,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val message = "Database: ${formatFileSize(dbSize)}\n" +
                     "Preferences: ${formatFileSize(prefsSize)}\n" +
                     "Total: ${formatFileSize(totalSize)}"
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Storage Information")
                 .setMessage(message)
                 .setPositiveButton("OK", null)
@@ -298,7 +298,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
      */
     private fun setupClearData() {
         findPreference<Preference>("clear_data")?.setOnPreferenceClickListener {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Clear All Data")
                 .setMessage("This will delete all stored passwords and settings. This action cannot be undone.\n\nAre you sure you want to continue?")
                 .setPositiveButton("Delete All") { _, _ ->

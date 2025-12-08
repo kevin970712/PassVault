@@ -65,7 +65,7 @@ class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
             // Apply category color
             val color = Utility.getCategoryColor(context = context, entry.category)
             tvCategory.setTextColor(color)
-            tvCategory.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
+            tvCategory.background?.setTint(color.and(0x00FFFFFF).or(0x10000000))
         }
     }
 }

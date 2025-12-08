@@ -81,18 +81,82 @@ class SettingsActivity : AppCompatActivity() {
         // Observe export result
         settingsViewModel.exportResult.observe(this) { result ->
             result.fold(
-                onSuccess = {
-                    Toast.makeText(this, "Export successful!", Toast.LENGTH_SHORT).show()
+                onSuccess = { exportResult ->
+                    when {
+                        exportResult.allSucceeded -> {
+                            Toast.makeText(
+                                this,
+                                "Export successful! ${exportResult.successCount} entries exported.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        exportResult.hasFailures -> {
+                            // Show detailed dialog about partial success
+                            MaterialAlertDialogBuilder(this)
+                                .setTitle("Export Partially Successful")
+                                .setMessage(
+                                    "Successfully exported ${exportResult.successCount} of ${exportResult.totalCount} entries.\n\n" +
+                                            "${exportResult.failedEntries.size} entries failed to export:\n" +
+                                            exportResult.failedEntries.joinToString("\n") { "• $it" } +
+                                            "\n\nThese entries may have been encrypted with an invalid keystore key."
+                                )
+                                .setPositiveButton("OK", null)
+                                .show()
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                this,
+                                "Export completed with ${exportResult.successCount} entries.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 },
                 onFailure = { error ->
                     android.util.Log.e("ExportError", "Export failed unexpectedly", error)
-                    Toast.makeText(
-                        this,
-                        "Export failed: ${error.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+
+                    // Check if it's a keystore validation error
+                    val message = if (error.message?.contains("Keystore key is invalid") == true) {
+                        "Export failed: Android Keystore key is invalid.\n\n" +
+                                "This usually happens when:\n" +
+                                "• Device security settings changed\n" +
+                                "• App was reinstalled\n" +
+                                "• Keystore was cleared\n\n" +
+                                "Unfortunately, encrypted passwords cannot be recovered without the original key."
+                    } else {
+                        "Export failed: ${error.message}"
+                    }
+
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Export Failed")
+                        .setMessage(message)
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             )
+        }
+
+        // Observe keystore validation result
+        settingsViewModel.keystoreValidationResult.observe(this) { isValid ->
+            if (isValid == false) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Keystore Warning")
+                    .setMessage(
+                        "The Android Keystore key appears to be invalid.\n\n" +
+                                "This may cause export failures. Some or all passwords may not be recoverable.\n\n" +
+                                "Do you want to continue with the export?"
+                    )
+                    .setPositiveButton("Continue Anyway") { _, _ ->
+                        // User chose to continue
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .setOnDismissListener {
+                        settingsViewModel.resetKeystoreValidation()
+                    }
+                    .show()
+            }
         }
 
         settingsViewModel.importResult.observe(this) { result ->
@@ -211,9 +275,14 @@ class SettingsActivity : AppCompatActivity() {
         val exportFormat = preferenceRepository.getExportFormat()
         val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
 
+        val mimeType = when (exportFormat.lowercase()) {
+            "csv" -> "text/csv"
+            else -> "application/json"
+        }
+
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
+            type = mimeType
             putExtra(Intent.EXTRA_TITLE, fileName)
         }
         if (preferenceRepository.getEncryptBackups()) {
@@ -230,23 +299,33 @@ class SettingsActivity : AppCompatActivity() {
                 )
                 .setPositiveButton("Proceed") { _, _ -> }
                 .setNegativeButton("Cancel", null)
+                .setCancelable(false)
                 .create()
 
             dialog.setOnShowListener {
                 val button = dialog.getButton(Dialog.BUTTON_POSITIVE)
                 button.isEnabled = false
                 lifecycleScope.launch {
-                    button.text = "(3) Proceed"
+                    button.text = buildString {
+                        append("(3) Proceed")
+                    }
                     delay(1000)
-                    button.text = "(2) Proceed"
+                    button.text = buildString {
+                        append("(2) Proceed")
+                    }
                     delay(1000)
-                    button.text = "(1) Proceed"
+                    button.text = buildString {
+                        append("(1) Proceed")
+                    }
                     delay(1000)
-                    button.text = "Proceed"
+                    button.text = buildString {
+                        append("Proceed")
+                    }
                     button.isEnabled = true
                 }
                 button.setOnClickListener {
                     createFileLauncher.launch(intent)
+                    dialog.dismiss()
                 }
             }
             dialog.show()

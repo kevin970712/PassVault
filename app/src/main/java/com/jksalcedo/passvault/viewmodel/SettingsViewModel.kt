@@ -21,6 +21,7 @@ import androidx.work.WorkManager
 import com.jksalcedo.passvault.adapter.BackupAdapter
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.AppDatabase
+import com.jksalcedo.passvault.data.ExportResult
 import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.importer.BitwardenImporter
 import com.jksalcedo.passvault.importer.KeePassImporter
@@ -58,8 +59,8 @@ open class SettingsViewModel(
     private val workManager by lazy { WorkManager.getInstance(application.applicationContext) }
     private val passwordDao = AppDatabase.getDatabase(application).passwordDao()
 
-    private val _exportResult = MutableLiveData<Result<Unit>>()
-    val exportResult: LiveData<Result<Unit>> = _exportResult
+    private val _exportResult = MutableLiveData<Result<ExportResult>>()
+    val exportResult: LiveData<Result<ExportResult>> = _exportResult
 
     private val _importResult = MutableLiveData<Result<Int>>()
     val importResult: LiveData<Result<Int>> = _importResult
@@ -69,6 +70,9 @@ open class SettingsViewModel(
 
     private val _restartAppEvent = MutableLiveData<Unit?>()
     val restartAppEvent: LiveData<Unit?> = _restartAppEvent
+
+    private val _keystoreValidationResult = MutableLiveData<Boolean?>()
+    val keystoreValidationResult: LiveData<Boolean?> = _keystoreValidationResult
 
 
     companion object {
@@ -176,6 +180,23 @@ open class SettingsViewModel(
     }
 
     /**
+     * Validates the Android Keystore before export.
+     * @return True if the keystore is valid, false otherwise.
+     */
+    fun validateKeystoreBeforeExport(): Boolean {
+        val isValid = Encryption.isKeystoreValid()
+        _keystoreValidationResult.postValue(isValid)
+        return isValid
+    }
+
+    /**
+     * Resets the keystore validation result.
+     */
+    fun resetKeystoreValidation() {
+        _keystoreValidationResult.value = null
+    }
+
+    /**
      * Exports entries to a file.
      * @param uri The URI of the file to export to.
      * @param password The password to encrypt the file with.
@@ -190,25 +211,35 @@ open class SettingsViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                // Validate keystore before export
+                if (!Encryption.isKeystoreValid()) {
+                    _exportResult.postValue(
+                        Result.failure(
+                            Exception("Android Keystore key is invalid. Some or all passwords cannot be decrypted.")
+                        )
+                    )
+                    return@launch
+                }
+
                 // Fetch entries from the database
                 val entries = withContext(Dispatchers.IO) {
                     passwordDao.getAllEntries()
                 }
 
-                val serializedData =
+                val exportResult =
                     Utility.serializeEntries(entries, prefsRepository.getExportFormat())
 
                 val contentToWrite = if (isEncryptionEnabled) {
                     Encryption.encryptFileContentArgon(
-                        serializedData,
+                        exportResult.serializedData,
                         password = password!!.toByteArray()
                     )
                 } else {
-                    serializedData
+                    exportResult.serializedData
                 }
 
                 saveToFile(contentToWrite, uri)
-                _exportResult.postValue(Result.success(Unit))
+                _exportResult.postValue(Result.success(exportResult))
             } catch (e: Exception) {
                 _exportResult.postValue(Result.failure(e))
             }
@@ -230,7 +261,7 @@ open class SettingsViewModel(
                 val fileContent = readFromFile(uri)
 
                 // Determine if we need to decrypt or use raw content
-                val jsonToParse = if (password.isNotEmpty()) {
+                val contentToParse = if (password.isNotEmpty()) {
                     try {
                         attemptDecryption(fileContent, password)
                     } catch (e: Exception) {
@@ -243,14 +274,14 @@ open class SettingsViewModel(
                     fileContent
                 }
 
-                if (jsonToParse.isBlank()) {
+                if (contentToParse.isBlank()) {
                     throw Exception("No entries found or invalid file format.")
                 }
 
                 //Deserialize
                 val format = formatOverride ?: prefsRepository.getExportFormat()
                 val entries =
-                    Utility.deserializeEntries(jsonToParse, format)
+                    Utility.deserializeEntries(contentToParse, format)
 
                 if (entries.isEmpty()) {
                     throw Exception("No entries found or invalid file format.")
@@ -431,6 +462,12 @@ open class SettingsViewModel(
                     importEntries(uri, password, formatOverride = "json")
                     return@launch
                 }
+
+                if (type == ImportType.PASSVAULT_CSV) {
+                    importEntries(uri, password, formatOverride = "csv")
+                    return@launch
+                }
+
 
                 val importer = when (type) {
                     ImportType.KEEPASS_CSV -> KeePassImporter(

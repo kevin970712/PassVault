@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.Toast
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
+import com.jksalcedo.passvault.data.ExportResult
 import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.data.PasswordEntry
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -32,12 +33,32 @@ object Utility {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun serializeEntries(list: List<PasswordEntry>, format: String): String {
+    fun serializeEntries(list: List<PasswordEntry>, format: String): ExportResult {
         val normalized = format.lowercase(Locale.ROOT)
         val json = Json { prettyPrint = true }
-        val importRecords = list.map { it.toImportRecord() }
-        return if (normalized == "json") json.encodeToString(importRecords) else Csv.encodeToString(
-            importRecords
+
+        val successfulRecords = mutableListOf<ImportRecord>()
+        val failedEntries = mutableListOf<String>()
+
+        // Convert entries, collecting failures
+        list.forEach { entry ->
+            when (val result = entry.toImportRecordResult()) {
+                is Result.Success -> successfulRecords.add(result.value)
+                is Result.Failure -> failedEntries.add(entry.title)
+            }
+        }
+
+        val serializedData = if (normalized == "json") {
+            json.encodeToString(successfulRecords)
+        } else {
+            Csv.encodeToString(successfulRecords)
+        }
+
+        return ExportResult(
+            serializedData = serializedData,
+            successCount = successfulRecords.size,
+            failedEntries = failedEntries,
+            totalCount = list.size
         )
     }
 
@@ -114,6 +135,34 @@ object Utility {
         )
     }
 
+    /**
+     * Converts a PasswordEntry to an ImportRecord, returning a Result to handle decryption failures.
+     */
+    private fun PasswordEntry.toImportRecordResult(): Result<ImportRecord> {
+        return try {
+            val password = Encryption.decrypt(this.passwordCipher, this.passwordIv)
+            Result.Success(
+                ImportRecord(
+                    title = this.title,
+                    username = this.username,
+                    password = password,
+                    email = this.email,
+                    url = this.url,
+                    category = this.category,
+                    notes = this.notes,
+                    createdAt = this.createdAt,
+                    updatedAt = this.updatedAt
+                )
+            )
+        } catch (e: Exception) {
+            Result.Failure(e)
+        }
+    }
+
+    /**
+     * Legacy function for backward compatibility. Throws exception on failure.
+     */
+    @Deprecated("Old converter")
     private fun PasswordEntry.toImportRecord(): ImportRecord {
         val password = try {
             Encryption.decrypt(this.passwordCipher, this.passwordIv)
@@ -131,6 +180,14 @@ object Utility {
             createdAt = this.createdAt,
             updatedAt = this.updatedAt
         )
+    }
+
+    /**
+     * Simple Result sealed class for internal use.
+     */
+    private sealed class Result<out T> {
+        data class Success<T>(val value: T) : Result<T>()
+        data class Failure(val exception: Exception) : Result<Nothing>()
     }
 
     fun getCategoryColor(context: Context, category: String?): Int {

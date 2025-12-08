@@ -50,10 +50,18 @@ class BackupWorker(
                 val password = preferenceRepository.getPasswordForAutoBackups()
 
                 // Serialize data
-                val data = when (format.uppercase()) {
+                val exportResult = when (format.uppercase()) {
                     "JSON" -> Utility.serializeEntries(entries, format = format)
                     "CSV" -> Utility.serializeEntries(entries, format = format)
                     else -> Utility.serializeEntries(entries, "json") // Default to JSON
+                }
+
+                // Log if there were any failures during serialization
+                if (exportResult.hasFailures) {
+                    Log.w(
+                        TAG,
+                        "Backup: ${exportResult.failedEntries.size} entries failed to export: ${exportResult.failedEntries.joinToString()}"
+                    )
                 }
 
                 val contentToWrite = if (encryptionEnabled) {
@@ -65,9 +73,9 @@ class BackupWorker(
                         // Return failure
                         return@withContext Result.failure()
                     }
-                    Encryption.encryptFileContentArgon(data, password.toByteArray())
+                    Encryption.encryptFileContentArgon(exportResult.serializedData, password.toByteArray())
                 } else {
-                    data
+                    exportResult.serializedData
                 }
 
                 // Create the backup file

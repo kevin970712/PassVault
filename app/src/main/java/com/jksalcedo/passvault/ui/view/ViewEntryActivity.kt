@@ -145,7 +145,7 @@ class ViewEntryActivity : AppCompatActivity() {
 
             val color = Utility.getCategoryColor(this, entry.category)
             binding.tvCategoryChip.setTextColor(color)
-            binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x20000000))
+            binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x10000000))
 
             // Copy username
             binding.btnCopyUsername.setOnClickListener {

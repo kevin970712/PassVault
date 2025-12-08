@@ -9,7 +9,7 @@
         android:id="@+id/materialTextView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose import file type"
+        android:text="@string/choose_import_file_type"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,6 +22,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialTextView3">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/mrb_passvault_json"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/passvault_json"
+            app:useMaterialThemeColors="true" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/mrb_passvault_csv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/passvault_csv"
+            app:useMaterialThemeColors="true" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/mrb_bitwarden_json"
@@ -43,13 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/keepass_kdbx"
-            app:useMaterialThemeColors="true" />
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/mrb_passvault_json"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/passvault_json"
             app:useMaterialThemeColors="true" />
     </RadioGroup>
 
