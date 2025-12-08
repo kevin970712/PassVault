@@ -12,14 +12,39 @@
         android:id="@+id/action_generator"
         android:icon="@drawable/ic_key"
         android:iconTint="@color/black"
-        android:orderInCategory="1000"
+        android:orderInCategory="98"
         android:title="@string/generate_password"
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort"
+        android:orderInCategory="99"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_name_asc"
+                android:title="@string/name_a_z" />
+            <item
+                android:id="@+id/sort_name_desc"
+                android:title="@string/name_z_a" />
+            <item
+                android:id="@+id/sort_date_created"
+                android:title="@string/date_created_newest" />
+            <item
+                android:id="@+id/sort_date_modified"
+                android:title="@string/recently_modified" />
+            <item
+                android:id="@+id/sort_category"
+                android:title="@string/category" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:orderInCategory="2"
+        android:orderInCategory="97"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
