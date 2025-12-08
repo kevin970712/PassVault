@@ -252,20 +252,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="16sp"
-                        app:layout_constraintEnd_toStartOf="@id/btnCopyUrl"
+                        app:layout_constraintEnd_toStartOf="@id/btn_open_url"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvUrlLabel"
                         tools:text="https://example.com" />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/btnCopyUrl"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_open_url"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
                         android:padding="8dp"
-                        android:text="@string/copy_password"
+                        android:text="@string/open"
                         app:layout_constraintBottom_toBottomOf="@id/tvUrl"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tvUrl" />
