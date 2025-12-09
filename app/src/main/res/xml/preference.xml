@@ -46,6 +46,21 @@
 
         <Preference
             app:iconSpaceReserved="false"
+            app:key="backup_location"
+            app:summary="Default: Internal App Storage"
+            app:title="Backup Location" />
+
+        <ListPreference
+            app:defaultValue="10"
+            app:entries="@array/backup_retention_entries"
+            app:entryValues="@array/backup_retention_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_retention"
+            app:summary="%s"
+            app:title="Max Backups to Keep" />
+
+        <Preference
+            app:iconSpaceReserved="false"
             app:key="manage_backups"
             app:summary="View, restore, or save copies of automatic backups"
             app:title="Manage Backups" />

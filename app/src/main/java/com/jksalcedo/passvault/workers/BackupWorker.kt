@@ -2,6 +2,7 @@ package com.jksalcedo.passvault.workers
 
 import android.content.Context
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.jksalcedo.passvault.crypto.Encryption
@@ -73,32 +74,127 @@ class BackupWorker(
                         // Return failure
                         return@withContext Result.failure()
                     }
-                    Encryption.encryptFileContentArgon(exportResult.serializedData, password.toByteArray())
+                    Encryption.encryptFileContentArgon(
+                        exportResult.serializedData,
+                        password.toByteArray()
+                    )
                 } else {
                     exportResult.serializedData
                 }
 
                 // Create the backup file
-                val backupsDir = File(applicationContext.getExternalFilesDir(null), "backups")
-                if (!backupsDir.exists()) {
-                    backupsDir.mkdirs()
-                }
                 val timestamp =
                     SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
                 val fileName = "passvault_backup_$timestamp.${format.lowercase()}"
-                val backupFile = File(backupsDir, fileName)
 
-                // Write data to the file
-                backupFile.writeText(contentToWrite)
-                Log.d(TAG, "Auto backup successful. File: $fileName")
+                val backupLocationUri = preferenceRepository.getBackupLocation()
+                val success = if (backupLocationUri != null) {
+                    // Use custom location (SAF)
+                    try {
+                        val treeUri = backupLocationUri.toUri()
+                        val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                            applicationContext,
+                            treeUri
+                        )
 
-                preferenceRepository.updateLastBackupTime()
+                        if (pickedDir != null && pickedDir.canWrite()) {
+                            val newFile = pickedDir.createFile("application/octet-stream", fileName)
+                            if (newFile != null) {
+                                applicationContext.contentResolver.openOutputStream(newFile.uri)
+                                    ?.use { outputStream ->
+                                        outputStream.write(contentToWrite.toByteArray())
+                                    }
+                                Log.d(
+                                    TAG,
+                                    "Auto backup successful to custom location: ${newFile.uri}"
+                                )
+                                true
+                            } else {
+                                Log.e(TAG, "Failed to create file in custom location")
+                                false
+                            }
+                        } else {
+                            Log.e(TAG, "Custom backup location is not accessible or writable")
+                            false
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error writing to custom backup location", e)
+                        false
+                    }
+                } else {
+                    // Use default internal storage
+                    val backupsDir = File(applicationContext.getExternalFilesDir(null), "backups")
+                    if (!backupsDir.exists()) {
+                        backupsDir.mkdirs()
+                    }
+                    val backupFile = File(backupsDir, fileName)
+                    backupFile.writeText(contentToWrite)
+                    Log.d(TAG, "Auto backup successful to default location: $fileName")
+                    true
+                }
 
-                Result.success()
+                if (success) {
+                    preferenceRepository.updateLastBackupTime()
+
+                    // Handle retention
+                    handleRetention(backupLocationUri)
+
+                    Result.success()
+                } else {
+                    Result.failure()
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Backup failed", e)
             Result.failure()
+        }
+    }
+
+    private fun handleRetention(backupLocationUri: String?) {
+        val maxBackups = preferenceRepository.getBackupRetention()
+        if (maxBackups == -1) return // Unlimited
+
+        try {
+            if (backupLocationUri != null) {
+                // Custom location retention
+                val treeUri = backupLocationUri.toUri()
+                val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                    applicationContext,
+                    treeUri
+                )
+
+                if (pickedDir != null) {
+                    val files = pickedDir.listFiles()
+                        .filter { it.name?.startsWith("passvault_backup_") == true }
+                        .sortedByDescending { it.lastModified() } // Newest first
+
+                    if (files.size > maxBackups) {
+                        val filesToDelete = files.drop(maxBackups)
+                        for (file in filesToDelete) {
+                            file.delete()
+                            Log.d(TAG, "Deleted old backup (retention): ${file.name}")
+                        }
+                    }
+                }
+            } else {
+                // Default location retention
+                val backupsDir = File(applicationContext.getExternalFilesDir(null), "backups")
+                if (backupsDir.exists()) {
+                    val files = backupsDir.listFiles()
+                        ?.filter { it.name.startsWith("passvault_backup_") }
+                        ?.sortedByDescending { it.lastModified() }
+
+                    if (files != null && files.size > maxBackups) {
+                        val filesToDelete = files.drop(maxBackups)
+                        for (file in filesToDelete) {
+                            file.delete()
+                            Log.d(TAG, "Deleted old backup (retention): ${file.name}")
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error handling backup retention", e)
         }
     }
 }

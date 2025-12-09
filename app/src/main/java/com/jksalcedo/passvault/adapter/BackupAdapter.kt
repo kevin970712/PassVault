@@ -9,26 +9,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.data.BackupItem
 import com.jksalcedo.passvault.utils.Utility.formatTime
-import java.io.File
 import java.util.Collections
 
 class BackupAdapter : RecyclerView.Adapter<BackupAdapter.VH>() {
 
-    private var _backupItems: MutableLiveData<List<File>> =
-        MutableLiveData<List<File>>(Collections.emptyList())
+    private var _backupItems: MutableLiveData<List<BackupItem>> =
+        MutableLiveData<List<BackupItem>>(Collections.emptyList())
 
-    val backupItems: LiveData<List<File>> = _backupItems
+    val backupItems: LiveData<List<BackupItem>> = _backupItems
 
-    var onItemClick: ((File) -> Unit)? = null
+    var onItemClick: ((BackupItem) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setBackups(list: List<File>?) {
+    fun setBackups(list: List<BackupItem>?) {
         _backupItems.value = list ?: emptyList()
         notifyDataSetChanged()
     }
 
-    fun deleteBackup(item: File) {
+    fun deleteBackup(item: BackupItem) {
         val currentList = _backupItems.value ?: return
         val position = currentList.indexOf(item)
 
@@ -56,9 +56,14 @@ class BackupAdapter : RecyclerView.Adapter<BackupAdapter.VH>() {
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val backupName = itemView.findViewById<TextView>(R.id.tvTitle)
         private val date = itemView.findViewById<TextView>(R.id.tvUpdatedAt)
-        fun bind(file: File) {
-            backupName.text = file.nameWithoutExtension
-            date.text = file.lastModified().formatTime()
+        fun bind(item: BackupItem) {
+            val name = if (item.name.contains(".")) {
+                item.name.substringBeforeLast(".")
+            } else {
+                item.name
+            }
+            backupName.text = name
+            date.text = item.lastModified.formatTime()
         }
     }
 }
