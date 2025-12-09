@@ -82,58 +82,67 @@ class BackupWorker(
                     exportResult.serializedData
                 }
 
-                // Create the backup file
+                // Create the backup file(s)
                 val timestamp =
                     SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                val fileName = "passvault_backup_$timestamp.${format.lowercase()}"
-
+                val copiesToCreate = preferenceRepository.getBackupCopies()
                 val backupLocationUri = preferenceRepository.getBackupLocation()
-                val success = if (backupLocationUri != null) {
-                    // Use custom location (SAF)
-                    try {
-                        val treeUri = backupLocationUri.toUri()
-                        val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
-                            applicationContext,
-                            treeUri
-                        )
+                
+                var successCount = 0
+                for (copyNum in 1..copiesToCreate) {
+                    val fileName = if (copiesToCreate == 1) {
+                        "passvault_backup_$timestamp.${format.lowercase()}"
+                    } else {
+                        "passvault_backup_${timestamp}_copy$copyNum.${format.lowercase()}"
+                    }
+                    
+                    val success = if (backupLocationUri != null) {
+                        // Use custom location (SAF)
+                        try {
+                            val treeUri = backupLocationUri.toUri()
+                            val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                                applicationContext,
+                                treeUri
+                            )
 
-                        if (pickedDir != null && pickedDir.canWrite()) {
-                            val newFile = pickedDir.createFile("application/octet-stream", fileName)
-                            if (newFile != null) {
-                                applicationContext.contentResolver.openOutputStream(newFile.uri)
-                                    ?.use { outputStream ->
-                                        outputStream.write(contentToWrite.toByteArray())
-                                    }
-                                Log.d(
-                                    TAG,
-                                    "Auto backup successful to custom location: ${newFile.uri}"
-                                )
-                                true
+                            if (pickedDir != null && pickedDir.canWrite()) {
+                                val newFile = pickedDir.createFile("application/octet-stream", fileName)
+                                if (newFile != null) {
+                                    applicationContext.contentResolver.openOutputStream(newFile.uri)
+                                        ?.use { outputStream ->
+                                            outputStream.write(contentToWrite.toByteArray())
+                                        }
+                                    Log.d(TAG, "Auto backup copy $copyNum successful: ${newFile.uri}")
+                                    true
+                                } else {
+                                    Log.e(TAG, "Failed to create file copy $copyNum")
+                                    false
+                                }
                             } else {
-                                Log.e(TAG, "Failed to create file in custom location")
+                                Log.e(TAG, "Custom backup location is not accessible or writable")
                                 false
                             }
-                        } else {
-                            Log.e(TAG, "Custom backup location is not accessible or writable")
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error writing backup copy $copyNum", e)
                             false
                         }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error writing to custom backup location", e)
-                        false
+                    } else {
+                        // Use default internal storage
+                        val backupsDir = File(applicationContext.getExternalFilesDir(null), "backups")
+                        if (!backupsDir.exists()) {
+                            backupsDir.mkdirs()
+                        }
+                        val backupFile = File(backupsDir, fileName)
+                        backupFile.writeText(contentToWrite)
+                        Log.d(TAG, "Auto backup copy $copyNum successful: $fileName")
+                        true
                     }
-                } else {
-                    // Use default internal storage
-                    val backupsDir = File(applicationContext.getExternalFilesDir(null), "backups")
-                    if (!backupsDir.exists()) {
-                        backupsDir.mkdirs()
-                    }
-                    val backupFile = File(backupsDir, fileName)
-                    backupFile.writeText(contentToWrite)
-                    Log.d(TAG, "Auto backup successful to default location: $fileName")
-                    true
+                    
+                    if (success) successCount++
                 }
 
-                if (success) {
+                if (successCount > 0) {
+                    Log.d(TAG, "Created $successCount/$copiesToCreate backup copies")
                     preferenceRepository.updateLastBackupTime()
 
                     // Handle retention

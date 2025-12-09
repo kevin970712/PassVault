@@ -8,11 +8,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
 import com.jksalcedo.passvault.data.SortOption
@@ -20,13 +19,13 @@ import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.ui.addedit.PasswordDialogListener
 import com.jksalcedo.passvault.ui.addedit.PasswordGenDialog
+import com.jksalcedo.passvault.ui.base.BaseActivity
+import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
-import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
-import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
-import com.google.android.material.chip.Chip
-import com.jksalcedo.passvault.ui.base.BaseActivity
+import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,12 +53,6 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         binding.contentMain.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.contentMain.recyclerView.adapter = adapter
 
-        adapter.items.observe(this, Observer { items ->
-            // Show message on first time
-            binding.contentMain.tvMessage.visibility =
-                if (items.isEmpty()) View.VISIBLE else View.GONE
-        })
-
         // View the entry
         adapter.onItemClick = { entry ->
             startActivity(ViewEntryActivity.createIntent(this, entry))
@@ -69,6 +62,10 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
         viewModel.filteredEntries.observe(this) { list ->
             adapter.submitList(list)
+
+            // Show message if empty
+            binding.contentMain.tvMessage.visibility =
+                if (list.isEmpty()) View.VISIBLE else View.GONE
         }
 
         // Add entry
@@ -79,61 +76,80 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         // Dynamically load category chips from database
         categoryViewModel.allCategories.observe(this) { categories ->
             binding.chipGroupCategories.removeAllViews()
-            
+
             // Add "All" chip
             val chipAll = Chip(this).apply {
                 id = View.generateViewId()
-                text = "All (${viewModel.allEntries.value?.size ?: 0})"
+                text = buildString {
+                    append("All (")
+                    append(viewModel.allEntries.value?.size ?: 0)
+                    append(")")
+                }
                 isCheckable = true
                 isChecked = true
                 setChipBackgroundColorResource(R.color.chip_background)
             }
             binding.chipGroupCategories.addView(chipAll)
-            
+
             // Add category chips
             categories.forEach { category ->
                 val chip = Chip(this).apply {
                     id = View.generateViewId()
-                    val count = viewModel.allEntries.value?.count { it.category == category.name } ?: 0
-                    text = "${category.name} ($count)"
+                    val count =
+                        viewModel.allEntries.value?.count { it.category == category.name } ?: 0
+                    text = buildString {
+                        append(category.name)
+                        append(" (")
+                        append(count)
+                        append(")")
+                    }
                     isCheckable = true
                     setChipBackgroundColorResource(R.color.chip_background)
                     tag = category.name // Store category name in tag
                 }
                 binding.chipGroupCategories.addView(chip)
             }
-            
+
             // Set up click listener for all chips
             binding.chipGroupCategories.setOnCheckedStateChangeListener { _, checkedIds ->
                 if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
-                
+
                 val selectedChip = findViewById<Chip>(checkedIds[0])
                 val categoryName = selectedChip?.tag as? String
-                
+
                 viewModel.filterByCategory(categoryName)
                 updateCategoryCounts()
             }
         }
-        
+
         // Update counts when entries change
         viewModel.allEntries.observe(this) {
             updateCategoryCounts()
         }
     }
-    
+
     private fun updateCategoryCounts() {
         val entries = viewModel.allEntries.value ?: return
-        
+
         for (i in 0 until binding.chipGroupCategories.childCount) {
             val chip = binding.chipGroupCategories.getChildAt(i) as? Chip ?: continue
             val categoryName = chip.tag as? String
-            
+
             if (categoryName == null) {
                 // "All" chip
-                chip.text = "All (${entries.size})"
+                chip.text = buildString {
+                    append("All (")
+                    append(entries.size)
+                    append(")")
+                }
             } else {
                 val count = entries.count { it.category == categoryName }
-                chip.text = "$categoryName ($count)"
+                chip.text = buildString {
+                    append(categoryName)
+                    append(" (")
+                    append(count)
+                    append(")")
+                }
             }
         }
     }

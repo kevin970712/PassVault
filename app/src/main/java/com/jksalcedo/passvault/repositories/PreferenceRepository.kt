@@ -175,6 +175,22 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets the number of backup copies to keep.
+     * @param count The number of backup copies.
+     */
+    fun setBackupCopies(count: Int) {
+        prefs.edit { putInt("backup_copies", count) }
+    }
+
+    /**
+     * Gets the number of backup copies to keep.
+     * @return The number of backup copies. Default is 1.
+     */
+    fun getBackupCopies(): Int {
+        return prefs.getInt("backup_copies", 1)
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {
