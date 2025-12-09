@@ -337,6 +337,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
             )
             true
         }
+
+        val blockScreenshotsPref = findPreference<SwitchPreferenceCompat>("block_screenshots")
+        blockScreenshotsPref?.isChecked = prefsRepository.getBlockScreenshots()
+        blockScreenshotsPref?.setOnPreferenceChangeListener { _, newValue ->
+            prefsRepository.setBlockScreenshots(newValue as Boolean)
+            
+            // Show dialog informing user that app needs to restart
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Restart Required")
+                .setMessage("The app needs to restart for this change to take effect.")
+                .setPositiveButton("Restart Now") { _, _ ->
+                    settingsActivity?.triggerRestart()
+                }
+                .setNegativeButton("Later", null)
+                .show()
+            
+            true
+        }
     }
 
     override fun onResume() {

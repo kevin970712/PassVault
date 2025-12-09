@@ -26,6 +26,7 @@ import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
 import com.google.android.material.chip.Chip
+import com.jksalcedo.passvault.ui.base.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,7 +34,7 @@ import kotlinx.coroutines.withContext
 /**
  * The main activity of the app.
  */
-class MainActivity : AppCompatActivity(), PasswordDialogListener {
+class MainActivity : BaseActivity(), PasswordDialogListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: PVAdapter

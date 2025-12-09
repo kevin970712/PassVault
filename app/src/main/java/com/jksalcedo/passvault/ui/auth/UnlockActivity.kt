@@ -10,11 +10,12 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
 import com.jksalcedo.passvault.ui.main.MainActivity
+import com.jksalcedo.passvault.ui.base.BaseActivity
 
 /**
  * An activity for unlocking the app.
  */
-class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
+class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
 
     lateinit var binding: ActivityUnlockBinding
     private val biometricAuthenticator = BiometricAuthenticator()

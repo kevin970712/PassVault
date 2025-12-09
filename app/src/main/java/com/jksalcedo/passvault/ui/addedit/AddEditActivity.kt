@@ -19,11 +19,12 @@ import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
 import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import com.jksalcedo.passvault.ui.base.BaseActivity
 
 /**
  * An activity for adding and editing password entries.
  */
-class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
+class AddEditActivity : BaseActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
     private lateinit var categoryViewModel: CategoryViewModel

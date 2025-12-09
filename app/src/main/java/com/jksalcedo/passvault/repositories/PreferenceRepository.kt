@@ -121,6 +121,22 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets whether screenshots should be blocked.
+     * @param enabled True to block, false to allow.
+     */
+    fun setBlockScreenshots(enabled: Boolean) {
+        prefs.edit { putBoolean("block_screenshots", enabled) }
+    }
+
+    /**
+     * Gets whether screenshots should be blocked.
+     * @return True if screenshots are blocked, false otherwise.
+     */
+    fun getBlockScreenshots(): Boolean {
+        return prefs.getBoolean("block_screenshots", true)
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

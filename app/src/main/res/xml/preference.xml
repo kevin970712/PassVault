@@ -97,6 +97,13 @@
             app:summary="Protect backup files with additional encryption"
             app:title="Encrypt Backups" />
 
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="block_screenshots"
+            app:summary="Prevent screenshots and screen recording for enhanced security"
+            app:title="Block Screenshots" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
