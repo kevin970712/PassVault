@@ -85,6 +85,7 @@
     <string name="name_z_a">Name (Z-A)</string>
     <string name="date_created_newest">Date Created (Newest)</string>
     <string name="recently_modified">Recently Modified</string>
+    <string name="title_required">Title (required)</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

@@ -133,14 +133,6 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             binding.tilTitle.error = "Title cannot be empty!"
             return
         }
-        if (rawPassword.isEmpty()) {
-            binding.tilPassword.error = "Password cannot be empty!"
-            return
-        }
-        if (username.isEmpty()) {
-            binding.tilUsername.error = "Username cannot be empty!"
-            return
-        }
 
         if (email.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.tilEmail.error = "Invalid email format"
