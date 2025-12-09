@@ -1,0 +1,11 @@
+Features
+
+- Implement custom category management
+- Add option to block screenshots
+- Add custom backup location and retention policy
+- Refactor backup file saving to use ACTION_CREATE_DOCUMENT
+- Add backup copies setting and refactor code
+
+Refactor
+
+- Make only title field mandatory

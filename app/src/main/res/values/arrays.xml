@@ -34,4 +34,20 @@
         <item>50</item>
         <item>-1</item>
     </string-array>
+
+    <string-array name="backup_copies_entries">
+        <item>1 Copy</item>
+        <item>2 Copies</item>
+        <item>3 Copies</item>
+        <item>5 Copies</item>
+        <item>10 Copies</item>
+    </string-array>
+
+    <string-array name="backup_copies_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
 </resources>

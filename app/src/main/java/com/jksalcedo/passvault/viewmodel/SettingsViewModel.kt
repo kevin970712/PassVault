@@ -347,21 +347,13 @@ open class SettingsViewModel(
      * @return The content of the URI.
      */
     suspend fun readFromFile(uri: Uri): String = withContext(Dispatchers.IO) {
-        val stringBuilder = StringBuilder()
         try {
             getApplication<Application>().contentResolver.openInputStream(uri)?.use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                    var line: String? = reader.readLine()
-                    while (line != null) {
-                        stringBuilder.append(line)
-                        line = reader.readLine()
-                    }
-                }
-            }
+                BufferedReader(InputStreamReader(inputStream)).readText()
+            } ?: ""
         } catch (e: Exception) {
             throw Exception("Failed to read file.", e)
         }
-        stringBuilder.toString()
     }
 
     /**

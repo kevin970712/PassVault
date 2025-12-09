@@ -7,7 +7,7 @@
         <Preference
             app:iconSpaceReserved="false"
             app:key="about_app"
-            app:summary="PassVault v1.0.0"
+            app:summary="PassVault v1.1.0"
             app:title="About App" />
     </PreferenceCategory>
 
@@ -58,6 +58,15 @@
             app:key="backup_retention"
             app:summary="%s"
             app:title="Max Backups to Keep" />
+
+        <ListPreference
+            app:defaultValue="1"
+            app:entries="@array/backup_copies_entries"
+            app:entryValues="@array/backup_copies_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_copies"
+            app:summary="%s"
+            app:title="Copies per Backup" />
 
         <Preference
             app:iconSpaceReserved="false"

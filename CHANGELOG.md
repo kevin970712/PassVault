@@ -2,12 +2,25 @@
 
 ### Features
 
+- Implement custom category management
+- Add option to block screenshots
+- Add custom backup location and retention policy
+- Refactor backup file saving to use ACTION_CREATE_DOCUMENT
+- Add backup copies setting and refactor code
+
+### Refactor
+
+- Make only title field mandatory
+
+## [1.0.0] - 2025-12-08
+
+### Features
+
 - Add URL field to password entries
 - Pre-fill email and URL fields on edit
 - Add email and URL validation
 - Add button to open URL in browser
 - Add category filter functionality
-- Add category filter, and other enhancements
 - Add password strength analyzer
 - Improve export/import robustness and add Keystore validation
 - Add sorting functionality for password entries
