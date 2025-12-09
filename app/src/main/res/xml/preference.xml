@@ -59,6 +59,15 @@
             app:summary="%s"
             app:title="Max Backups to Keep" />
 
+        <ListPreference
+            app:defaultValue="1"
+            app:entries="@array/backup_copies_entries"
+            app:entryValues="@array/backup_copies_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_copies"
+            app:summary="%s"
+            app:title="Copies per Backup" />
+
         <Preference
             app:iconSpaceReserved="false"
             app:key="manage_backups"

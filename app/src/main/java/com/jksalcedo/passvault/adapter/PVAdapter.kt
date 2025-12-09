@@ -19,15 +19,13 @@ import java.util.Date
 
 class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
 
-    private var _items: MutableLiveData<List<PasswordEntry>> =
-        MutableLiveData<List<PasswordEntry>>(emptyList<PasswordEntry>())
-    val items: LiveData<List<PasswordEntry>> = _items
+    private var items: List<PasswordEntry> = emptyList()
 
     var onItemClick: ((PasswordEntry) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<PasswordEntry>?) {
-        _items.value = (list ?: emptyList())
+        items = list ?: emptyList()
         notifyDataSetChanged()
     }
 
@@ -38,12 +36,12 @@ class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = items.value?.getOrNull(position) ?: return
+        val item = items.getOrNull(position) ?: return
         holder.bind(item)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
     }
 
-    override fun getItemCount(): Int = items.value?.size ?: 0
+    override fun getItemCount(): Int = items.size
 
     class VH(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
