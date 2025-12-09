@@ -9,6 +9,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_manage_categories"
+        android:orderInCategory="99"
+        android:title="@string/manage_categories"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_generator"
         android:icon="@drawable/ic_key"
         android:iconTint="@color/black"
@@ -19,7 +25,7 @@
     <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort"
-        android:orderInCategory="99"
+        android:orderInCategory="98"
         android:title="@string/sort"
         app:showAsAction="ifRoom">
         <menu>

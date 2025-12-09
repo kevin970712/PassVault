@@ -86,6 +86,16 @@
     <string name="date_created_newest">Date Created (Newest)</string>
     <string name="recently_modified">Recently Modified</string>
     <string name="title_required">Title (required)</string>
+    <string name="manage_categories">Manage Categories</string>
+    <string name="existing_categories">Existing Categories</string>
+    <string name="add_category">Add Category</string>
+    <string name="close">Close</string>
+    <string name="color_e_g_ff5722">Color (e.g., #FF5722)</string>
+    <string name="category_name">Category Name</string>
+    <string name="add_new_category">Add New Category</string>
+    <string name="pick">Pick</string>
+    <string name="default_">DEFAULT</string>
+    <string name="delete_category">Delete Category</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

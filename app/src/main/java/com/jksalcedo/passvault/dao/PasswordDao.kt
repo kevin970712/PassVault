@@ -1,4 +1,4 @@
-package com.jksalcedo.passvault.data
+package com.jksalcedo.passvault.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.jksalcedo.passvault.data.PasswordEntry
 
 @Dao
 interface PasswordDao {
@@ -19,7 +20,7 @@ interface PasswordDao {
     @Query("SELECT * FROM password_entries WHERE id = :id")
     fun getEntryById(id: Long): LiveData<PasswordEntry>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insert(entry: PasswordEntry): Long
 
     @Update

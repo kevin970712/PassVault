@@ -23,6 +23,9 @@ import com.jksalcedo.passvault.ui.addedit.PasswordGenDialog
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import com.jksalcedo.passvault.viewmodel.CategoryViewModel
+import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: PVAdapter
     private lateinit var viewModel: PasswordViewModel
+    private lateinit var categoryViewModel: CategoryViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
         }
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
+        categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
         viewModel.filteredEntries.observe(this) { list ->
             adapter.submitList(list)
         }
@@ -70,60 +75,64 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
             startActivity(Intent(this, AddEditActivity::class.java))
         }
 
-        // Filter Category
-        binding.chipGroupCategories.setOnCheckedStateChangeListener { _, checkedIds ->
-            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
-
-            val category = when (checkedIds[0]) {
-                R.id.chipAll -> null
-                R.id.chipGeneral -> "General"
-                R.id.chipSocial -> "Social"
-                R.id.chipWork -> "Work"
-                R.id.chipPersonal -> "Personal"
-                R.id.chipFinance -> "Finance"
-                R.id.chipEntertainment -> "Entertainment"
-                else -> null
+        // Dynamically load category chips from database
+        categoryViewModel.allCategories.observe(this) { categories ->
+            binding.chipGroupCategories.removeAllViews()
+            
+            // Add "All" chip
+            val chipAll = Chip(this).apply {
+                id = View.generateViewId()
+                text = "All (${viewModel.allEntries.value?.size ?: 0})"
+                isCheckable = true
+                isChecked = true
+                setChipBackgroundColorResource(R.color.chip_background)
             }
-
-            viewModel.filterByCategory(category)
-
-            // Update counts
-            viewModel.allEntries.value?.let { entries ->
-                binding.chipAll.text = buildString {
-                    append("All (")
-                    append(entries.size)
-                    append(")")
+            binding.chipGroupCategories.addView(chipAll)
+            
+            // Add category chips
+            categories.forEach { category ->
+                val chip = Chip(this).apply {
+                    id = View.generateViewId()
+                    val count = viewModel.allEntries.value?.count { it.category == category.name } ?: 0
+                    text = "${category.name} ($count)"
+                    isCheckable = true
+                    setChipBackgroundColorResource(R.color.chip_background)
+                    tag = category.name // Store category name in tag
                 }
-                binding.chipGeneral.text = buildString {
-                    append("General (")
-                    append(entries.count { it.category == "General" })
-                    append(")")
-                }
-                binding.chipSocial.text = buildString {
-                    append("Social (")
-                    append(entries.count { it.category == "Social" })
-                    append(")")
-                }
-                binding.chipWork.text = buildString {
-                    append("Work (")
-                    append(entries.count { it.category == "Work" })
-                    append(")")
-                }
-                binding.chipPersonal.text = buildString {
-                    append("Personal (")
-                    append(entries.count { it.category == "Personal" })
-                    append(")")
-                }
-                binding.chipFinance.text = buildString {
-                    append("Finance (")
-                    append(entries.count { it.category == "Finance" })
-                    append(")")
-                }
-                binding.chipEntertainment.text = buildString {
-                    append("Entertainment (")
-                    append(entries.count { it.category == "Entertainment" })
-                    append(")")
-                }
+                binding.chipGroupCategories.addView(chip)
+            }
+            
+            // Set up click listener for all chips
+            binding.chipGroupCategories.setOnCheckedStateChangeListener { _, checkedIds ->
+                if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+                
+                val selectedChip = findViewById<Chip>(checkedIds[0])
+                val categoryName = selectedChip?.tag as? String
+                
+                viewModel.filterByCategory(categoryName)
+                updateCategoryCounts()
+            }
+        }
+        
+        // Update counts when entries change
+        viewModel.allEntries.observe(this) {
+            updateCategoryCounts()
+        }
+    }
+    
+    private fun updateCategoryCounts() {
+        val entries = viewModel.allEntries.value ?: return
+        
+        for (i in 0 until binding.chipGroupCategories.childCount) {
+            val chip = binding.chipGroupCategories.getChildAt(i) as? Chip ?: continue
+            val categoryName = chip.tag as? String
+            
+            if (categoryName == null) {
+                // "All" chip
+                chip.text = "All (${entries.size})"
+            } else {
+                val count = entries.count { it.category == categoryName }
+                chip.text = "$categoryName ($count)"
             }
         }
     }
@@ -174,6 +183,12 @@ class MainActivity : AppCompatActivity(), PasswordDialogListener {
                 val dialog = PasswordGenDialog()
                 dialog.isCancelable = false
                 dialog.show(supportFragmentManager, null)
+                true
+            }
+
+            R.id.action_manage_categories -> {
+                val dialog = ManageCategoriesDialog()
+                dialog.show(supportFragmentManager, "ManageCategoriesDialog")
                 true
             }
 
