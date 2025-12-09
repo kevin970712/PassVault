@@ -64,13 +64,13 @@ system. The application does not require internet permissions. User data never l
 - [X] Encrypted Automatic Backups
 - [X] Import from KeePass (using [kotpass](https://github.com/keemobile/kotpass))/Bitwarden
 - [X] Categories/Labels
+- [X] Password strength scoring
 
 ## Planned Features
 
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
 - [ ] QR Code Password Sharing
-- [ ] Password strength scoring
 - [ ] Custom field templates
 - [ ] TOTP generator
 
