@@ -33,56 +33,7 @@
                 android:layout_height="wrap_content"
                 app:selectionRequired="true"
                 app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipAll"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/all" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipGeneral"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/general" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipSocial"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/social" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipWork"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/work" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipPersonal"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/personal" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipFinance"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/finance" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEntertainment"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/entertainment" />
+                <!-- Chips will be added dynamically from database -->
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 

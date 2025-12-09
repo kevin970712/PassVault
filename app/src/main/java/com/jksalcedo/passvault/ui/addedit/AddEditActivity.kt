@@ -17,14 +17,17 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
 import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
+import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import com.jksalcedo.passvault.ui.base.BaseActivity
 
 /**
  * An activity for adding and editing password entries.
  */
-class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
+class AddEditActivity : BaseActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
+    private lateinit var categoryViewModel: CategoryViewModel
     private var currentEntry: PasswordEntry? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +39,7 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
+        categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
 
         val entryFromIntent: PasswordEntry? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -102,10 +106,13 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             Toast.makeText(this, "Failed to decrypt password", Toast.LENGTH_SHORT).show()
         }
 
-        val categories = resources.getStringArray(R.array.category_options)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
-
-        binding.etCategory.setAdapter(adapter)
+        // Load categories from database
+        categoryViewModel.allCategories.observe(this) { categories ->
+            val categoryNames = categories.map { it.name }
+            val adapter =
+                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryNames)
+            binding.etCategory.setAdapter(adapter)
+        }
 
         binding.etCategory.setText(entry.category ?: "General", false)
         binding.etEmail.setText(entry.email)
@@ -133,14 +140,6 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
             binding.tilTitle.error = "Title cannot be empty!"
             return
         }
-        if (rawPassword.isEmpty()) {
-            binding.tilPassword.error = "Password cannot be empty!"
-            return
-        }
-        if (username.isEmpty()) {
-            binding.tilUsername.error = "Username cannot be empty!"
-            return
-        }
 
         if (email.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.tilEmail.error = "Invalid email format"
@@ -164,7 +163,7 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
                 notes = notes,
                 email = email,
                 url = url,
-                category = category,
+                category = category.ifEmpty { "General" },
                 updatedAt = System.currentTimeMillis()
             ) ?: PasswordEntry(
                 title = title,
@@ -174,7 +173,7 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
                 notes = notes,
                 email = email,
                 url = url,
-                category = category,
+                category = category.ifEmpty { "General" },
                 updatedAt = System.currentTimeMillis()
             )
 
@@ -217,7 +216,10 @@ class AddEditActivity : AppCompatActivity(), PasswordDialogListener {
 
         // Update label
         val strengthLabel = PasswordStrengthAnalyzer.getStrengthLabel(result.level)
-        binding.tvPasswordStrength.text = "Password Strength: $strengthLabel"
+        binding.tvPasswordStrength.text = buildString {
+            append("Password Strength: ")
+            append(strengthLabel)
+        }
         binding.tvPasswordStrength.setTextColor(color)
 
         // Update feedback

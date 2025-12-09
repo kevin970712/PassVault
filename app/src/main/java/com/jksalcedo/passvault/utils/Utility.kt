@@ -191,6 +191,7 @@ object Utility {
     }
 
     fun getCategoryColor(context: Context, category: String?): Int {
+        // Default color mapping for backward compatibility
         val colorRes = when (category) {
             "General" -> R.color.category_general
             "Social" -> R.color.category_social
@@ -201,5 +202,20 @@ object Utility {
             else -> R.color.category_general
         }
         return context.getColor(colorRes)
+    }
+
+    /**
+     * Get category color from hex string (for custom categories)
+     */
+    fun getCategoryColorFromHex(colorHex: String?, defaultColor: Int): Int {
+        return try {
+            if (colorHex != null) {
+                android.graphics.Color.parseColor(colorHex)
+            } else {
+                defaultColor
+            }
+        } catch (e: IllegalArgumentException) {
+            defaultColor
+        }
     }
 }

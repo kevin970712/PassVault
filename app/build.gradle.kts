@@ -124,6 +124,7 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.sqlite.ktx)
+    implementation(libs.androidx.documentfile)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

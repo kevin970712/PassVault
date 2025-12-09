@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,7 +38,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.BufferedReader
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStreamReader
@@ -379,30 +379,82 @@ open class SettingsViewModel(
      * Gets the internal backups.
      * @return The list of internal backups.
      */
-    fun getInternalBackups(): List<File> {
-        val backupsDir = File(getApplication<Application>().getExternalFilesDir(null), "backups")
-        if (!backupsDir.exists() || !backupsDir.isDirectory) {
-            return emptyList()
+    /**
+     * Gets the list of backups from the configured location.
+     * @return The list of backup items.
+     */
+    fun getBackups(): List<com.jksalcedo.passvault.data.BackupItem> {
+        val backupLocationUri = prefsRepository.getBackupLocation()
+        val backupItems = mutableListOf<com.jksalcedo.passvault.data.BackupItem>()
+
+        if (backupLocationUri != null) {
+            // SAF Location
+            try {
+                val treeUri = backupLocationUri.toUri()
+                val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                    getApplication(),
+                    treeUri
+                )
+
+                pickedDir?.listFiles()?.forEach { file ->
+                    if (file.name?.startsWith("passvault_backup_") == true) {
+                        backupItems.add(
+                            com.jksalcedo.passvault.data.BackupItem(
+                                name = file.name ?: "Unknown",
+                                uri = file.uri,
+                                lastModified = file.lastModified(),
+                                size = file.length(),
+                                isSaf = true
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            // Internal Storage
+            val backupsDir =
+                File(getApplication<Application>().getExternalFilesDir(null), "backups")
+            if (backupsDir.exists() && backupsDir.isDirectory) {
+                backupsDir.listFiles()?.forEach { file ->
+                    if (file.name.startsWith("passvault_backup_")) {
+                        backupItems.add(
+                            com.jksalcedo.passvault.data.BackupItem(
+                                name = file.name,
+                                uri = file.toUri(),
+                                lastModified = file.lastModified(),
+                                size = file.length(),
+                                isSaf = false
+                            )
+                        )
+                    }
+                }
+            }
         }
-        // Return files sorted by newest first
-        return backupsDir.listFiles()?.sortedByDescending { it.lastModified() } ?: emptyList()
+        return backupItems.sortedByDescending { it.lastModified }
     }
 
     /**
      * Copies a backup file to a user-selected path.
-     * @param backupFile The backup file to copy.
+     * @param backupItem The backup item to copy.
      * @param targetUri The target URI to copy to.
      */
-    fun copyBackupToUri(backupFile: File, targetUri: Uri) {
+    fun copyBackupToUri(backupItem: com.jksalcedo.passvault.data.BackupItem, targetUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                getApplication<Application>().contentResolver.openOutputStream(targetUri)
-                    ?.use { outputStream ->
-                        FileInputStream(backupFile).use { inputStream ->
-                            // Copy the file content
-                            inputStream.copyTo(outputStream)
+                val inputStream =
+                    getApplication<Application>().contentResolver.openInputStream(backupItem.uri)
+                val outputStream =
+                    getApplication<Application>().contentResolver.openOutputStream(targetUri)
+
+                if (inputStream != null && outputStream != null) {
+                    inputStream.use { input ->
+                        outputStream.use { output ->
+                            input.copyTo(output)
                         }
                     }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -411,22 +463,46 @@ open class SettingsViewModel(
 
     /**
      * Deletes a backup file.
-     * @param backupItem The backup file to delete.
+     * @param backupItem The backup item to delete.
      * @return True if the backup file was deleted successfully, false otherwise.
      */
-    fun deleteBackup(backupItem: File): Boolean {
-        val backupFile =
-            File(
-                getApplication<Application>().getExternalFilesDir(null),
-                "backups/" + backupItem.name
-            )
-        if (!backupFile.isFile || !backupFile.exists()) {
-            return false
+    fun deleteBackup(backupItem: com.jksalcedo.passvault.data.BackupItem): Boolean {
+        return try {
+            if (backupItem.isSaf) {
+                val documentFile = androidx.documentfile.provider.DocumentFile.fromSingleUri(
+                    getApplication(),
+                    backupItem.uri
+                )
+                val deleted = documentFile?.delete() ?: false
+                if (deleted) {
+                    adapter?.deleteBackup(backupItem)
+                }
+                deleted
+            } else {
+                val file = File(
+                    getApplication<Application>().getExternalFilesDir(null),
+                    "backups/${backupItem.name}"
+                )
+                if (file.exists() && file.delete()) {
+                    adapter?.deleteBackup(backupItem)
+                    true
+                } else {
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
+    }
 
-        backupFile.delete()
-        adapter?.deleteBackup(backupItem)
-        return true
+    /**
+     * Restores a backup from the given item.
+     * @param backupItem The backup item to restore.
+     * @param password The password if encrypted.
+     */
+    fun restoreBackup(backupItem: com.jksalcedo.passvault.data.BackupItem, password: String) {
+        startImport(backupItem.uri, ImportType.PASSVAULT_JSON, password)
     }
 
     /**

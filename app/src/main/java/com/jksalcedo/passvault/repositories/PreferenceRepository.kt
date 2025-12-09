@@ -121,6 +121,60 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets whether screenshots should be blocked.
+     * @param enabled True to block, false to allow.
+     */
+    fun setBlockScreenshots(enabled: Boolean) {
+        prefs.edit { putBoolean("block_screenshots", enabled) }
+    }
+
+    /**
+     * Gets whether screenshots should be blocked.
+     * @return True if screenshots are blocked, false otherwise.
+     */
+    fun getBlockScreenshots(): Boolean {
+        return prefs.getBoolean("block_screenshots", true)
+    }
+
+    /**
+     * Sets the backup location URI string.
+     * @param uri The URI string of the backup directory.
+     */
+    fun setBackupLocation(uri: String?) {
+        prefs.edit { putString("backup_location", uri) }
+    }
+
+    /**
+     * Gets the backup location URI string.
+     * @return The URI string, or null if not set (default internal storage).
+     */
+    fun getBackupLocation(): String? {
+        return prefs.getString("backup_location", null)
+    }
+
+    /**
+     * Sets the max number of backups to keep.
+     * @param count The number of backups. -1 for unlimited.
+     */
+    fun setBackupRetention(count: Int) {
+        prefs.edit { putInt("backup_retention", count) }
+    }
+
+    /**
+     * Gets the max number of backups to keep.
+     * @return The number of backups. Default is 10.
+     */
+    fun getBackupRetention(): Int {
+        // Retrieve as string first because ListPreference stores values as strings
+        val value = prefs.getString("backup_retention", "10")
+        return try {
+            value?.toInt() ?: 10
+        } catch (e: NumberFormatException) {
+            10
+        }
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

@@ -19,6 +19,7 @@ import com.jksalcedo.passvault.ui.auth.UnlockActivity
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
+import com.jksalcedo.passvault.ui.base.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ import java.util.Locale
 /**
  * An activity for managing app settings.
  */
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : BaseActivity() {
 
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsModelFactory(application = this.application)

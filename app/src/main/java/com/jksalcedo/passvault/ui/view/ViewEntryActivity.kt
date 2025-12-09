@@ -24,13 +24,14 @@ import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.formatTime
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import com.jksalcedo.passvault.ui.base.BaseActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
  * An activity for viewing a password entry.
  */
-class ViewEntryActivity : AppCompatActivity() {
+class ViewEntryActivity : BaseActivity() {
 
     private lateinit var binding: ActivityViewEntryBinding
     private var currentEntry: PasswordEntry? = null

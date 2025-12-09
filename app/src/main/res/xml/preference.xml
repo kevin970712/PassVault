@@ -46,6 +46,21 @@
 
         <Preference
             app:iconSpaceReserved="false"
+            app:key="backup_location"
+            app:summary="Default: Internal App Storage"
+            app:title="Backup Location" />
+
+        <ListPreference
+            app:defaultValue="10"
+            app:entries="@array/backup_retention_entries"
+            app:entryValues="@array/backup_retention_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_retention"
+            app:summary="%s"
+            app:title="Max Backups to Keep" />
+
+        <Preference
+            app:iconSpaceReserved="false"
             app:key="manage_backups"
             app:summary="View, restore, or save copies of automatic backups"
             app:title="Manage Backups" />
@@ -96,6 +111,13 @@
             app:key="encrypt_backups"
             app:summary="Protect backup files with additional encryption"
             app:title="Encrypt Backups" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="block_screenshots"
+            app:summary="Prevent screenshots and screen recording for enhanced security"
+            app:title="Block Screenshots" />
 
     </PreferenceCategory>
 

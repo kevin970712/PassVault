@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +19,6 @@ import com.jksalcedo.passvault.databinding.FragmentBackupsBinding
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
-import java.io.File
 
 /**
  * A fragment for managing backups.
@@ -35,14 +33,14 @@ class BackupsFragment : Fragment() {
             application = requireActivity().application
         )
     }
-    private lateinit var backupFile: File
+    private lateinit var backupItem: com.jksalcedo.passvault.data.BackupItem
 
     private val openFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
                     try {
-                        settingsViewModel.copyBackupToUri(backupFile, uri)
+                        settingsViewModel.copyBackupToUri(backupItem, uri)
                         Utility.showToast(requireContext(), "Backup file copied successfully!.")
                     } catch (_: Exception) {
                         Utility.showToast(requireContext(), "Process failed.")
@@ -65,18 +63,18 @@ class BackupsFragment : Fragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.setTitle(R.string.manage_backups)
 
         // get backups
-        val backups = settingsViewModel.getInternalBackups()
-        adapter.setBackups(backups.sortedByDescending { it.lastModified() })
+        val backups = settingsViewModel.getBackups()
+        adapter.setBackups(backups)
 
-        adapter.backupItems.observe(this.requireActivity()) { backupItem ->
-            binding.tvNoBackup.visibility = if (backupItem.isEmpty()) View.VISIBLE else View.GONE
+        adapter.backupItems.observe(this.requireActivity()) { items ->
+            binding.tvNoBackup.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         }
 
-        adapter.onItemClick = { backupItem ->
-            backupFile = backupItem
+        adapter.onItemClick = { item ->
+            backupItem = item
             var selectedPosition = -1
             MaterialAlertDialogBuilder(this.requireContext())
-                .setTitle(backupItem.nameWithoutExtension)
+                .setTitle(item.name)
                 .setSingleChoiceItems(R.array.backup_options, 0) { _, which ->
                     selectedPosition = which
                 }
@@ -84,7 +82,7 @@ class BackupsFragment : Fragment() {
                     when (selectedPosition) {
                         // Restore
                         0 -> {
-                            //settingsViewModel.restoreBackup(backupItem)
+                            showRestorePasswordDialog(item)
                         }
                         // Save & Copy
                         1 -> {
@@ -94,38 +92,26 @@ class BackupsFragment : Fragment() {
                         // Delete
                         2 -> {
                             try {
-                                settingsViewModel.deleteBackup(backupItem)
-                                Utility.showToast(requireContext(), "Backup file deleted.")
+                                if (settingsViewModel.deleteBackup(item)) {
+                                    Utility.showToast(requireContext(), "Backup file deleted.")
+                                    // Refresh the list after deleting
+                                    adapter.setBackups(settingsViewModel.getBackups())
+                                } else {
+                                    Utility.showToast(requireContext(), "Failed to delete backup.")
+                                }
                             } catch (e: Exception) {
                                 Utility.showToast(
                                     requireContext(),
                                     "Error deleting backup file: $e."
                                 )
                             }
-                            // Refresh the list after deleting
-                            adapter.setBackups(
-                                settingsViewModel.getInternalBackups()
-                                    .sortedByDescending { it.lastModified() }
-                            )
                         }
                         // Share
                         3 -> {
                             try {
-                                val backupFile =
-                                    File(
-                                        requireActivity().application.getExternalFilesDir(null),
-                                        "backups/" + backupItem.name
-                                    )
-                                val authority = "${requireContext().packageName}.provider"
-                                val contentUri = FileProvider.getUriForFile(
-                                    requireContext(),
-                                    authority,
-                                    backupFile
-                                )
-
                                 val intent = Intent(Intent.ACTION_SEND).apply {
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    putExtra(Intent.EXTRA_STREAM, contentUri)
+                                    putExtra(Intent.EXTRA_STREAM, item.uri)
                                     type = "*/*"
                                 }
                                 startActivity(intent)
@@ -140,6 +126,48 @@ class BackupsFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun showRestorePasswordDialog(item: com.jksalcedo.passvault.data.BackupItem) {
+        val layout = layoutInflater.inflate(R.layout.dialog_enter_password, null)
+        val etPassword =
+            layout.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.et_password)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Restore Backup")
+            .setMessage("Enter the password for this backup (if encrypted). Leave empty if not encrypted.")
+            .setView(layout)
+            .setPositiveButton("Restore") { _, _ ->
+                val password = etPassword.text.toString()
+                settingsViewModel.restoreBackup(item, password)
+
+                settingsViewModel.importUiState.observe(viewLifecycleOwner) { state ->
+                    when (state) {
+                        is ImportUiState.Loading -> {
+                        }
+
+                        is com.jksalcedo.passvault.ui.settings.ImportUiState.Success -> {
+                            Utility.showToast(
+                                requireContext(),
+                                "Restored ${state.count} entries successfully!"
+                            )
+                            settingsViewModel.resetImportState()
+                        }
+
+                        is com.jksalcedo.passvault.ui.settings.ImportUiState.Error -> {
+                            Utility.showToast(
+                                requireContext(),
+                                "Restore failed: ${state.exception.message}"
+                            )
+                            settingsViewModel.resetImportState()
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun onDestroy() {

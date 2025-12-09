@@ -58,6 +58,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupStorageInfo()
         setupClearData()
         setupSecurityPreferences()
+        setupBackupLocation()
+        setupBackupRetention()
     }
 
     /**
@@ -337,12 +339,96 @@ class SettingsFragment : PreferenceFragmentCompat() {
             )
             true
         }
+
+        val blockScreenshotsPref = findPreference<SwitchPreferenceCompat>("block_screenshots")
+        blockScreenshotsPref?.isChecked = prefsRepository.getBlockScreenshots()
+        blockScreenshotsPref?.setOnPreferenceChangeListener { _, newValue ->
+            prefsRepository.setBlockScreenshots(newValue as Boolean)
+            
+            // Show dialog informing user that app needs to restart
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Restart Required")
+                .setMessage("The app needs to restart for this change to take effect.")
+                .setPositiveButton("Restart Now") { _, _ ->
+                    settingsActivity?.triggerRestart()
+                }
+                .setNegativeButton("Later", null)
+                .show()
+            
+            true
+        }
+    }
+
+    private val pickBackupLocationLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri?.let {
+                try {
+                    val takeFlags: Int =
+                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    requireContext().contentResolver.takePersistableUriPermission(it, takeFlags)
+
+                    prefsRepository.setBackupLocation(it.toString())
+                    updateBackupLocationSummary()
+                    Utility.showToast(requireContext(), "Backup location updated")
+                } catch (e: Exception) {
+                    Utility.showToast(requireContext(), "Failed to set backup location: ${e.message}")
+                }
+            }
+        }
+
+    private fun setupBackupLocation() {
+        updateBackupLocationSummary()
+        findPreference<Preference>("backup_location")?.setOnPreferenceClickListener {
+            try {
+                pickBackupLocationLauncher.launch(null)
+            } catch (e: Exception) {
+                Utility.showToast(requireContext(), "Error launching file picker: ${e.message}")
+            }
+            true
+        }
+    }
+
+    private fun updateBackupLocationSummary() {
+        val uriString = prefsRepository.getBackupLocation()
+        val summary = if (uriString != null) {
+            // Try to get a user-friendly path or just show the URI
+            try {
+                val uri = android.net.Uri.parse(uriString)
+                val documentFile = androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
+                documentFile?.name ?: uriString
+            } catch (e: Exception) {
+                uriString
+            }
+        } else {
+            "Default: Internal App Storage"
+        }
+        findPreference<Preference>("backup_location")?.summary = summary
+    }
+
+    private fun setupBackupRetention() {
+        val retentionPref = findPreference<ListPreference>("backup_retention")
+        retentionPref?.setOnPreferenceChangeListener { _, newValue ->
+            val count = (newValue as String).toInt()
+            prefsRepository.setBackupRetention(count)
+            updateBackupRetentionSummary()
+            true
+        }
+        updateBackupRetentionSummary()
+    }
+
+    private fun updateBackupRetentionSummary() {
+        val count = prefsRepository.getBackupRetention()
+        val summary = if (count == -1) "Unlimited" else "$count Backups"
+        findPreference<ListPreference>("backup_retention")?.summary = summary
     }
 
     override fun onResume() {
         super.onResume()
         updateLastBackupSummary()
         updateStorageInfoSummary()
+        updateBackupLocationSummary()
+        updateBackupRetentionSummary()
     }
 
     override fun onDetach() {
