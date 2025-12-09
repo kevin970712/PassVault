@@ -86,7 +86,11 @@ class BackupsFragment : Fragment() {
                         }
                         // Save & Copy
                         1 -> {
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                                type = "application/octet-stream"
+                                putExtra(Intent.EXTRA_TITLE, item.name)
+                            }
                             openFileLauncher.launch(intent)
                         }
                         // Delete
