@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jksalcedo.passvault.databinding.DialogImportBinding
+import com.jksalcedo.passvault.data.enums.ImportType
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
@@ -177,12 +178,4 @@ class ImportDialog : BottomSheetDialogFragment() {
         super.onDestroy()
         _binding = null
     }
-}
-
-enum class ImportType {
-    PASSVAULT_JSON,
-    PASSVAULT_CSV,
-    BITWARDEN_JSON,
-    KEEPASS_CSV,
-    KEEPASS_KDBX
 }

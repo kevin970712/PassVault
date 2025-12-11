@@ -12,6 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.data.enums.Action
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.BiometricAuthenticator
 import com.jksalcedo.passvault.utils.Utility
@@ -435,8 +436,4 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onDetach()
         settingsActivity = null
     }
-}
-
-enum class Action {
-    IMPORT, EXPORT
 }

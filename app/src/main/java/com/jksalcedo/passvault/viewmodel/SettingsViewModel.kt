@@ -27,7 +27,7 @@ import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.importer.BitwardenImporter
 import com.jksalcedo.passvault.importer.KeePassImporter
 import com.jksalcedo.passvault.repositories.PreferenceRepository
-import com.jksalcedo.passvault.ui.settings.ImportType
+import com.jksalcedo.passvault.data.enums.ImportType
 import com.jksalcedo.passvault.ui.settings.ImportUiState
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.toPasswordEntry

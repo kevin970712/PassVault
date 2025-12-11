@@ -8,7 +8,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.jksalcedo.passvault.data.PasswordEntry
-import com.jksalcedo.passvault.data.SortOption
+import com.jksalcedo.passvault.data.enums.SortOption
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import kotlinx.coroutines.Dispatchers

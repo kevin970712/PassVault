@@ -7,7 +7,7 @@ import app.keemobile.kotpass.database.KeePassDatabase
 import app.keemobile.kotpass.database.decode
 import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.data.KeepassRecord
-import com.jksalcedo.passvault.ui.settings.ImportType
+import com.jksalcedo.passvault.data.enums.ImportType
 import com.jksalcedo.passvault.utils.Utility.toEpochMillis
 import com.jksalcedo.passvault.utils.Utility.toPasswordEntry
 import kotlinx.serialization.ExperimentalSerializationApi
