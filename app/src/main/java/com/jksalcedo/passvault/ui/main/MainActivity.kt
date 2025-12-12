@@ -23,7 +23,6 @@ import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
-import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 import kotlinx.coroutines.Dispatchers
@@ -78,7 +77,9 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             binding.chipGroupCategories.removeAllViews()
 
             // Add "All" chip
-            val chipAll = Chip(this).apply {
+            val chipAll =
+                layoutInflater.inflate(R.layout.chip, binding.chipGroupCategories, false) as Chip
+            chipAll.apply {
                 id = View.generateViewId()
                 text = buildString {
                     append("All (")
@@ -87,13 +88,18 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
                 }
                 isCheckable = true
                 isChecked = true
-                setChipBackgroundColorResource(R.color.chip_background)
+                setChipBackgroundColorResource(R.color.chip_background_selector)
             }
             binding.chipGroupCategories.addView(chipAll)
 
             // Add category chips
             categories.forEach { category ->
-                val chip = Chip(this).apply {
+                val chip = layoutInflater.inflate(
+                    R.layout.chip,
+                    binding.chipGroupCategories,
+                    false
+                ) as Chip
+                chip.apply {
                     id = View.generateViewId()
                     val count =
                         viewModel.allEntries.value?.count { it.category == category.name } ?: 0
@@ -104,7 +110,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
                         append(")")
                     }
                     isCheckable = true
-                    setChipBackgroundColorResource(R.color.chip_background)
+                    setChipBackgroundColorResource(R.color.chip_background_selector)
                     tag = category.name // Store category name in tag
                 }
                 binding.chipGroupCategories.addView(chip)
