@@ -29,6 +29,11 @@ class Application() : Application(),
         preferenceRepository = PreferenceRepository(this.applicationContext)
         workerFactory = BackupWorkerFactory(passwordRepository, preferenceRepository)
 
+        // Apply Dynamic Colors if enabled
+        if (preferenceRepository.getUseDynamicColors()) {
+            com.google.android.material.color.DynamicColors.applyToActivitiesIfAvailable(this)
+        }
+
         // Initialize interaction time to prevent auto-lock on first app launch
         lastInteractionTime = System.currentTimeMillis()
 

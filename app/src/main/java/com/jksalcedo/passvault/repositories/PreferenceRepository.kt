@@ -201,6 +201,38 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets the app theme.
+     * @param theme The theme to set (system, light, dark).
+     */
+    fun setTheme(theme: String) {
+        prefs.edit { putString("app_theme", theme) }
+    }
+
+    /**
+     * Gets the app theme.
+     * @return The app theme (system, light, dark).
+     */
+    fun getTheme(): String {
+        return prefs.getString("app_theme", "system") ?: "system"
+    }
+
+    /**
+     * Sets whether to use dynamic colors (Material You).
+     * @param enabled True to enable dynamic colors, false otherwise.
+     */
+    fun setUseDynamicColors(enabled: Boolean) {
+        prefs.edit { putBoolean("use_dynamic_colors", enabled) }
+    }
+
+    /**
+     * Gets whether to use dynamic colors (Material You).
+     * @return True if dynamic colors are enabled, false otherwise.
+     */
+    fun getUseDynamicColors(): Boolean {
+        return prefs.getBoolean("use_dynamic_colors", true)
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

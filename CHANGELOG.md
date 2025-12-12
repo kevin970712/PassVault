@@ -1,4 +1,4 @@
-## [unreleased]
+## [1.1.0] - 2025-12-09
 
 ### Features
 
@@ -11,6 +11,10 @@
 ### Refactor
 
 - Make only title field mandatory
+
+### Miscellaneous Tasks
+
+- Update database schema to version 3
 
 ## [1.0.0] - 2025-12-08
 
