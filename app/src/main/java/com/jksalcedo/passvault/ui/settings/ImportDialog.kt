@@ -112,18 +112,35 @@ class ImportDialog : BottomSheetDialogFragment() {
      * Opens a file picker for the user to select a file to import.
      */
     private fun openFileForImport() {
-        val mimeType = when (type) {
-            ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> "application/json"
-            ImportType.KEEPASS_CSV, ImportType.PASSVAULT_CSV -> {
-                "text/csv"
-            }
+        val mimeTypes = when (type) {
+            ImportType.BITWARDEN_JSON, ImportType.PASSVAULT_JSON -> arrayOf(
+                "application/json",
+                "text/plain",
+                "application/octet-stream"
+            )
 
-            ImportType.KEEPASS_KDBX -> "application/octet-stream"
+            ImportType.KEEPASS_CSV, ImportType.PASSVAULT_CSV -> arrayOf(
+                "text/csv",
+                "text/comma-separated-values",
+                "text/plain",
+                "application/csv",
+                "application/excel",
+                "application/vnd.ms-excel",
+                "application/vnd.msexcel",
+                "application/octet-stream"
+            )
+
+            ImportType.KEEPASS_KDBX -> arrayOf(
+                "application/octet-stream",
+                "application/x-keepass2",
+                "application/kdbx"
+            )
         }
 
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            this.type = mimeType
+            this.type = "*/*" // Allow all, then filter with EXTRA_MIME_TYPES
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         }
         openFileLauncher.launch(intent)
     }
@@ -144,9 +161,9 @@ class ImportDialog : BottomSheetDialogFragment() {
 
                 is ImportUiState.Success -> {
                     binding.progressImporter.visibility = View.GONE
-                    Utility.showToast(
-                        requireContext(),
-                        "Successfully imported ${state.count} entries"
+                    ImportStatusDialog(state.results).show(
+                        parentFragmentManager,
+                        ImportStatusDialog.TAG
                     )
                     settingsViewModel.resetImportState()
                     dismiss()

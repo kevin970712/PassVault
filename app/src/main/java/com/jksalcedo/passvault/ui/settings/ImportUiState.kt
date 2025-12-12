@@ -16,7 +16,12 @@ sealed class ImportUiState {
      * The state of the import UI when the import is successful.
      * @param count The number of entries imported.
      */
-    data class Success(val count: Int) : ImportUiState()
+    /**
+     * The state of the import UI when the import is successful.
+     * @param count The number of entries imported.
+     * @param results The list of import results.
+     */
+    data class Success(val count: Int, val results: List<com.jksalcedo.passvault.data.ImportResult>) : ImportUiState()
     /**
      * The state of the import UI when an error occurs.
      * @param exception The exception that occurred.

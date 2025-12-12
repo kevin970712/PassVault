@@ -163,7 +163,7 @@ object Utility {
      * Legacy function for backward compatibility. Throws exception on failure.
      */
     @Deprecated("Old converter")
-    private fun PasswordEntry.toImportRecord(): ImportRecord {
+    fun PasswordEntry.toImportRecord(): ImportRecord {
         val password = try {
             Encryption.decrypt(this.passwordCipher, this.passwordIv)
         } catch (e: Exception) {

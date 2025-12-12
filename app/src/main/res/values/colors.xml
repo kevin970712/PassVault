@@ -33,7 +33,7 @@
     <color name="category_personal">#AB47BC</color>       <!-- Purple -->
     <color name="category_finance">#66BB6A</color>        <!-- Green -->
     <color name="category_entertainment">#EC407A</color>  <!-- Pink -->
-    
+
     <!-- Chip Background -->
     <color name="chip_background">@android:color/transparent</color>
 
@@ -42,5 +42,7 @@
     <color name="strength_weak">#FF9800</color>           <!-- Orange -->
     <color name="strength_fair">#FFC107</color>           <!-- Amber -->
     <color name="strength_good">#8BC34A</color>           <!-- Light Green -->
-    <color name="strength_strong">#4CAF50</color>         <!-- Green -->
+    <color name="strength_strong">#4CAF50</color>
+    <color name="green_500">#4CAF50</color>
+    <color name="red_500">#D81B21</color>         <!-- Green -->
 </resources>
