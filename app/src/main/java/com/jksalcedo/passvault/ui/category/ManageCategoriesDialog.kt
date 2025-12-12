@@ -1,34 +1,26 @@
 package com.jksalcedo.passvault.ui.category
 
-import android.app.Dialog
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jksalcedo.passvault.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jksalcedo.passvault.data.Category
 import com.jksalcedo.passvault.databinding.DialogManageCategoriesBinding
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import kotlinx.coroutines.launch
 
-class ManageCategoriesDialog : DialogFragment() {
+class ManageCategoriesDialog : BottomSheetDialogFragment() {
 
     private var _binding: DialogManageCategoriesBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: CategoryViewModel
     private lateinit var adapter: CategoryAdapter
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        return dialog
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -132,9 +124,9 @@ class ManageCategoriesDialog : DialogFragment() {
 
     private fun isValidColorHex(colorHex: String): Boolean {
         return try {
-            Color.parseColor(colorHex)
+            colorHex.toColorInt()
             true
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             false
         }
     }
@@ -157,13 +149,5 @@ class ManageCategoriesDialog : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
     }
 }
