@@ -83,6 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setPreferencesFromResource(R.xml.settings_about, null)
                 setupAboutPreference()
                 setupGitHubLink()
+                setupTelegramLink()
             }
 
             else -> {
@@ -95,6 +96,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("github_link")?.setOnPreferenceClickListener {
             val intent =
                 Intent(Intent.ACTION_VIEW, "https://github.com/jksalcedo/PassVault".toUri())
+            startActivity(intent)
+            true
+        }
+    }
+
+    private fun setupTelegramLink() {
+        findPreference<Preference>("telegram_link")?.setOnPreferenceClickListener {
+            val intent =
+                Intent(Intent.ACTION_VIEW, "https://t.me/passvault_app".toUri())
             startActivity(intent)
             true
         }

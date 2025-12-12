@@ -18,6 +18,12 @@
 
         <Preference
             app:iconSpaceReserved="false"
+            app:key="telegram_link"
+            app:summary="Join our Telegram channel"
+            app:title="Telegram" />
+
+        <Preference
+            app:iconSpaceReserved="false"
             app:key="licenses"
             app:summary="Open Source Licenses"
             app:title="Licenses" />
