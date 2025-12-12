@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Security">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="require_auth_export"
+            app:summary="Verify PIN/biometric before exporting data"
+            app:title="Require Authentication for Export" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="encrypt_backups"
+            app:summary="Protect backup files with additional encryption"
+            app:title="Encrypt Backups" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="block_screenshots"
+            app:summary="Prevent screenshots and screen recording for enhanced security"
+            app:title="Block Screenshots" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

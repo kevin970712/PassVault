@@ -48,22 +48,81 @@ class SettingsFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?,
         rootKey: String?
     ) {
-        setPreferencesFromResource(R.xml.preference, rootKey)
+        val key = arguments?.getString(ARG_PREFERENCE_ROOT)
 
-        setupAboutPreference()
-        setupExportAndImport()
-        setupExportFormat()
-        setupAutoBackups()
-        setupManageBackups()
-        setupLastBackup()
-        setupStorageInfo()
-        setupClearData()
-        setupSecurityPreferences()
-        setupBackupLocation()
-        setupBackupRetention()
-        setupBackupRetention()
-        setupBackupCopies()
-        setupBottomAppBarPreference()
+        when (key) {
+            "pref_security" -> {
+                setPreferencesFromResource(R.xml.settings_security, null)
+                setupSecurityPreferences()
+            }
+
+            "pref_display" -> {
+                setPreferencesFromResource(R.xml.settings_display, null)
+                setupBottomAppBarPreference()
+                setupThemePreference()
+                setupDynamicColorsPreference()
+            }
+
+            "pref_data_sync" -> {
+                setPreferencesFromResource(R.xml.settings_data_sync, null)
+                setupExportAndImport()
+                setupExportFormat()
+                setupAutoBackups()
+                setupManageBackups()
+                setupLastBackup()
+                setupStorageInfo()
+                setupClearData()
+                setupBackupLocation()
+                setupBackupRetention()
+                setupBackupCopies()
+            }
+
+            "pref_about" -> {
+                setPreferencesFromResource(R.xml.settings_about, null)
+                setupAboutPreference()
+            }
+
+            else -> {
+                setPreferencesFromResource(R.xml.settings_root, rootKey)
+            }
+        }
+    }
+
+    private fun setupThemePreference() {
+        val themePref = findPreference<ListPreference>("app_theme")
+        themePref?.setOnPreferenceChangeListener { _, newValue ->
+            val theme = newValue as String
+            prefsRepository.setTheme(theme)
+            
+            // Apply theme immediately
+            val mode = when (theme) {
+                "light" -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                "dark" -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                else -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode)
+            true
+        }
+    }
+
+    private fun setupDynamicColorsPreference() {
+        val dynamicColorsPref = findPreference<SwitchPreferenceCompat>("use_dynamic_colors")
+        dynamicColorsPref?.isChecked = prefsRepository.getUseDynamicColors()
+        dynamicColorsPref?.setOnPreferenceChangeListener { _, newValue ->
+            prefsRepository.setUseDynamicColors(newValue as Boolean)
+
+            // Show dialog informing user that app needs to restart
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Restart Required")
+                .setMessage("The app needs to restart for this change to take effect.")
+                .setPositiveButton("Restart Now") { _, _ ->
+                    settingsActivity?.triggerRestart()
+                }
+                .setNegativeButton("Later", null)
+                .show()
+
+            true
+        }
     }
 
     private fun setupBottomAppBarPreference() {
@@ -436,13 +495,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun updateBackupLocationSummary() {
         val uriString = prefsRepository.getBackupLocation()
         val summary = if (uriString != null) {
-            // Try to get a user-friendly path or just show the URI
             try {
                 val uri = android.net.Uri.parse(uriString)
                 val documentFile =
                     androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
                 documentFile?.name ?: uriString
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 uriString
             }
         } else {

@@ -30,7 +30,7 @@ import java.util.Locale
 /**
  * An activity for managing app settings.
  */
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : BaseActivity(), androidx.preference.PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsModelFactory(application = this.application)
@@ -334,7 +334,32 @@ class SettingsActivity : BaseActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        if (supportFragmentManager.popBackStackImmediate()) {
+            return true
+        }
         onBackPressedDispatcher.onBackPressed()
+        return true
+    }
+
+    override fun onPreferenceStartFragment(
+        caller: androidx.preference.PreferenceFragmentCompat,
+        pref: androidx.preference.Preference
+    ): Boolean {
+        // Instantiate the new Fragment
+        val args = pref.extras
+        args.putString(androidx.preference.PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.key)
+        val fragment = supportFragmentManager.fragmentFactory.instantiate(
+            classLoader,
+            pref.fragment!!
+        )
+        fragment.arguments = args
+        fragment.setTargetFragment(caller, 0)
+        
+        // Replace the existing Fragment with the new Fragment
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.settings_fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
         return true
     }
 }

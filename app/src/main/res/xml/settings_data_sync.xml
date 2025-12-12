@@ -1,0 +1,92 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Backup &amp; Restore">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="export_data"
+            app:summary="Create an encrypted backup of all your entries"
+            app:title="Export Data" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="import_data"
+            app:summary="Restore entries from an encrypted backup file"
+            app:title="Import Data" />
+
+        <ListPreference
+            app:defaultValue="json"
+            app:entries="@array/export_format_entries"
+            app:entryValues="@array/export_format_values"
+            app:iconSpaceReserved="false"
+            app:key="export_format"
+            app:title="Export Format"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="auto_backups"
+            app:summary="Automatically create daily backups"
+            app:title="Automatic Backups" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="backup_location"
+            app:summary="Default: Internal App Storage"
+            app:title="Backup Location" />
+
+        <ListPreference
+            app:defaultValue="10"
+            app:entries="@array/backup_retention_entries"
+            app:entryValues="@array/backup_retention_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_retention"
+            app:summary="%s"
+            app:title="Max Backups to Keep" />
+
+        <ListPreference
+            app:defaultValue="1"
+            app:entries="@array/backup_copies_entries"
+            app:entryValues="@array/backup_copies_values"
+            app:iconSpaceReserved="false"
+            app:key="backup_copies"
+            app:summary="%s"
+            app:title="Copies per Backup" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="manage_backups"
+            app:summary="View, restore, or save copies of automatic backups"
+            app:title="Manage Backups" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="last_backup"
+            app:selectable="false"
+            app:summary="Never"
+            app:title="Last Backup" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Data Management">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="storage_info"
+            app:summary="View database size and entry count"
+            app:title="Storage Information" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="clear_data"
+            app:summary="Permanently delete all stored entries"
+            app:title="Clear All Data" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
