@@ -128,7 +128,7 @@ object Utility {
             passwordIv = iv,
             email = email,
             url = url,
-            category = category,
+            category = category ?: "General",
             notes = notes,
             createdAt = createdAt ?: System.currentTimeMillis(),
             updatedAt = updatedAt ?: System.currentTimeMillis()
@@ -202,20 +202,5 @@ object Utility {
             else -> R.color.category_general
         }
         return context.getColor(colorRes)
-    }
-
-    /**
-     * Get category color from hex string (for custom categories)
-     */
-    fun getCategoryColorFromHex(colorHex: String?, defaultColor: Int): Int {
-        return try {
-            if (colorHex != null) {
-                android.graphics.Color.parseColor(colorHex)
-            } else {
-                defaultColor
-            }
-        } catch (e: IllegalArgumentException) {
-            defaultColor
-        }
     }
 }

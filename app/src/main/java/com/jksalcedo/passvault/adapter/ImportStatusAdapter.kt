@@ -1,4 +1,4 @@
-package com.jksalcedo.passvault.ui.settings
+package com.jksalcedo.passvault.adapter
 
 import android.view.LayoutInflater
 import android.view.View

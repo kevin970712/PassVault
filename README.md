@@ -48,9 +48,15 @@ Kotlin.</h4>
   <br>
 </h1>
 
-PassVault is a lightweight password manager that allows users to securely store credentials on their
-device. All data is stored locally and sensitive information is encrypted using the Android Keystore
-system. The application does not require internet permissions. User data never leaves the device.
+PassVault is a secure, lightweight, and completely offline password manager for Android. It empowers
+you to store and manage your credentials locally with military-grade encryption (AES-256), ensuring
+your data never leaves your device.
+
+Built with a focus on privacy and usability, PassVault features a modern Material Design interface,
+robust import capabilities (seamlessly migrating from KeePass and Bitwarden), and advanced security
+options like biometric login and encrypted backups. Whether you're organizing passwords with custom
+categories or generating strong credentials, PassVault keeps your digital life secure and
+accessible.
 
 ## Core Features
 
@@ -62,7 +68,8 @@ system. The application does not require internet permissions. User data never l
 - [x] In-app Password Generator
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
-- [X] Import from KeePass (using [kotpass](https://github.com/keemobile/kotpass))/Bitwarden
+- [X] Robust Import System (KeePass CSV/KDBX & Bitwarden JSON) with detailed status reporting
+- [X] Modern Material Design UI
 - [X] Categories/Labels
 - [X] Password strength scoring
 

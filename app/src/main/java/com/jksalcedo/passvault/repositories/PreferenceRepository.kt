@@ -185,6 +185,22 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets whether to use the bottom app bar.
+     * @param enabled True to use bottom app bar, false for top toolbar.
+     */
+    fun setUseBottomAppBar(enabled: Boolean) {
+        prefs.edit { putBoolean("use_bottom_app_bar", enabled) }
+    }
+
+    /**
+     * Gets whether to use the bottom app bar.
+     * @return True if using bottom app bar, false otherwise.
+     */
+    fun getUseBottomAppBar(): Boolean {
+        return prefs.getBoolean("use_bottom_app_bar", false)
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

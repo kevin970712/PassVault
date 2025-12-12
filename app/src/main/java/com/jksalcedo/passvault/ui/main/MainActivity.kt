@@ -16,6 +16,7 @@ import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
 import com.jksalcedo.passvault.data.enums.SortOption
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
+import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.ui.addedit.PasswordDialogListener
 import com.jksalcedo.passvault.ui.addedit.PasswordGenDialog
@@ -46,7 +47,42 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        val prefsRepository = PreferenceRepository(this)
+        val useBottomAppBar = prefsRepository.getUseBottomAppBar()
+
+        if (useBottomAppBar) {
+            binding.toolbar.visibility = View.GONE
+            binding.bottomAppBar.visibility = View.VISIBLE
+            setSupportActionBar(binding.bottomAppBar)
+
+            // Ensure FAB is anchored to BottomAppBar
+            val params =
+                binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+            params.anchorId = binding.bottomAppBar.id
+            binding.fabAdd.layoutParams = params
+
+            // Add top padding to chips to avoid status bar overlap
+            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                val statusBarHeight = resources.getDimensionPixelSize(resourceId)
+                binding.chipScrollView.setPadding(
+                    binding.chipScrollView.paddingLeft,
+                    statusBarHeight + 16, // extra padding
+                    binding.chipScrollView.paddingRight,
+                    binding.chipScrollView.paddingBottom
+                )
+            }
+        } else {
+            binding.toolbar.visibility = View.VISIBLE
+            binding.bottomAppBar.visibility = View.GONE
+            setSupportActionBar(binding.toolbar)
+
+            // Remove FAB anchor
+            val params =
+                binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+            params.anchorId = View.NO_ID
+            binding.fabAdd.layoutParams = params
+        }
 
         adapter = PVAdapter(this)
         binding.contentMain.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -177,6 +213,13 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnSearchClickListener {
+            binding.fabAdd.visibility = View.INVISIBLE
+        }
+        searchView.setOnCloseListener {
+            binding.fabAdd.visibility = View.VISIBLE
+            false
+        }
         val searchPlateId =
             searchView.context.resources.getIdentifier("android:id/search_plate", null, null)
         val searchPlate = searchView.findViewById<View>(searchPlateId)

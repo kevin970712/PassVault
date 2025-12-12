@@ -61,7 +61,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupSecurityPreferences()
         setupBackupLocation()
         setupBackupRetention()
+        setupBackupRetention()
         setupBackupCopies()
+        setupBottomAppBarPreference()
+    }
+
+    private fun setupBottomAppBarPreference() {
+        val bottomAppBarPref = findPreference<SwitchPreferenceCompat>("use_bottom_app_bar")
+        bottomAppBarPref?.isChecked = prefsRepository.getUseBottomAppBar()
+        bottomAppBarPref?.setOnPreferenceChangeListener { _, newValue ->
+            prefsRepository.setUseBottomAppBar(newValue as Boolean)
+
+            // Show dialog informing user that app needs to restart
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Restart Required")
+                .setMessage("The app needs to restart for this change to take effect.")
+                .setPositiveButton("Restart Now") { _, _ ->
+                    settingsActivity?.triggerRestart()
+                }
+                .setNegativeButton("Later", null)
+                .show()
+
+            true
+        }
     }
 
     private fun setupBackupCopies() {
@@ -363,7 +385,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         blockScreenshotsPref?.isChecked = prefsRepository.getBlockScreenshots()
         blockScreenshotsPref?.setOnPreferenceChangeListener { _, newValue ->
             prefsRepository.setBlockScreenshots(newValue as Boolean)
-            
+
             // Show dialog informing user that app needs to restart
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Restart Required")
@@ -373,7 +395,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 .setNegativeButton("Later", null)
                 .show()
-            
+
             true
         }
     }
@@ -391,7 +413,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     updateBackupLocationSummary()
                     Utility.showToast(requireContext(), "Backup location updated")
                 } catch (e: Exception) {
-                    Utility.showToast(requireContext(), "Failed to set backup location: ${e.message}")
+                    Utility.showToast(
+                        requireContext(),
+                        "Failed to set backup location: ${e.message}"
+                    )
                 }
             }
         }
@@ -414,7 +439,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             // Try to get a user-friendly path or just show the URI
             try {
                 val uri = android.net.Uri.parse(uriString)
-                val documentFile = androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
+                val documentFile =
+                    androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
                 documentFile?.name ?: uriString
             } catch (e: Exception) {
                 uriString
