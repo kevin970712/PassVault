@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
-import com.jksalcedo.passvault.data.SortOption
+import com.jksalcedo.passvault.data.enums.SortOption
 import com.jksalcedo.passvault.databinding.ActivityMainBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
 import com.jksalcedo.passvault.ui.addedit.PasswordDialogListener

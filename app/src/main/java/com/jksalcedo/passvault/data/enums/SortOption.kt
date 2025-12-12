@@ -1,8 +1,5 @@
-package com.jksalcedo.passvault.data
+package com.jksalcedo.passvault.data.enums
 
-/**
- * Enum representing different sorting options for password entries.
- */
 enum class SortOption {
     NAME_ASC,
     NAME_DESC,
@@ -13,9 +10,6 @@ enum class SortOption {
     CATEGORY_ASC;
 
     companion object {
-        /**
-         * Gets a SortOption from its string name, with a fallback default.
-         */
         fun fromString(value: String?): SortOption {
             return try {
                 valueOf(value ?: "NAME_ASC")
