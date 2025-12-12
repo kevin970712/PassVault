@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -59,6 +60,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             val params =
                 binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
             params.anchorId = binding.bottomAppBar.id
+            params.setMargins(0, 0, 0, 0)
             binding.fabAdd.layoutParams = params
 
             // Add top padding to chips to avoid status bar overlap
@@ -81,6 +83,9 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             val params =
                 binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
             params.anchorId = View.NO_ID
+            params.gravity = Gravity.BOTTOM or Gravity.END
+            val margin = (16 * resources.displayMetrics.density).toInt()
+            params.setMargins(0, 0, margin, margin)
             binding.fabAdd.layoutParams = params
         }
 
