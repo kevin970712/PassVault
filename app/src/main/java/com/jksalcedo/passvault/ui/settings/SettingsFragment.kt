@@ -61,6 +61,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupSecurityPreferences()
         setupBackupLocation()
         setupBackupRetention()
+        setupBackupCopies()
+    }
+
+    private fun setupBackupCopies() {
+        val copiesPref = findPreference<ListPreference>("backup_copies")
+        copiesPref?.setOnPreferenceChangeListener { _, newValue ->
+            val count = (newValue as String).toInt()
+            prefsRepository.setBackupCopies(count)
+            updateBackupCopiesSummary()
+            true
+        }
+        updateBackupCopiesSummary()
+    }
+
+    private fun updateBackupCopiesSummary() {
+        val count = prefsRepository.getBackupCopies()
+        val summary = "$count Copies"
+        findPreference<ListPreference>("backup_copies")?.summary = summary
     }
 
     /**
@@ -430,6 +448,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateStorageInfoSummary()
         updateBackupLocationSummary()
         updateBackupRetentionSummary()
+        updateBackupCopiesSummary()
     }
 
     override fun onDetach() {

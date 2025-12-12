@@ -115,7 +115,7 @@ class PreferenceRepository(context: Context) {
     fun getSortOption(): String {
         return prefs.getString("sort_option", "NAME_ASC") ?: "NAME_ASC"
     }
-    
+
     fun setSortOption(sortOption: String) {
         prefs.edit { putString("sort_option", sortOption) }
     }
@@ -165,13 +165,7 @@ class PreferenceRepository(context: Context) {
      * @return The number of backups. Default is 10.
      */
     fun getBackupRetention(): Int {
-        // Retrieve as string first because ListPreference stores values as strings
-        val value = prefs.getString("backup_retention", "10")
-        return try {
-            value?.toInt() ?: 10
-        } catch (e: NumberFormatException) {
-            10
-        }
+        return prefs.getInt("backup_retention", 10)
     }
 
     /**
