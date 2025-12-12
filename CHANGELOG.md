@@ -1,4 +1,4 @@
-## [1.1.0] - 2025-12-09
+## [1.2.0] - 2025-12-12
 
 ### Features
 
@@ -23,6 +23,7 @@
 - Add custom backup location and retention policy
 - Refactor backup file saving to use ACTION_CREATE_DOCUMENT
 - Add backup copies setting and refactor code
+- Add backup copies setting and refactor code
 
 ### Refactor
 
@@ -41,8 +42,12 @@
 - Add email and URL validation
 - Add button to open URL in browser
 - Add category filter functionality
+- Add category filter functionality
+- Add URL field, category filter, and other enhancements
+- Add URL field, category filter, and other enhancements
 - Add password strength analyzer
 - Improve export/import robustness and add Keystore validation
+- Add sorting functionality for password entries
 - Add sorting functionality for password entries
 
 ### Other
@@ -56,11 +61,13 @@
 ### Styling
 
 - Update Store screenshot
+- Update Store screenshot
 
 ## [1.0.0-beta01] - 2025-12-07
 
 ### Features
 
+- Add categories and enhance entry fields
 - Add categories and enhance entry fields
 
 ## [0.9.1] - 2025-12-02

@@ -1,0 +1,2 @@
+- fix fab layout gravity when not in bottom appbar
+- fix crashing on settings screen caused by incorrect namespace declaration on preference root
