@@ -1,8 +1,10 @@
 package com.jksalcedo.passvault.ui.settings
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -80,6 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             "pref_about" -> {
                 setPreferencesFromResource(R.xml.settings_about, null)
                 setupAboutPreference()
+                setupGitHubLink()
             }
 
             else -> {
@@ -88,12 +91,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun setupGitHubLink() {
+        findPreference<Preference>("github_link")?.setOnPreferenceClickListener {
+            val intent =
+                Intent(Intent.ACTION_VIEW, "https://github.com/jksalcedo/PassVault".toUri())
+            startActivity(intent)
+            true
+        }
+    }
+
     private fun setupThemePreference() {
         val themePref = findPreference<ListPreference>("app_theme")
         themePref?.setOnPreferenceChangeListener { _, newValue ->
             val theme = newValue as String
             prefsRepository.setTheme(theme)
-            
+
             // Apply theme immediately
             val mode = when (theme) {
                 "light" -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
@@ -464,8 +476,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             uri?.let {
                 try {
                     val takeFlags: Int =
-                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     requireContext().contentResolver.takePersistableUriPermission(it, takeFlags)
 
                     prefsRepository.setBackupLocation(it.toString())

@@ -1,0 +1,9 @@
+- Refactor Chip creation and update styling
+- Add setting for number of backup copies
+- Introduce detailed import status report
+- Introduce optional Bottom App Bar
+- Implement Theme and Dynamic Color options
+
+- Relocate enums to a dedicated package
+- Convert Manage Categories Dialog to BottomSheet
+- Reorganize settings into categories
