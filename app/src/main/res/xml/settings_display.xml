@@ -1,0 +1,41 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Display">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="use_bottom_app_bar"
+            app:summary="Move navigation and actions to the bottom of the screen"
+            app:title="Use Bottom App Bar" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="use_dynamic_colors"
+            app:summary="Use wallpaper colors for app theme (Android 12+)"
+            app:title="Use Dynamic Colors" />
+
+        <ListPreference
+            app:defaultValue="system"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:iconSpaceReserved="false"
+            app:key="app_theme"
+            app:summary="%s"
+            app:title="Theme" />
+
+        <ListPreference
+            app:defaultValue="en"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:iconSpaceReserved="false"
+            app:key="app_language"
+            app:summary="%s"
+            app:title="Language" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="About">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="about_app"
+            app:summary="PassVault v1.1.0"
+            app:title="About App" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="github_link"
+            app:summary="View source code on GitHub"
+            app:title="GitHub" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="licenses"
+            app:summary="Open Source Licenses"
+            app:title="Licenses" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
