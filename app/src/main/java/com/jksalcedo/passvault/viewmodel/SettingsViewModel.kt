@@ -515,11 +515,12 @@ open class SettingsViewModel(
         withContext(Dispatchers.IO) {
             entries.forEach { importRecord ->
                 try {
-                    passwordDao.insert(importRecord.toPasswordEntry())
+                    val entry = importRecord.toPasswordEntry()
+                    passwordDao.insert(entry)
                     results.add(
                         com.jksalcedo.passvault.data.ImportResult(
                             title = importRecord.title,
-                            isSuccess = true
+                            isSuccess = true,
                         )
                     )
                 } catch (e: Exception) {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.adapter.ImportStatusAdapter
 import com.jksalcedo.passvault.data.ImportResult
 
 class ImportStatusDialog(private val results: List<ImportResult>) : BottomSheetDialogFragment() {

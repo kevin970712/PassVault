@@ -9,6 +9,13 @@
             app:key="about_app"
             app:summary="PassVault v1.1.0"
             app:title="About App" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="use_bottom_app_bar"
+            app:summary="Move navigation and actions to the bottom of the screen"
+            app:title="Use Bottom App Bar" />
     </PreferenceCategory>
 
     <!-- Backup & Restore -->
