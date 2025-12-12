@@ -2,6 +2,22 @@
 
 ### Features
 
+- *(UI)* Refactor Chip creation and update styling
+- *(settings)* Add setting for number of backup copies
+- *(import)* Introduce detailed import status report
+- *(UI)* Introduce optional Bottom App Bar
+- *(UI)* Implement Theme and Dynamic Color options
+
+### Refactor
+
+- Relocate enums to a dedicated package
+- *(UI)* Convert Manage Categories Dialog to BottomSheet
+- *(Settings)* Reorganize settings into categories
+
+## [1.1.0] - 2025-12-09
+
+### Features
+
 - Implement custom category management
 - Add option to block screenshots
 - Add custom backup location and retention policy
