@@ -24,12 +24,13 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.AppDatabase
 import com.jksalcedo.passvault.data.ExportResult
 import com.jksalcedo.passvault.data.ImportRecord
+import com.jksalcedo.passvault.data.enums.ImportType
 import com.jksalcedo.passvault.importer.BitwardenImporter
 import com.jksalcedo.passvault.importer.KeePassImporter
 import com.jksalcedo.passvault.repositories.PreferenceRepository
-import com.jksalcedo.passvault.data.enums.ImportType
 import com.jksalcedo.passvault.ui.settings.ImportUiState
 import com.jksalcedo.passvault.utils.Utility
+import com.jksalcedo.passvault.utils.Utility.toImportRecord
 import com.jksalcedo.passvault.utils.Utility.toPasswordEntry
 import com.jksalcedo.passvault.workers.BackupWorker
 import kotlinx.coroutines.Dispatchers
@@ -288,9 +289,16 @@ open class SettingsViewModel(
                 }
 
                 // Insert all into Database
-                entries.forEach { passwordDao.insert(it) }
+                @Suppress("DEPRECATION") val results = importVault(entries.map { entry ->
+                    entry.toImportRecord()
+                })
 
-                _importUiState.postValue(ImportUiState.Success(entries.size))
+                _importUiState.postValue(
+                    ImportUiState.Success(
+                        results.count { it.isSuccess },
+                        results
+                    )
+                )
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -500,19 +508,32 @@ open class SettingsViewModel(
     /**
      * Imports a vault.
      * @param entries The entries to import.
+     * @return A list of [com.jksalcedo.passvault.data.ImportResult].
      */
-    fun importVault(entries: List<ImportRecord>) {
-        viewModelScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    entries.forEach { importRecord ->
-                        passwordDao.insert(importRecord.toPasswordEntry())
-                    }
+    suspend fun importVault(entries: List<ImportRecord>): List<com.jksalcedo.passvault.data.ImportResult> {
+        val results = mutableListOf<com.jksalcedo.passvault.data.ImportResult>()
+        withContext(Dispatchers.IO) {
+            entries.forEach { importRecord ->
+                try {
+                    passwordDao.insert(importRecord.toPasswordEntry())
+                    results.add(
+                        com.jksalcedo.passvault.data.ImportResult(
+                            title = importRecord.title,
+                            isSuccess = true
+                        )
+                    )
+                } catch (e: Exception) {
+                    results.add(
+                        com.jksalcedo.passvault.data.ImportResult(
+                            title = importRecord.title,
+                            isSuccess = false,
+                            errorMessage = e.message
+                        )
+                    )
                 }
-            } catch (_: Exception) {
-
             }
         }
+        return results
     }
 
     /**
@@ -557,9 +578,14 @@ open class SettingsViewModel(
                 }
                 val content = readFromFile(uri)
                 val entries = importer.parse(content)
-                importVault(entries)
+                val results = importVault(entries)
 
-                _importUiState.postValue(ImportUiState.Success(entries.size))
+                _importUiState.postValue(
+                    ImportUiState.Success(
+                        results.count { it.isSuccess },
+                        results
+                    )
+                )
             } catch (e: Exception) {
                 Log.e("SettingsViewModel", "Import failed", e)
                 _importUiState.postValue(ImportUiState.Error(Exception(getFriendlyErrorMessage(e))))

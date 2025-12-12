@@ -96,6 +96,8 @@
     <string name="pick">Pick</string>
     <string name="default_">DEFAULT</string>
     <string name="delete_category">Delete Category</string>
+    <string name="import_summary">Import Summary</string>
+    <string name="icon">Icon</string>
 
     <string-array name="backup_options">
         <item>Restore</item>
