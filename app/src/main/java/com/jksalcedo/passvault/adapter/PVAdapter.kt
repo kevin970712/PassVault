@@ -20,6 +20,7 @@ import java.util.Date
 class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
 
     private var items: List<PasswordEntry> = emptyList()
+    private var categoryColors: Map<String, String> = emptyMap()
 
     var onItemClick: ((PasswordEntry) -> Unit)? = null
 
@@ -29,15 +30,21 @@ class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun setCategoryColors(colors: Map<String, String>) {
+        categoryColors = colors
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val view = LayoutInflater.from(parent.context)
+        val binding = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_password_entry, parent, false)
-        return VH(view, context)
+        return VH(binding, context)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items.getOrNull(position) ?: return
-        holder.bind(item)
+        holder.bind(item, categoryColors)
         holder.itemView.setOnClickListener { onItemClick?.invoke(item) }
     }
 
@@ -49,7 +56,7 @@ class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
         private val tvUpdatedAt: TextView = itemView.findViewById(R.id.tvUpdatedAt)
         private val tvCategory: MaterialTextView = itemView.findViewById(R.id.tvCategoryChip)
 
-        fun bind(entry: PasswordEntry) {
+        fun bind(entry: PasswordEntry, categoryColors: Map<String, String>) {
             tvTitle.text = entry.title
             tvUsername.text = entry.username ?: ""
             val dateText = DateFormat.getDateInstance().format(Date(entry.updatedAt))
@@ -60,8 +67,8 @@ class PVAdapter(val context: Context) : RecyclerView.Adapter<PVAdapter.VH>() {
             val category = entry.category ?: "General"
             tvCategory.text = category.uppercase()
 
-            // Apply category color
-            val color = Utility.getCategoryColor(context = context, entry.category)
+            val colorHex = categoryColors[category]
+            val color = Utility.getCategoryColor(context, entry.category, colorHex)
             tvCategory.setTextColor(color)
             tvCategory.background?.setTint(color.and(0x00FFFFFF).or(0x10000000))
         }

@@ -1,13 +1,14 @@
 package com.jksalcedo.passvault.ui.category
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jksalcedo.passvault.data.Category
 import com.jksalcedo.passvault.databinding.ItemCategoryBinding
-import android.graphics.Color
 
 class CategoryAdapter(
     private val onDeleteClick: (Category) -> Unit
@@ -36,21 +37,10 @@ class CategoryAdapter(
 
             // Show color preview
             try {
-                val color = Color.parseColor(category.colorHex)
+                val color = category.colorHex.toColorInt()
                 binding.viewColorPreview.setBackgroundColor(color)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 binding.viewColorPreview.setBackgroundColor(Color.GRAY)
-            }
-
-            // Show badge for default categories
-            if (category.isDefault) {
-                binding.tvDefaultBadge.visibility = android.view.View.VISIBLE
-                binding.btnDelete.isEnabled = false
-                binding.btnDelete.alpha = 0.5f
-            } else {
-                binding.tvDefaultBadge.visibility = android.view.View.GONE
-                binding.btnDelete.isEnabled = true
-                binding.btnDelete.alpha = 1.0f
             }
 
             binding.btnDelete.setOnClickListener {

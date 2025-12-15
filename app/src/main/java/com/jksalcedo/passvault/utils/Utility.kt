@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.core.graphics.toColorInt
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.ExportResult
@@ -190,8 +191,16 @@ object Utility {
         data class Failure(val exception: Exception) : Result<Nothing>()
     }
 
-    fun getCategoryColor(context: Context, category: String?): Int {
-        // Default color mapping for backward compatibility
+    fun getCategoryColor(context: Context, category: String?, colorHex: String? = null): Int {
+        // If colorHex is provided, parse it first
+        if (!colorHex.isNullOrBlank()) {
+            try {
+                return colorHex.toColorInt()
+            } catch (_: IllegalArgumentException) {
+                // default color mapping
+            }
+        }
+
         val colorRes = when (category) {
             "General" -> R.color.category_general
             "Social" -> R.color.category_social
