@@ -38,10 +38,8 @@
             app:summary="Default: Internal App Storage"
             app:title="Backup Location" />
 
-        <ListPreference
+        <EditTextPreference
             app:defaultValue="10"
-            app:entries="@array/backup_retention_entries"
-            app:entryValues="@array/backup_retention_values"
             app:iconSpaceReserved="false"
             app:key="backup_retention"
             app:summary="%s"
