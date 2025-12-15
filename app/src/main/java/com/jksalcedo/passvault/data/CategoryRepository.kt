@@ -36,16 +36,17 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
     }
 
     suspend fun initializeDefaultCategories() {
-        if (categoryDao.getDefaultCategoriesCount() == 0) {
-            val defaultCategories = listOf(
-                Category(name = "General", colorHex = "#9E9E9E", isDefault = true),
-                Category(name = "Social", colorHex = "#2196F3", isDefault = true),
-                Category(name = "Work", colorHex = "#FF9800", isDefault = true),
-                Category(name = "Personal", colorHex = "#9C27B0", isDefault = true),
-                Category(name = "Finance", colorHex = "#4CAF50", isDefault = true),
-                Category(name = "Entertainment", colorHex = "#F44336", isDefault = true)
-            )
-            insertAll(defaultCategories)
-        }
+        val existingCategories = getAllCategoriesSync()
+        if (existingCategories.isNotEmpty()) return
+        
+        val defaultCategories = listOf(
+            Category(name = "General", colorHex = "#9E9E9E"),
+            Category(name = "Social", colorHex = "#2196F3"),
+            Category(name = "Work", colorHex = "#FF9800"),
+            Category(name = "Personal", colorHex = "#9C27B0"),
+            Category(name = "Finance", colorHex = "#4CAF50"),
+            Category(name = "Entertainment", colorHex = "#F44336")
+        )
+        insertAll(defaultCategories)
     }
 }

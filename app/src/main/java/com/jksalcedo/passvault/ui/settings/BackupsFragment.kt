@@ -72,7 +72,7 @@ class BackupsFragment : Fragment() {
 
         adapter.onItemClick = { item ->
             backupItem = item
-            var selectedPosition = -1
+            var selectedPosition = 0
             MaterialAlertDialogBuilder(this.requireContext())
                 .setTitle(item.name)
                 .setSingleChoiceItems(R.array.backup_options, 0) { _, which ->

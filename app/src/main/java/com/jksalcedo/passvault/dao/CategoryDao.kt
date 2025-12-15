@@ -11,10 +11,10 @@ import com.jksalcedo.passvault.data.Category
 
 @Dao
 interface CategoryDao {
-    @Query("SELECT * FROM categories ORDER BY isDefault DESC, name ASC")
+    @Query("SELECT * FROM categories ORDER BY name ASC")
     fun getAllCategories(): LiveData<List<Category>>
 
-    @Query("SELECT * FROM categories ORDER BY isDefault DESC, name ASC")
+    @Query("SELECT * FROM categories ORDER BY name ASC")
     suspend fun getAllCategoriesSync(): List<Category>
 
     @Query("SELECT * FROM categories WHERE name = :name LIMIT 1")
@@ -32,9 +32,6 @@ interface CategoryDao {
     @Delete
     suspend fun delete(category: Category)
 
-    @Query("DELETE FROM categories WHERE isDefault = 0 AND name = :name")
+    @Query("DELETE FROM categories WHERE name = :name")
     suspend fun deleteCustomCategory(name: String)
-
-    @Query("SELECT COUNT(*) FROM categories WHERE isDefault = 1")
-    suspend fun getDefaultCategoriesCount(): Int
 }

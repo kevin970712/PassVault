@@ -117,6 +117,10 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         categoryViewModel.allCategories.observe(this) { categories ->
             binding.chipGroupCategories.removeAllViews()
 
+            // Build category color map and pass to adapter
+            val categoryColors = categories.associate { it.name to it.colorHex }
+            adapter.setCategoryColors(categoryColors)
+
             // Add "All" chip
             val chipAll =
                 layoutInflater.inflate(R.layout.chip, binding.chipGroupCategories, false) as Chip

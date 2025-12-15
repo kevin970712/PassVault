@@ -9,7 +9,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
@@ -20,11 +19,12 @@ import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityViewEntryBinding
 import com.jksalcedo.passvault.ui.addedit.AddEditActivity
+import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.formatTime
+import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
-import com.jksalcedo.passvault.ui.base.BaseActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -37,6 +37,7 @@ class ViewEntryActivity : BaseActivity() {
     private var currentEntry: PasswordEntry? = null
 
     private lateinit var viewModel: PasswordViewModel
+    private lateinit var categoryViewModel: CategoryViewModel
 
     private var revealed: Boolean = false
     private var plainPassword: String = ""
@@ -73,6 +74,7 @@ class ViewEntryActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
+        categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
 
         currentEntry = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_ENTRY, PasswordEntry::class.java)
@@ -140,13 +142,18 @@ class ViewEntryActivity : BaseActivity() {
                     append(entry.updatedAt.formatTime())
                 }
 
-            // Set category chip with color
+            // Set category chip with color (async lookup for custom categories)
             val category = entry.category ?: "General"
             binding.tvCategoryChip.text = category.uppercase()
 
-            val color = Utility.getCategoryColor(this, entry.category)
-            binding.tvCategoryChip.setTextColor(color)
-            binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x10000000))
+            lifecycleScope.launch {
+                val categoryEntity = categoryViewModel.getCategoryByName(category)
+                val colorHex = categoryEntity?.colorHex
+                val color =
+                    Utility.getCategoryColor(this@ViewEntryActivity, entry.category, colorHex)
+                binding.tvCategoryChip.setTextColor(color)
+                binding.tvCategoryChip.background?.setTint(color.and(0x00FFFFFF).or(0x10000000))
+            }
 
             // Copy username
             binding.btnCopyUsername.setOnClickListener {

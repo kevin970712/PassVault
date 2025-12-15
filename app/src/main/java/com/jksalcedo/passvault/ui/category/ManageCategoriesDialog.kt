@@ -39,19 +39,11 @@ class ManageCategoriesDialog : BottomSheetDialogFragment() {
         // Setup RecyclerView
         adapter = CategoryAdapter(
             onDeleteClick = { category ->
-                if (!category.isDefault) {
-                    lifecycleScope.launch {
-                        viewModel.deleteCategory(category)
-                        Toast.makeText(
-                            requireContext(),
-                            "Category '${category.name}' deleted",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
+                lifecycleScope.launch {
+                    viewModel.deleteCategory(category)
                     Toast.makeText(
                         requireContext(),
-                        "Cannot delete default category",
+                        "Category '${category.name}' deleted",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -95,7 +87,6 @@ class ManageCategoriesDialog : BottomSheetDialogFragment() {
                     val newCategory = Category(
                         name = categoryName,
                         colorHex = colorHex,
-                        isDefault = false
                     )
                     viewModel.insertCategory(newCategory)
                     binding.etCategoryName.text?.clear()
