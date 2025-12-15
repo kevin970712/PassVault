@@ -1,3 +1,9 @@
+## [1.2.1] - 2025-12-12
+
+### Bug Fixes
+
+- *(UI)* Correct FAB position and fix settings crash
+
 ## [1.2.0] - 2025-12-12
 
 ### Features

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -541,7 +542,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupBackupRetention() {
-        val retentionPref = findPreference<ListPreference>("backup_retention")
+        val retentionPref = findPreference<EditTextPreference>("backup_retention")
         retentionPref?.setOnPreferenceChangeListener { _, newValue ->
             val count = (newValue as String).toInt()
             prefsRepository.setBackupRetention(count)
@@ -554,7 +555,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun updateBackupRetentionSummary() {
         val count = prefsRepository.getBackupRetention()
         val summary = if (count == -1) "Unlimited" else "$count Backups"
-        findPreference<ListPreference>("backup_retention")?.summary = summary
+        findPreference<EditTextPreference>("backup_retention")?.summary = summary
     }
 
     override fun onResume() {

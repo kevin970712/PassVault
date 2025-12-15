@@ -1,0 +1,6 @@
+- Enhance some UIs
+- Update dependencies
+- Implement OSS Licenses Screen
+- Improve category management UX
+- Fix bug on Restoring backups
+- Fix minor bugs

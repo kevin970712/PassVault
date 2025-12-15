@@ -4,21 +4,21 @@
     tools:context="com.jksalcedo.passvault.ui.main.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_manage_categories"
-        android:orderInCategory="99"
+        android:orderInCategory="199"
         android:title="@string/manage_categories"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_generator"
         android:icon="@drawable/ic_key"
         android:iconTint="@color/black"
-        android:orderInCategory="98"
+        android:orderInCategory="100"
         android:title="@string/generate_password"
         app:showAsAction="ifRoom" />
 
@@ -50,8 +50,8 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:orderInCategory="97"
+        android:orderInCategory="1"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>
