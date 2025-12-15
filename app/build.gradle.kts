@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
     id("com.autonomousapps.dependency-analysis")
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
@@ -18,8 +19,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.2.1"
+        versionCode = 22
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -167,4 +168,7 @@ dependencies {
 
     // Argon2
     implementation(libs.argon2kt)
+
+    implementation(libs.play.services.oss.licenses)
+
 }

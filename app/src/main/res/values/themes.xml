@@ -23,7 +23,7 @@
         <item name="colorSurfaceContainerLow">@color/white</item>
         <item name="colorSurfaceContainerHigh">@color/grey_100</item>
         <item name="colorOnSurface">@color/black</item>
-        <item name="colorOnSurfaceVariant">@color/grey_500</item>
+        <item name="colorOnSurfaceVariant">@color/grey_600</item>
 
         <!-- Background color - Pure white -->
         <item name="android:colorBackground">@color/white</item>

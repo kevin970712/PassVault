@@ -50,6 +50,7 @@ class PasswordGenDialog : DialogFragment() {
         val savedLength = prefs.getInt("length", 16)
         binding.sbLength.progress = savedLength
         binding.tvLength.text = savedLength.toString()
+        binding.sbLength.min = 4
 
         binding.sbUppercase.isChecked = prefs.getBoolean("uppercase", true)
         binding.sbLowercase.isChecked = prefs.getBoolean("lowercase", true)
@@ -68,6 +69,7 @@ class PasswordGenDialog : DialogFragment() {
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
+            .setTitle(R.string.generate_password)
             .setCancelable(false)
             // This button generates the password and shows it, but does nor close the dialog
             .setPositiveButton("Generate", null)
@@ -97,7 +99,6 @@ class PasswordGenDialog : DialogFragment() {
         dialog.setOnShowListener {
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setOnClickListener {
-                // Read the UI state right when the button is clicked
                 val length = binding.sbLength.progress
                 val hasUppercase = binding.sbUppercase.isChecked
                 val hasLowercase = binding.sbLowercase.isChecked

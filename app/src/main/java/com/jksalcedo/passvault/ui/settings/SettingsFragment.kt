@@ -10,6 +10,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -84,11 +85,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setupAboutPreference()
                 setupGitHubLink()
                 setupTelegramLink()
+                setupOSSLicenses()
             }
 
             else -> {
                 setPreferencesFromResource(R.xml.settings_root, rootKey)
             }
+        }
+    }
+
+    private fun setupOSSLicenses() {
+        findPreference<Preference>("licenses")?.setOnPreferenceClickListener {
+            startActivity(Intent(this.requireContext(), OssLicensesMenuActivity::class.java))
+            true
         }
     }
 
@@ -518,7 +527,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val uriString = prefsRepository.getBackupLocation()
         val summary = if (uriString != null) {
             try {
-                val uri = android.net.Uri.parse(uriString)
+                val uri = uriString.toUri()
                 val documentFile =
                     androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
                 documentFile?.name ?: uriString
