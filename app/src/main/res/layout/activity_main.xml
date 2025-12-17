@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/add_new_entry"
         app:layout_anchor="@id/bottomAppBar"
-        app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator"
+        app:shapeAppearanceOverlay="@style/CircleImage"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 

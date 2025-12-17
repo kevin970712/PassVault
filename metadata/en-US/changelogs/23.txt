@@ -1,0 +1,3 @@
+- Fix bug when editing an entry
+- Fix improper styling with FABs
+- Refactor some Unit Tests

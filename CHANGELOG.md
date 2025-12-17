@@ -1,3 +1,14 @@
+## [1.3.0] - 2025-12-15
+
+### Features
+
+- *(category)* Remove `isDefault` flag and use hex colors
+
+### Refactor
+
+- *(UI)* Improve contrast and update icons
+- *(UI/UX)* Improve UI components and user experience
+
 ## [1.2.1] - 2025-12-12
 
 ### Bug Fixes

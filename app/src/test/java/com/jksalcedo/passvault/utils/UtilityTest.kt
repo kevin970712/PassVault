@@ -98,16 +98,16 @@ class UtilityTest {
             format = "json"
         )
 
-        print(result)
+        print(result.serializedData)
 
         // Check for the first entry with a non-null username
-        assertThat(result).contains("\"title\": \"Entry1\"")
-        assertThat(result).contains("\"username\": \"user1\"")
+        assertThat(result.serializedData).contains("\"title\": \"Entry1\"")
+        assertThat(result.serializedData).contains("\"username\": \"user1\"")
 
         // Check for the second entry with null username
-        assertThat(result).contains("\"title\": \"Entry2\"")
-        assertThat(result).contains("\"username\": null")
-        assertThat(result).contains("\"notes\": \"some notes\"")
+        assertThat(result.serializedData).contains("\"title\": \"Entry2\"")
+        assertThat(result.serializedData).contains("\"username\": null")
+        assertThat(result.serializedData).contains("\"notes\": \"some notes\"")
     }
 
     @Test
@@ -125,7 +125,7 @@ class UtilityTest {
             )
         )
         val entry = Utility.serializeEntries(to, "json")
-        val result = Utility.deserializeEntries(entry, "json")
+        val result = Utility.deserializeEntries(entry.serializedData, "json")
 
         print(result)
 
@@ -159,7 +159,7 @@ class UtilityTest {
         )
 
         val payload = Utility.serializeEntries(entries, "JSON")
-        val parsed = Utility.deserializeEntries(payload, "JSON")
+        val parsed = Utility.deserializeEntries(payload.serializedData, "JSON")
 
         assertThat(parsed).hasSize(1)
         assertThat(parsed.first().title).isEqualTo("UpperJson")
@@ -181,7 +181,7 @@ class UtilityTest {
         )
 
         val payload = Utility.serializeEntries(entries, "CSV")
-        val parsed = Utility.deserializeEntries(payload, "CSV")
+        val parsed = Utility.deserializeEntries(payload.serializedData, "CSV")
 
         assertThat(parsed).hasSize(1)
         assertThat(parsed.first().title).isEqualTo("UpperCsv")
@@ -262,7 +262,7 @@ class UtilityTest {
         )
 
         val json = Utility.serializeEntries(entries, "json")
-        val deserialized = Utility.deserializeEntries(json, "json")
+        val deserialized = Utility.deserializeEntries(json.serializedData, "json")
 
         assertThat(deserialized).hasSize(1)
         val entry = deserialized.first()
