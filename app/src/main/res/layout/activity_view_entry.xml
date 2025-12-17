@@ -389,7 +389,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/fabDelete"
-                app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium" />
+                app:shapeAppearanceOverlay="@style/CircleImage" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvEdit"
@@ -413,7 +413,7 @@
                 app:layout_constraintBottom_toTopOf="@id/fabEdit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium" />
+                app:shapeAppearanceOverlay="@style/CircleImage" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvDelete"
@@ -438,6 +438,6 @@
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:shapeAppearance="@style/Widget.Material3.CircularProgressIndicator.Medium" />
+            app:shapeAppearanceOverlay="@style/CircleImage" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

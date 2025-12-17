@@ -3,6 +3,7 @@ package com.jksalcedo.passvault.workers
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.work.ListenableWorker
+import com.jksalcedo.passvault.data.ExportResult
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
@@ -50,7 +51,12 @@ class BackupWorkerTest {
 
         // Mock the Utility object
         mockkObject(Utility)
-        every { Utility.serializeEntries(any(), any()) } returns "{\"key\":\"dummy_json\"}"
+        every { Utility.serializeEntries(any(), any()) } returns ExportResult(
+            serializedData = "{\"key\":\"dummy_json\"}",
+            successCount = 1,
+            failedEntries = emptyList(),
+            totalCount = 1
+        )
     }
 
     @After

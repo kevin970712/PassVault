@@ -112,6 +112,8 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         binding.fabAdd.setOnClickListener {
             startActivity(Intent(this, AddEditActivity::class.java))
         }
+        // Delay showing FAB until icon is loaded to prevent flash on older Android
+        binding.fabAdd.post { binding.fabAdd.visibility = View.VISIBLE }
 
         // Dynamically load category chips from database
         categoryViewModel.allCategories.observe(this) { categories ->
