@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
     id("com.autonomousapps.dependency-analysis")
-    id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.aboutLibraries)
 }
 
 android {
@@ -169,6 +169,6 @@ dependencies {
     // Argon2
     implementation(libs.argon2kt)
 
-    implementation(libs.play.services.oss.licenses)
+    implementation(libs.aboutlibraries)
 
 }
