@@ -11,7 +11,6 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -23,6 +22,7 @@ import com.jksalcedo.passvault.utils.Utility
 import com.jksalcedo.passvault.utils.Utility.formatFileSize
 import com.jksalcedo.passvault.viewmodel.SettingsModelFactory
 import com.jksalcedo.passvault.viewmodel.SettingsViewModel
+import com.mikepenz.aboutlibraries.LibsBuilder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -95,9 +95,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun setupOSSLicenses() {
         findPreference<Preference>("licenses")?.setOnPreferenceClickListener {
-            startActivity(Intent(this.requireContext(), OssLicensesMenuActivity::class.java))
+            LibsBuilder()
+                .withLicenseShown(true)
+                .withActivityTitle("Open Source Licenses")
+                .start(requireContext())
             true
         }
     }

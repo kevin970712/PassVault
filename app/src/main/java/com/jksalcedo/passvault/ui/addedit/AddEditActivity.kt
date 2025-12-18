@@ -9,17 +9,16 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
+import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
-import com.jksalcedo.passvault.ui.base.BaseActivity
 
 /**
  * An activity for adding and editing password entries.
@@ -40,6 +39,19 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
         categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
+
+        // Load categories for dropdown
+        categoryViewModel.allCategories.observe(this) { categories ->
+            val categoryNames = categories.map { it.name }
+            val adapter =
+                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryNames)
+            binding.etCategory.setAdapter(adapter)
+
+            // Set default category for new entries
+            if (currentEntry == null && binding.etCategory.text.isNullOrEmpty()) {
+                binding.etCategory.setText("General", false)
+            }
+        }
 
         val entryFromIntent: PasswordEntry? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -104,14 +116,6 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
         } catch (_: Exception) {
             binding.etPassword.setText("")
             Toast.makeText(this, "Failed to decrypt password", Toast.LENGTH_SHORT).show()
-        }
-
-        // Load categories from database
-        categoryViewModel.allCategories.observe(this) { categories ->
-            val categoryNames = categories.map { it.name }
-            val adapter =
-                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryNames)
-            binding.etCategory.setAdapter(adapter)
         }
 
         binding.etCategory.setText(entry.category ?: "General", false)

@@ -78,7 +78,7 @@ class SettingsViewModelTest {
             createdAt = 123L,
             updatedAt = 456L
         )
-        val jsonPayload = Utility.serializeEntries(listOf(entry), "json")
+        val jsonPayload = Utility.serializeEntries(listOf(entry), "json").serializedData
         val backupFile = File(application.filesDir, "passvault_override.json").apply {
             writeText(jsonPayload)
         }

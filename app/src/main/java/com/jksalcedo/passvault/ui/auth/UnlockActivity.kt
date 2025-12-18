@@ -4,13 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
-import com.jksalcedo.passvault.ui.main.MainActivity
 import com.jksalcedo.passvault.ui.base.BaseActivity
+import com.jksalcedo.passvault.ui.main.MainActivity
 
 /**
  * An activity for unlocking the app.
