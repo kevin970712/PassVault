@@ -208,16 +208,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
     }
 
     private fun performSearch(query: String?) {
-        lifecycleScope.launch {
-            if (!query.isNullOrEmpty()) {
-                val result = withContext(Dispatchers.IO) {
-                    viewModel.search(query)
-                }
-                adapter.submitList(result)
-            } else {
-                viewModel.filteredEntries.value?.let { adapter.submitList(it) }
-            }
-        }
+        viewModel.setSearchQuery(query ?: "")
     }
 
     @SuppressLint("DiscouragedApi")

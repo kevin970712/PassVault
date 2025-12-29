@@ -1,0 +1,3 @@
+- Improved search functionality: now searches all fields (Title, Username, Email, URL, Notes)
+- Search now respects the selected category filter
+- Fixed search bar UI issues
