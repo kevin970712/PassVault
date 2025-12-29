@@ -19,7 +19,7 @@ class Application() : Application(),
     private var lastInteractionTime: Long = 0
 
     companion object {
-        const val IDLE_TIMEOUT_MS: Long = 60 * 1000 // 1 minute
+        // Removed fixed timeout
     }
 
     override fun onCreate() {
@@ -34,14 +34,20 @@ class Application() : Application(),
             com.google.android.material.color.DynamicColors.applyToActivitiesIfAvailable(this)
         }
 
-        // Initialize interaction time to prevent auto-lock on first app launch
-        lastInteractionTime = System.currentTimeMillis()
+        // Initialize interaction time from prefs to handle process death
+        lastInteractionTime = preferenceRepository.getLastInteractionTime()
+        if (lastInteractionTime == 0L) {
+            lastInteractionTime = System.currentTimeMillis()
+            preferenceRepository.setLastInteractionTime(lastInteractionTime)
+        }
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityResumed(activity: Activity) {
                 // Check if app should be locked due to inactivity
-                if (lastInteractionTime > 0 &&
-                    System.currentTimeMillis() - lastInteractionTime >= IDLE_TIMEOUT_MS &&
+                val timeout = preferenceRepository.getAutoLockTimeout()
+                
+                if (timeout != -1L && lastInteractionTime > 0 &&
+                    System.currentTimeMillis() - lastInteractionTime >= timeout &&
                     activity !is UnlockActivity &&
                     !activity.isFinishing &&
                     !activity.isDestroyed
@@ -57,6 +63,7 @@ class Application() : Application(),
             override fun onActivityPaused(activity: Activity) {
                 // Record the time when user leaves the app
                 lastInteractionTime = System.currentTimeMillis()
+                preferenceRepository.setLastInteractionTime(lastInteractionTime)
             }
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
