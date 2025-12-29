@@ -29,8 +29,7 @@ interface PasswordDao {
     @Delete
     suspend fun delete(entry: PasswordEntry)
 
-    @Query("SELECT * FROM password_entries WHERE title LIKE :query OR username LIKE :query")
-    suspend fun search(query: String): List<PasswordEntry>
+
 
     @Query("SELECT * FROM password_entries WHERE category = :category ORDER BY title ASC")
     fun getEntriesByCategory(category: String): LiveData<List<PasswordEntry>>
