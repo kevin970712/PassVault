@@ -233,6 +233,42 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets the auto-lock timeout in milliseconds.
+     * @param timeout The timeout in milliseconds. -1 for never.
+     */
+    fun setAutoLockTimeout(timeout: Long) {
+        prefs.edit { putString("auto_lock_timeout", timeout.toString()) }
+    }
+
+    /**
+     * Gets the auto-lock timeout in milliseconds.
+     * @return The timeout in milliseconds. Default is 60000 (1 minute).
+     */
+    fun getAutoLockTimeout(): Long {
+        return try {
+            prefs.getString("auto_lock_timeout", "60000")?.toLong() ?: 60000L
+        } catch (e: Exception) {
+            60000L
+        }
+    }
+
+    /**
+     * Sets the last interaction time.
+     * @param time The timestamp in milliseconds.
+     */
+    fun setLastInteractionTime(time: Long) {
+        prefs.edit { putLong("last_interaction_time", time) }
+    }
+
+    /**
+     * Gets the last interaction time.
+     * @return The timestamp in milliseconds.
+     */
+    fun getLastInteractionTime(): Long {
+        return prefs.getLong("last_interaction_time", 0L)
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

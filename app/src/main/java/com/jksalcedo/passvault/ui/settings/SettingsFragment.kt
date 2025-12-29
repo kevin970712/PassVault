@@ -493,6 +493,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             true
         }
+
+        setupAutoLockTimeout()
+    }
+
+    private fun setupAutoLockTimeout() {
+        val timeoutPref = findPreference<ListPreference>("auto_lock_timeout")
+        timeoutPref?.setOnPreferenceChangeListener { _, newValue ->
+            val timeout = (newValue as String).toLong()
+            prefsRepository.setAutoLockTimeout(timeout)
+            true
+        }
     }
 
     private val pickBackupLocationLauncher =

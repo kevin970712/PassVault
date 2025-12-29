@@ -1,3 +1,5 @@
 - Improved search functionality: now searches all fields (Title, Username, Email, URL, Notes)
 - Search now respects the selected category filter
 - Fixed search bar UI issues
+- Added configurable Auto-lock Timeout setting (30s to 30m)
+- Improved auto-lock reliability
