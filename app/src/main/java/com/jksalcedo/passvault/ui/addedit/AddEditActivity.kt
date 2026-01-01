@@ -49,7 +49,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
             // Set default category for new entries
             if (currentEntry == null && binding.etCategory.text.isNullOrEmpty()) {
-                binding.etCategory.setText("General", false)
+                binding.etCategory.setText(getString(R.string.general), false)
             }
         }
 
@@ -111,6 +111,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
         // Decrypt and set password
         try {
+            Encryption.ensureKeyExists()
             val decryptedPassword = Encryption.decrypt(entry.passwordCipher, entry.passwordIv)
             binding.etPassword.setText(decryptedPassword)
         } catch (_: Exception) {
@@ -118,7 +119,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
             Toast.makeText(this, "Failed to decrypt password", Toast.LENGTH_SHORT).show()
         }
 
-        binding.etCategory.setText(entry.category ?: "General", false)
+        binding.etCategory.setText(entry.category ?: getString(R.string.general), false)
         binding.etEmail.setText(entry.email)
         binding.etUrl.setText(entry.url)
     }
@@ -167,7 +168,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
                 notes = notes,
                 email = email,
                 url = url,
-                category = category.ifEmpty { "General" },
+                category = category.ifEmpty { getString(R.string.general) },
                 updatedAt = System.currentTimeMillis()
             ) ?: PasswordEntry(
                 title = title,
@@ -177,7 +178,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
                 notes = notes,
                 email = email,
                 url = url,
-                category = category.ifEmpty { "General" },
+                category = category.ifEmpty { getString(R.string.general) },
                 updatedAt = System.currentTimeMillis()
             )
 

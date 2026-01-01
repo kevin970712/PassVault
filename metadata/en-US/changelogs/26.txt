@@ -1,0 +1,3 @@
+- Added configurable backup filenames and timestamp formats
+- Users can now customize the backup filename pattern
+- Added option to choose between Readable, Compact, and Date Only timestamp formats

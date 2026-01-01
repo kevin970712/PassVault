@@ -269,6 +269,38 @@ class PreferenceRepository(context: Context) {
     }
 
     /**
+     * Sets the backup filename format.
+     * @param format The format string.
+     */
+    fun setBackupFileNameFormat(format: String) {
+        prefs.edit { putString("backup_filename_format", format) }
+    }
+
+    /**
+     * Gets the backup filename format.
+     * @return The format string. Default is "passvault_backup_{timestamp}".
+     */
+    fun getBackupFileNameFormat(): String {
+        return prefs.getString("backup_filename_format", "passvault_backup_{timestamp}") ?: "passvault_backup_{timestamp}"
+    }
+
+    /**
+     * Sets the backup timestamp format.
+     * @param format The format string.
+     */
+    fun setBackupTimestampFormat(format: String) {
+        prefs.edit { putString("backup_timestamp_format", format) }
+    }
+
+    /**
+     * Gets the backup timestamp format.
+     * @return The format string. Default is "yyyy-MM-dd_HH-mm-ss".
+     */
+    fun getBackupTimestampFormat(): String {
+        return prefs.getString("backup_timestamp_format", "yyyy-MM-dd_HH-mm-ss") ?: "yyyy-MM-dd_HH-mm-ss"
+    }
+
+    /**
      * Clears all preferences.
      */
     fun clear() {

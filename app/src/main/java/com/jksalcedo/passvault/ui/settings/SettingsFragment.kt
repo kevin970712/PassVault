@@ -79,6 +79,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setupBackupLocation()
                 setupBackupRetention()
                 setupBackupCopies()
+                setupBackupFilenameConfig()
             }
 
             "pref_about" -> {
@@ -537,6 +538,80 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             true
         }
+    }
+
+    private fun setupBackupFilenameConfig() {
+        findPreference<Preference>("backup_filename_config")?.setOnPreferenceClickListener {
+            showBackupFilenameDialog()
+            true
+        }
+    }
+
+    private fun showBackupFilenameDialog() {
+        val layout = layoutInflater.inflate(R.layout.dialog_backup_filename, null)
+        val etPattern = layout.findViewById<TextInputEditText>(R.id.et_filename_pattern)
+        val rgFormat = layout.findViewById<android.widget.RadioGroup>(R.id.rg_timestamp_format)
+        val tvPreview = layout.findViewById<android.widget.TextView>(R.id.tv_preview)
+
+        // Load current values
+        etPattern.setText(prefsRepository.getBackupFileNameFormat())
+        val currentFormat = prefsRepository.getBackupTimestampFormat()
+        when (currentFormat) {
+            "yyyy-MM-dd_HH-mm-ss" -> rgFormat.check(R.id.rb_readable)
+            "yyyyMMdd_HHmmss" -> rgFormat.check(R.id.rb_compact)
+            "yyyy-MM-dd" -> rgFormat.check(R.id.rb_date_only)
+            else -> rgFormat.check(R.id.rb_readable)
+        }
+
+        // Preview update logic
+        fun updatePreview() {
+            val pattern = etPattern.text.toString()
+            val formatId = rgFormat.checkedRadioButtonId
+            val dateFormat = when (formatId) {
+                R.id.rb_compact -> "yyyyMMdd_HHmmss"
+                R.id.rb_date_only -> "yyyy-MM-dd"
+                else -> "yyyy-MM-dd_HH-mm-ss"
+            }
+            val timestamp = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date())
+            val filename = pattern.replace("{timestamp}", timestamp)
+            val ext = prefsRepository.getExportFormat()
+            tvPreview.text = "$filename.$ext"
+        }
+
+        etPattern.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { updatePreview() }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+
+        rgFormat.setOnCheckedChangeListener { _, _ -> updatePreview() }
+
+        // Initial preview
+        updatePreview()
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Backup Filename")
+            .setView(layout)
+            .setPositiveButton("Save") { _, _ ->
+                val pattern = etPattern.text.toString()
+                val formatId = rgFormat.checkedRadioButtonId
+                val dateFormat = when (formatId) {
+                    R.id.rb_compact -> "yyyyMMdd_HHmmss"
+                    R.id.rb_date_only -> "yyyy-MM-dd"
+                    else -> "yyyy-MM-dd_HH-mm-ss"
+                }
+
+                if (pattern.isBlank()) {
+                    Utility.showToast(requireContext(), "Filename pattern cannot be empty")
+                    return@setPositiveButton
+                }
+
+                prefsRepository.setBackupFileNameFormat(pattern)
+                prefsRepository.setBackupTimestampFormat(dateFormat)
+                Utility.showToast(requireContext(), "Backup filename settings saved")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun updateBackupLocationSummary() {
