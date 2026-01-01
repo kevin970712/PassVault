@@ -38,6 +38,12 @@
             app:summary="Default: Internal App Storage"
             app:title="Backup Location" />
 
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="backup_filename_config"
+            app:summary="Configure filename pattern and timestamp format"
+            app:title="Backup Filename" />
+
         <EditTextPreference
             app:defaultValue="10"
             app:iconSpaceReserved="false"

@@ -272,9 +272,13 @@ class SettingsActivity : BaseActivity(), androidx.preference.PreferenceFragmentC
      * Creates a file for export.
      */
     fun createFileForExport() {
-        val formatter = SimpleDateFormat("yyyy-MM-dd_HH:mm", Locale.getDefault())
+        val timestampFormat = preferenceRepository.getBackupTimestampFormat()
+        val filenameFormat = preferenceRepository.getBackupFileNameFormat()
+        
+        val formatter = SimpleDateFormat(timestampFormat, Locale.getDefault())
         val exportFormat = preferenceRepository.getExportFormat()
-        val fileName = "passvault_backup_${formatter.format(Date())}.$exportFormat"
+        val timestamp = formatter.format(Date())
+        val fileName = "${filenameFormat.replace("{timestamp}", timestamp)}.$exportFormat"
 
         val mimeType = when (exportFormat.lowercase()) {
             "csv" -> "text/csv"

@@ -5,10 +5,15 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.work.Configuration
+import com.jksalcedo.passvault.data.AppDatabase
+import com.jksalcedo.passvault.data.CategoryRepository
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.UnlockActivity
 import com.jksalcedo.passvault.workers.BackupWorkerFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class Application() : Application(),
     Configuration.Provider {
@@ -28,6 +33,13 @@ class Application() : Application(),
         passwordRepository = PasswordRepository(this.applicationContext)
         preferenceRepository = PreferenceRepository(this.applicationContext)
         workerFactory = BackupWorkerFactory(passwordRepository, preferenceRepository)
+
+        // Initialize default categories
+        val categoryDao = AppDatabase.getDatabase(this).categoryDao()
+        val categoryRepository = CategoryRepository(categoryDao)
+        CoroutineScope(Dispatchers.IO).launch {
+            categoryRepository.initializeDefaultCategories()
+        }
 
         // Apply Dynamic Colors if enabled
         if (preferenceRepository.getUseDynamicColors()) {
@@ -56,7 +68,6 @@ class Application() : Application(),
                     val intent = Intent(activity, UnlockActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     activity.startActivity(intent)
-                    activity.finish()
                 }
             }
 

@@ -83,17 +83,21 @@ class BackupWorker(
                 }
 
                 // Create the backup file(s)
+                val timestampFormat = preferenceRepository.getBackupTimestampFormat()
+                val filenameFormat = preferenceRepository.getBackupFileNameFormat()
+                
                 val timestamp =
-                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                    SimpleDateFormat(timestampFormat, Locale.getDefault()).format(Date())
                 val copiesToCreate = preferenceRepository.getBackupCopies()
                 val backupLocationUri = preferenceRepository.getBackupLocation()
                 
                 var successCount = 0
                 for (copyNum in 1..copiesToCreate) {
+                    val baseFileName = filenameFormat.replace("{timestamp}", timestamp)
                     val fileName = if (copiesToCreate == 1) {
-                        "passvault_backup_$timestamp.${format.lowercase()}"
+                        "$baseFileName.${format.lowercase()}"
                     } else {
-                        "passvault_backup_${timestamp}_copy$copyNum.${format.lowercase()}"
+                        "${baseFileName}_copy$copyNum.${format.lowercase()}"
                     }
                     
                     val success = if (backupLocationUri != null) {

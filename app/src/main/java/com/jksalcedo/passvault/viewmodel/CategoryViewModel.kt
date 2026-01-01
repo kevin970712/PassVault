@@ -18,11 +18,6 @@ class CategoryViewModel(application: Application) : AndroidViewModel(application
         val categoryDao = AppDatabase.getDatabase(application).categoryDao()
         repository = CategoryRepository(categoryDao)
         allCategories = repository.allCategories
-
-        // Initialize default categories on first run
-        viewModelScope.launch {
-            repository.initializeDefaultCategories()
-        }
     }
 
     suspend fun getAllCategoriesSync(): List<Category> {
