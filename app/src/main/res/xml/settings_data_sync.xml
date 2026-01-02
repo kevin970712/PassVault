@@ -2,7 +2,13 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="Backup &amp; Restore">
+        app:title="Vault Management">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="storage_info"
+            app:summary="View database size and entry count"
+            app:title="Storage Information" />
 
         <Preference
             app:iconSpaceReserved="false"
@@ -24,6 +30,18 @@
             app:key="export_format"
             app:title="Export Format"
             app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="clear_data"
+            app:summary="Permanently delete all stored entries"
+            app:title="Clear All Data" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Backup &amp; Restore">
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
@@ -77,19 +95,19 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="Data Management">
+        app:title="Troubleshooting">
 
         <Preference
             app:iconSpaceReserved="false"
-            app:key="storage_info"
-            app:summary="View database size and entry count"
-            app:title="Storage Information" />
+            app:key="crash_logs_location"
+            app:summary="Default: Internal App Storage"
+            app:title="Crash Logs Location" />
 
         <Preference
             app:iconSpaceReserved="false"
-            app:key="clear_data"
-            app:summary="Permanently delete all stored entries"
-            app:title="Clear All Data" />
+            app:key="share_crash_logs"
+            app:summary="Share all crash logs as a zip file"
+            app:title="Share Crash Logs" />
 
     </PreferenceCategory>
 
