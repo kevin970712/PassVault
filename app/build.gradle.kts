@@ -19,8 +19,8 @@ android {
         applicationId = "com.jksalcedo.passvault"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.5.0-beta2"
+        versionCode = 27
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

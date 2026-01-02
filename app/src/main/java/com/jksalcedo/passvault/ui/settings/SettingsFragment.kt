@@ -198,6 +198,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setupDynamicColorsPreference() {
         val dynamicColorsPref = findPreference<SwitchPreferenceCompat>("use_dynamic_colors")
+
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+            dynamicColorsPref?.isVisible = false
+            return
+        }
+
         dynamicColorsPref?.isChecked = prefsRepository.getUseDynamicColors()
         dynamicColorsPref?.setOnPreferenceChangeListener { _, newValue ->
             prefsRepository.setUseDynamicColors(newValue as Boolean)

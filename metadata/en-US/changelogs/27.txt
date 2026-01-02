@@ -1,0 +1,6 @@
+- Added configurable backup filenames and timestamp formats
+- Improved crash handling and added ability to share crash logs
+- Reorganized settings for better navigation
+- Fixed crash when editing entries
+- Improved auto-lock functionality
+- Dynamic colors setting is now hidden on unsupported devices

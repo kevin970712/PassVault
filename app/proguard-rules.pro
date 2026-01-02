@@ -36,3 +36,9 @@
 -dontpreverify
 -allowaccessmodification
 -optimizationpasses 5
+
+# Keep data classes and Parcelable implementations
+-keep class com.jksalcedo.passvault.data.** { *; }
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}

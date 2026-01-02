@@ -1,3 +1,3 @@
-- Added configurable backup filenames and timestamp formats
+- Added configurable backup filenames and timestamp formats (applies to both manual exports and auto backups)
 - Users can now customize the backup filename pattern
 - Added option to choose between Readable, Compact, and Date Only timestamp formats
