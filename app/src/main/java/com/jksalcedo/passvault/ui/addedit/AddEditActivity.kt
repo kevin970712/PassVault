@@ -55,6 +55,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
         val entryFromIntent: PasswordEntry? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.setExtrasClassLoader(PasswordEntry::class.java.classLoader)
                 intent.getParcelableExtra(EXTRA_ENTRY, PasswordEntry::class.java)
             } else {
                 @Suppress("DEPRECATION")
