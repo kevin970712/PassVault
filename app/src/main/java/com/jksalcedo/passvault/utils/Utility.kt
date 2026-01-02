@@ -212,4 +212,28 @@ object Utility {
         }
         return context.getColor(colorRes)
     }
+    fun zipFiles(files: List<File>, zipFile: File): Boolean {
+        return try {
+            java.util.zip.ZipOutputStream(java.io.BufferedOutputStream(java.io.FileOutputStream(zipFile)))
+                .use { out ->
+                    val data = ByteArray(1024)
+                    for (file in files) {
+                        java.io.FileInputStream(file).use { fi ->
+                            java.io.BufferedInputStream(fi, 1024).use { origin ->
+                                val entry = java.util.zip.ZipEntry(file.name)
+                                out.putNextEntry(entry)
+                                var count: Int
+                                while (origin.read(data, 0, 1024).also { count = it } != -1) {
+                                    out.write(data, 0, count)
+                                }
+                            }
+                        }
+                    }
+                }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 }

@@ -1,20 +1,49 @@
+## [1.5.0-beta3] - 2026-01-02
+
+### Features
+
+- *(crash)* Implement crash reporting and log sharing
+## [1.5.9-beta2] - 2026-01-01
+
+### Features
+
+- *(backup)* Implement configurable backup filename
+## [1.5.0-beta1] - 2025-12-29
+
+### Features
+
+- *(security)* Implement configurable auto-lock timeout
+
+### Other
+
+- Improve search functionality and fix UI issues
+- Improve search functionality and fix UI issues
+## [1.3.1] - 2025-12-18
+
+### Bug Fixes
+
+- *(various)* Correct FAB shape, entry editing, and unit tests
+- *(various)* Correct FAB shape, entry editing, and unit tests
+
+### Refactor
+
+- *(deps)* Replace OSS Licenses plugin with AboutLibraries
 ## [1.3.0] - 2025-12-15
 
 ### Features
 
+- *(category)* Remove `isDefault` flag and use hex colors
 - *(category)* Remove `isDefault` flag and use hex colors
 
 ### Refactor
 
 - *(UI)* Improve contrast and update icons
 - *(UI/UX)* Improve UI components and user experience
-
 ## [1.2.1] - 2025-12-12
 
 ### Bug Fixes
 
 - *(UI)* Correct FAB position and fix settings crash
-
 ## [1.2.0] - 2025-12-12
 
 ### Features
@@ -24,13 +53,13 @@
 - *(import)* Introduce detailed import status report
 - *(UI)* Introduce optional Bottom App Bar
 - *(UI)* Implement Theme and Dynamic Color options
+- *(UI)* Implement Theme and Dynamic Color options
 
 ### Refactor
 
 - Relocate enums to a dedicated package
 - *(UI)* Convert Manage Categories Dialog to BottomSheet
 - *(Settings)* Reorganize settings into categories
-
 ## [1.1.0] - 2025-12-09
 
 ### Features
@@ -49,7 +78,6 @@
 ### Miscellaneous Tasks
 
 - Update database schema to version 3
-
 ## [1.0.0] - 2025-12-08
 
 ### Features
@@ -79,14 +107,12 @@
 
 - Update Store screenshot
 - Update Store screenshot
-
 ## [1.0.0-beta01] - 2025-12-07
 
 ### Features
 
 - Add categories and enhance entry fields
 - Add categories and enhance entry fields
-
 ## [0.9.1] - 2025-12-02
 
 ### Features
@@ -107,14 +133,12 @@
 ### Miscellaneous Tasks
 
 - Fix typo in UnlockActivity filename
-
 ## [0.9.0] - 2025-12-02
 
 ### Features
 
 - Add search functionality
 - Add password generator to main screen
-
 ## [0.8.0] - 2025-11-30
 
 ### Features
@@ -125,7 +149,6 @@
 ### Bug Fixes
 
 - Allow importing entries with empty passwords
-
 ## [0.8.0-beta02] - 2025-11-27
 
 ### Features
@@ -140,7 +163,6 @@
 
 - Simplify APK artifact path in release workflow
 - Simplify APK artifact path in release workflow
-
 ## [0.8.0-beta01] - 2025-11-25
 
 ### Features
@@ -149,7 +171,6 @@
 - Enhance backup encryption with Argon2 and refactor restart logic
 - Enhance backup encryption with Argon2 and refactor restart logic
 - Enhance backup encryption and refactor restart logic
-
 ## [0.7.1] - 2025-11-21
 
 ### Other
@@ -165,7 +186,6 @@
 - Allow format override during import
 - Enhance serialization, timestamp format, and importer logic
 - Enhance import logic and replace launcher icons
-
 ## [0.7.0] - 2025-11-20
 
 ### Features
@@ -181,7 +201,6 @@
 ### Miscellaneous Tasks
 
 - Update CHANGELOG for version 0.7.0
-
 ## [0.7.0-beta01] - 2025-11-20
 
 ### Features
@@ -202,7 +221,6 @@
 
 - Update IDE configurations and build script
 - Update dependencies and clean up IDE configurations
-
 ## [0.6.0] - 2025-11-18
 
 ### Refactor
@@ -219,7 +237,6 @@
 ### Miscellaneous Tasks
 
 - Bump version to 0.6.0
-
 ## [0.6.0-beta2] - 2025-11-18
 
 ### Other
@@ -231,7 +248,6 @@
 - Replace SetPinDialog with SetPinFragment for a full-screen UI
 - Improve Password Generator dialog and SharedPreferences usage
 - Improve password dialogs and replace AlertDialog
-
 ## [0.6.0-beta] - 2025-11-17
 
 ### Features
@@ -274,7 +290,6 @@
 ### Refactor
 
 - Remove unused TestWorkerFactory
-
 ## [0.5.0] - 2025-11-15
 
 ### Features
@@ -286,7 +301,6 @@
 
 - Add Toolbar and Up Navigation to Add/Edit screen
 - Simplify ViewEntryActivity and layout
-
 ## [0.4-beta] - 2025-11-08
 
 ### Features
@@ -297,13 +311,11 @@
 
 - Add database size utility functions
 - Rename APK artifact and update version
-
 ## [0.4-alpha] - 2025-11-07
 
 ### Other
 
 - Rename "Passkey" to "Password" for clarity
-
 ## [0.3-alpha] - 2025-11-06
 
 ### Features
@@ -317,7 +329,6 @@
 - Add delete functionality and confirmation dialog
 - Correct FAB layout and add content descriptions
 - Correct FAB layout and add content descriptions
-
 ## [0.2-alpha] - 2025-11-04
 
 ### Other
@@ -326,5 +337,4 @@
 - Rename `AddActivity` to `AddEditActivity` and move files
 - Implement comprehensive testing and improve Add/Edit functionality
 - Update variable and preference key names for clarity
-
 ## [0.1-alpha] - 2025-11-02

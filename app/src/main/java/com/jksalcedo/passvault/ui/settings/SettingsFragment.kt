@@ -39,6 +39,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
         SettingsModelFactory(application = requireActivity().application)
     }
 
+    private val pickCrashLocationLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri?.let {
+                try {
+                    val takeFlags: Int =
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    requireContext().contentResolver.takePersistableUriPermission(it, takeFlags)
+
+                    prefsRepository.setCrashLogsLocation(it.toString())
+                    updateCrashLogsLocationSummary()
+                    Utility.showToast(requireContext(), "Crash logs location updated")
+                } catch (e: Exception) {
+                    Utility.showToast(
+                        requireContext(),
+                        "Failed to set crash logs location: ${e.message}"
+                    )
+                }
+            }
+        }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is SettingsActivity) {
@@ -80,6 +101,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setupBackupRetention()
                 setupBackupCopies()
                 setupBackupFilenameConfig()
+                setupCrashHandlerLocation()
             }
 
             "pref_about" -> {
@@ -94,6 +116,38 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setPreferencesFromResource(R.xml.settings_root, rootKey)
             }
         }
+    }
+
+    private fun setupCrashHandlerLocation() {
+        updateCrashLogsLocationSummary()
+        findPreference<Preference>("crash_logs_location")?.setOnPreferenceClickListener {
+            try {
+                pickCrashLocationLauncher.launch(null)
+            } catch (e: Exception) {
+                Utility.showToast(
+                    requireContext(),
+                    "Error launching directory picker: ${e.message}"
+                )
+            }
+            true
+        }
+    }
+
+    private fun updateCrashLogsLocationSummary() {
+        val uriString = prefsRepository.getCrashLogsLocation()
+        val summary = if (uriString != null) {
+            try {
+                val uri = uriString.toUri()
+                val documentFile =
+                    androidx.documentfile.provider.DocumentFile.fromTreeUri(requireContext(), uri)
+                documentFile?.name ?: uriString
+            } catch (_: Exception) {
+                uriString
+            }
+        } else {
+            "Default: Internal App Storage"
+        }
+        findPreference<Preference>("crash_logs_location")?.summary = summary
     }
 
     @Suppress("DEPRECATION")
@@ -580,7 +634,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         etPattern.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { updatePreview() }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updatePreview()
+            }
+
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
 
@@ -642,6 +699,79 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateBackupRetentionSummary()
     }
 
+    private fun setupShareCrashLogs() {
+        val sharePref = findPreference<Preference>("share_crash_logs")
+        sharePref?.setOnPreferenceClickListener {
+            val crashLocationUri = prefsRepository.getCrashLogsLocation()
+            val filesToZip = mutableListOf<java.io.File>()
+
+            if (crashLocationUri != null) {
+                // Custom location (SAF)
+                try {
+                    val treeUri = crashLocationUri.toUri()
+                    val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                        requireContext(),
+                        treeUri
+                    )
+                    pickedDir?.listFiles()?.forEach { file ->
+                        if (file.name?.startsWith("PV_Crash") == true && file.name?.endsWith(".txt") == true) {
+                            // Copy to cache
+                            val cacheFile = java.io.File(requireContext().cacheDir, file.name!!)
+                            requireContext().contentResolver.openInputStream(file.uri)
+                                ?.use { input ->
+                                    java.io.FileOutputStream(cacheFile).use { output ->
+                                        input.copyTo(output)
+                                    }
+                                }
+                            filesToZip.add(cacheFile)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            } else {
+                // Default location
+                val crashLogDir =
+                    java.io.File(requireContext().getExternalFilesDir(null), "crash_logs")
+                if (crashLogDir.exists()) {
+                    crashLogDir.listFiles()?.forEach { file ->
+                        if (file.name.startsWith("PV_Crash") && file.name.endsWith(".txt")) {
+                            filesToZip.add(file)
+                        }
+                    }
+                }
+            }
+
+            if (filesToZip.isNotEmpty()) {
+                val zipFile = java.io.File(requireContext().cacheDir, "crash_logs.zip")
+                if (com.jksalcedo.passvault.utils.Utility.zipFiles(filesToZip, zipFile)) {
+                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                        requireContext(),
+                        "${requireContext().packageName}.provider",
+                        zipFile
+                    )
+                    val intent = android.content.Intent(android.content.Intent.ACTION_SEND)
+                    intent.type = "application/zip"
+                    intent.putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                    intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    startActivity(android.content.Intent.createChooser(intent, "Share Crash Logs"))
+                } else {
+                    com.jksalcedo.passvault.utils.Utility.showToast(
+                        requireContext(),
+                        "Failed to create zip file"
+                    )
+                }
+            } else {
+                com.jksalcedo.passvault.utils.Utility.showToast(
+                    requireContext(),
+                    "No crash logs found"
+                )
+            }
+            true
+        }
+    }
+
     private fun updateBackupRetentionSummary() {
         val count = prefsRepository.getBackupRetention()
         val summary = if (count == -1) "Unlimited" else "$count Backups"
@@ -655,6 +785,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateBackupLocationSummary()
         updateBackupRetentionSummary()
         updateBackupCopiesSummary()
+        updateCrashLogsLocationSummary()
+        setupShareCrashLogs()
     }
 
     override fun onDetach() {

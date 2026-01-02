@@ -10,6 +10,7 @@ import com.jksalcedo.passvault.data.CategoryRepository
 import com.jksalcedo.passvault.repositories.PasswordRepository
 import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.auth.UnlockActivity
+import com.jksalcedo.passvault.utils.PassVaultCrashHandler
 import com.jksalcedo.passvault.workers.BackupWorkerFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,15 @@ class Application() : Application(),
         preferenceRepository = PreferenceRepository(this.applicationContext)
         workerFactory = BackupWorkerFactory(passwordRepository, preferenceRepository)
 
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler(
+            PassVaultCrashHandler(
+                this,
+                preferenceRepository,
+                defaultHandler
+            )
+        )
+
         // Initialize default categories
         val categoryDao = AppDatabase.getDatabase(this).categoryDao()
         val categoryRepository = CategoryRepository(categoryDao)
@@ -57,7 +67,7 @@ class Application() : Application(),
             override fun onActivityResumed(activity: Activity) {
                 // Check if app should be locked due to inactivity
                 val timeout = preferenceRepository.getAutoLockTimeout()
-                
+
                 if (timeout != -1L && lastInteractionTime > 0 &&
                     System.currentTimeMillis() - lastInteractionTime >= timeout &&
                     activity !is UnlockActivity &&

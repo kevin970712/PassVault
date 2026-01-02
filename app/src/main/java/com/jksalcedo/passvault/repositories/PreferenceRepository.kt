@@ -281,7 +281,8 @@ class PreferenceRepository(context: Context) {
      * @return The format string. Default is "passvault_backup_{timestamp}".
      */
     fun getBackupFileNameFormat(): String {
-        return prefs.getString("backup_filename_format", "passvault_backup_{timestamp}") ?: "passvault_backup_{timestamp}"
+        return prefs.getString("backup_filename_format", "passvault_backup_{timestamp}")
+            ?: "passvault_backup_{timestamp}"
     }
 
     /**
@@ -297,7 +298,8 @@ class PreferenceRepository(context: Context) {
      * @return The format string. Default is "yyyy-MM-dd_HH-mm-ss".
      */
     fun getBackupTimestampFormat(): String {
-        return prefs.getString("backup_timestamp_format", "yyyy-MM-dd_HH-mm-ss") ?: "yyyy-MM-dd_HH-mm-ss"
+        return prefs.getString("backup_timestamp_format", "yyyy-MM-dd_HH-mm-ss")
+            ?: "yyyy-MM-dd_HH-mm-ss"
     }
 
     /**
@@ -305,5 +307,13 @@ class PreferenceRepository(context: Context) {
      */
     fun clear() {
         prefs.edit { clear().apply() }
+    }
+
+    fun setCrashLogsLocation(uri: String?) {
+        prefs.edit { putString("crash_logs_location", uri) }
+    }
+
+    fun getCrashLogsLocation(): String? {
+        return prefs.getString("crash_logs_location", null)
     }
 }

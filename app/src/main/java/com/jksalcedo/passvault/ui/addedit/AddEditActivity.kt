@@ -42,7 +42,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
         // Load categories for dropdown
         categoryViewModel.allCategories.observe(this) { categories ->
-            val categoryNames = categories.map { it.name }
+            val categoryNames = categories.mapNotNull { it.name.takeIf(String::isNotBlank) }
             val adapter =
                 ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryNames)
             binding.etCategory.setAdapter(adapter)
@@ -206,7 +206,11 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
         val result = PasswordStrengthAnalyzer.analyze(password)
 
         // Update progress bar
-        binding.progressPasswordStrength.setProgress(result.score, true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            binding.progressPasswordStrength.setProgress(result.score, true)
+        } else {
+            binding.progressPasswordStrength.progress = result.score
+        }
 
         // Update color based on strength level
         val colorResId = when (result.level) {
