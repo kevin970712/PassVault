@@ -288,6 +288,19 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Custom Fields RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_custom_fields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardUrl"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_custom_field"/>
+
             <!-- Notes Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNotes"
@@ -298,7 +311,7 @@
                 app:cardElevation="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardUrl"
+                app:layout_constraintTop_toBottomOf="@id/rv_custom_fields"
                 app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout

@@ -27,6 +27,10 @@ import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.jksalcedo.passvault.adapter.CustomFieldsAdapter
+import com.jksalcedo.passvault.data.CustomFieldsPayload
+import kotlinx.serialization.json.Json
 
 /**
  * An activity for viewing a password entry.
@@ -202,6 +206,35 @@ class ViewEntryActivity : BaseActivity() {
             binding.chipPasswordStrength.setTextColor(
                 ContextCompat.getColor(this, android.R.color.white)
             )
+
+            // Load custom fields
+            if (entry.customFieldsCipher != null && entry.customFieldsIv != null) {
+                try {
+                    val json = Encryption.decrypt(entry.customFieldsCipher, entry.customFieldsIv)
+                    val payload = Json.decodeFromString<CustomFieldsPayload>(json)
+                    
+                    if (payload.fields.isNotEmpty()) {
+                        val adapter = CustomFieldsAdapter(
+                            isReadOnly = true,
+                            onCopyClick = { field ->
+                                Utility.copyToClipboard(this, field.name, field.value)
+                                Toast.makeText(this, "${field.name} copied", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                        binding.rvCustomFields.layoutManager = LinearLayoutManager(this)
+                        binding.rvCustomFields.adapter = adapter
+                        adapter.submitList(payload.fields)
+                        binding.rvCustomFields.visibility = View.VISIBLE
+                    } else {
+                        binding.rvCustomFields.visibility = View.GONE
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    binding.rvCustomFields.visibility = View.GONE
+                }
+            } else {
+                binding.rvCustomFields.visibility = View.GONE
+            }
         }
 
         binding.btnReveal.setOnClickListener {

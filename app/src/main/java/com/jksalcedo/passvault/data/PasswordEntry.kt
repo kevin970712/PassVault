@@ -20,5 +20,7 @@ data class PasswordEntry(
     val url: String? = null,
     val category: String? = "General",
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val customFieldsCipher: String? = null,
+    val customFieldsIv: String? = null
 ) : Parcelable
