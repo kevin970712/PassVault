@@ -98,6 +98,11 @@
     <string name="delete_category">Delete Category</string>
     <string name="import_summary">Import Summary</string>
     <string name="icon">Icon</string>
+    <string name="drag_handle">Drag Handle</string>
+    <string name="field_name">Field Name</string>
+    <string name="value">Value</string>
+    <string name="secret_masked">Secret (Masked)</string>
+    <string name="options">Options</string>
 
     <string-array name="backup_options">
         <item>Restore</item>

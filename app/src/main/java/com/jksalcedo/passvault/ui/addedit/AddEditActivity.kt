@@ -11,14 +11,25 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.textfield.TextInputEditText
 import com.jksalcedo.passvault.R
+import com.jksalcedo.passvault.adapter.CustomFieldsAdapter
 import com.jksalcedo.passvault.crypto.Encryption
+import com.jksalcedo.passvault.data.CustomField
+import com.jksalcedo.passvault.data.CustomFieldsPayload
 import com.jksalcedo.passvault.data.PasswordEntry
 import com.jksalcedo.passvault.databinding.ActivityAddEditBinding
 import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.utils.PasswordStrengthAnalyzer
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
+import kotlinx.serialization.json.Json
+import java.util.UUID
 
 /**
  * An activity for adding and editing password entries.
@@ -27,7 +38,10 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
     private lateinit var binding: ActivityAddEditBinding
     private lateinit var viewModel: PasswordViewModel
     private lateinit var categoryViewModel: CategoryViewModel
+
     private var currentEntry: PasswordEntry? = null
+    private lateinit var customFieldsAdapter: CustomFieldsAdapter
+    private val customFields = mutableListOf<CustomField>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +53,8 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
         categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
+
+        setupCustomFields()
 
         // Load categories for dropdown
         categoryViewModel.allCategories.observe(this) { categories ->
@@ -99,6 +115,101 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
                 updatePasswordStrength(s?.toString() ?: "")
             }
         })
+
+    }
+
+    private fun setupCustomFields() {
+        customFieldsAdapter = CustomFieldsAdapter(
+            onEditClick = { field -> showAddEditFieldDialog(field) },
+            onDeleteClick = { field ->
+                customFields.remove(field)
+                customFieldsAdapter.submitList(customFields.toList())
+            },
+            onCopyClick = { field ->
+                com.jksalcedo.passvault.utils.Utility.copyToClipboard(this, field.name, field.value)
+                Toast.makeText(this, "${field.name} copied", Toast.LENGTH_SHORT).show()
+            },
+            onStartDrag = { viewHolder ->
+                itemTouchHelper.startDrag(viewHolder)
+            }
+        )
+
+        binding.rvCustomFields.apply {
+            layoutManager = LinearLayoutManager(this@AddEditActivity)
+            adapter = customFieldsAdapter
+        }
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPos = viewHolder.bindingAdapterPosition
+                val toPos = target.bindingAdapterPosition
+                java.util.Collections.swap(customFields, fromPos, toPos)
+                customFieldsAdapter.notifyItemMoved(fromPos, toPos)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+        }
+        itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.rvCustomFields)
+
+        binding.btnAddCustomField.setOnClickListener {
+            showAddEditFieldDialog(null)
+        }
+    }
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
+
+    private fun showAddEditFieldDialog(field: CustomField?) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_custom_field, null)
+        val etName = dialogView.findViewById<TextInputEditText>(R.id.et_field_name)
+        val etValue = dialogView.findViewById<TextInputEditText>(R.id.et_field_value)
+        val switchSecret = dialogView.findViewById<SwitchMaterial>(R.id.switch_is_secret)
+
+        field?.let {
+            etName.setText(it.name)
+            etValue.setText(it.value)
+            switchSecret.isChecked = it.isSecret
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(if (field == null) "Add Field" else "Edit Field")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val name = etName.text.toString().trim()
+                val value = etValue.text.toString().trim()
+                val isSecret = switchSecret.isChecked
+
+                if (name.isNotEmpty()) {
+                    if (field == null) {
+                        val newField = CustomField(
+                            id = UUID.randomUUID().toString(),
+                            name = name,
+                            value = value,
+                            isSecret = isSecret
+                        )
+                        customFields.add(newField)
+                    } else {
+                        val index = customFields.indexOfFirst { it.id == field.id }
+                        if (index != -1) {
+                            customFields[index] = field.copy(
+                                name = name,
+                                value = value,
+                                isSecret = isSecret
+                            )
+                        }
+                    }
+                    customFieldsAdapter.submitList(customFields.toList())
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     /**
@@ -123,6 +234,19 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
         binding.etCategory.setText(entry.category ?: getString(R.string.general), false)
         binding.etEmail.setText(entry.email)
         binding.etUrl.setText(entry.url)
+
+        // Load custom fields
+        if (entry.customFieldsCipher != null && entry.customFieldsIv != null) {
+            try {
+                val json = Encryption.decrypt(entry.customFieldsCipher, entry.customFieldsIv)
+                val payload = Json.decodeFromString<CustomFieldsPayload>(json)
+                customFields.clear()
+                customFields.addAll(payload.fields)
+                customFieldsAdapter.submitList(customFields.toList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     /**
@@ -183,10 +307,26 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
                 updatedAt = System.currentTimeMillis()
             )
 
+            // Encrypt custom fields
+            var customFieldsCipher: String? = null
+            var customFieldsIv: String? = null
+            if (customFields.isNotEmpty()) {
+                val payload = CustomFieldsPayload(fields = customFields)
+                val json = Json.encodeToString(payload)
+                val (cfCipher, cfIv) = Encryption.encrypt(json)
+                customFieldsCipher = cfCipher
+                customFieldsIv = cfIv
+            }
+
+            val finalEntry = entry.copy(
+                customFieldsCipher = customFieldsCipher,
+                customFieldsIv = customFieldsIv
+            )
+
             if (currentEntry == null) {
-                viewModel.insert(entry)
+                viewModel.insert(finalEntry)
             } else {
-                viewModel.update(entry)
+                viewModel.update(finalEntry)
             }
             finish()
         } catch (_: Exception) {
@@ -207,11 +347,7 @@ class AddEditActivity : BaseActivity(), PasswordDialogListener {
         val result = PasswordStrengthAnalyzer.analyze(password)
 
         // Update progress bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            binding.progressPasswordStrength.setProgress(result.score, true)
-        } else {
-            binding.progressPasswordStrength.progress = result.score
-        }
+        binding.progressPasswordStrength.setProgress(result.score, true)
 
         // Update color based on strength level
         val colorResId = when (result.level) {
