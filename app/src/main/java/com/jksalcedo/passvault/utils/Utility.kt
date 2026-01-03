@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.core.graphics.toColorInt
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
+import com.jksalcedo.passvault.data.CustomField
+import com.jksalcedo.passvault.data.CustomFieldsPayload
 import com.jksalcedo.passvault.data.ExportResult
 import com.jksalcedo.passvault.data.ImportRecord
 import com.jksalcedo.passvault.data.PasswordEntry
@@ -122,6 +124,18 @@ object Utility {
 
     fun ImportRecord.toPasswordEntry(): PasswordEntry = this.let {
         val (cipher, iv) = Encryption.encrypt(it.password)
+        
+        // Encrypt custom fields
+        var customFieldsCipher: String? = null
+        var customFieldsIv: String? = null
+        if (it.customFields.isNotEmpty()) {
+            val payload = CustomFieldsPayload(fields = it.customFields)
+            val json = Json.encodeToString(payload)
+            val (cfCipher, cfIv) = Encryption.encrypt(json)
+            customFieldsCipher = cfCipher
+            customFieldsIv = cfIv
+        }
+
         return PasswordEntry(
             title = title,
             username = username,
@@ -132,7 +146,9 @@ object Utility {
             category = category ?: "General",
             notes = notes,
             createdAt = createdAt ?: System.currentTimeMillis(),
-            updatedAt = updatedAt ?: System.currentTimeMillis()
+            updatedAt = updatedAt ?: System.currentTimeMillis(),
+            customFieldsCipher = customFieldsCipher,
+            customFieldsIv = customFieldsIv
         )
     }
 
@@ -152,7 +168,8 @@ object Utility {
                     category = this.category,
                     notes = this.notes,
                     createdAt = this.createdAt,
-                    updatedAt = this.updatedAt
+                    updatedAt = this.updatedAt,
+                    customFields = this.getCustomFields()
                 )
             )
         } catch (e: Exception) {
@@ -234,6 +251,18 @@ object Utility {
         } catch (e: Exception) {
             e.printStackTrace()
             false
+        }
+    }
+
+    private fun PasswordEntry.getCustomFields(): List<CustomField> {
+        if (this.customFieldsCipher == null || this.customFieldsIv == null) {
+            return emptyList()
+        }
+        return try {
+            val json = Encryption.decrypt(this.customFieldsCipher, this.customFieldsIv)
+            Json.decodeFromString<CustomFieldsPayload>(json).fields
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }
