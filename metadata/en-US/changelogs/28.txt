@@ -1,0 +1,4 @@
+- Upgrade Gradle wrapper to 9.2.0
+- Automate release notes generation and switch to gh cli
+- Implement custom fields for password entries
+- Add illustrations on empty screens

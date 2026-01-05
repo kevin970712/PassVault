@@ -93,6 +93,10 @@ class PasswordViewModel(app: Application) : AndroidViewModel(app) {
         _searchQuery.value = query
     }
 
+    fun isSearching(): Boolean {
+        return !_searchQuery.value.isNullOrEmpty()
+    }
+
     fun getEntryById(id: Long): LiveData<PasswordEntry> {
         return passwordRepository.getEntryById(id)
     }

@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.jksalcedo.passvault.R
@@ -27,9 +26,6 @@ import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * The main activity of the app.
@@ -100,12 +96,38 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
 
         viewModel = ViewModelProvider(this)[PasswordViewModel::class.java]
         categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
+        var pendingEmptyStateRunnable: Runnable? = null
         viewModel.filteredEntries.observe(this) { list ->
             adapter.submitList(list)
 
-            // Show message if empty
-            binding.contentMain.tvMessage.visibility =
-                if (list.isEmpty()) View.VISIBLE else View.GONE
+            // Cancel any pending empty state show
+            pendingEmptyStateRunnable?.let { binding.root.removeCallbacks(it) }
+
+//            val showEmpty = list.isEmpty() && !viewModel.isSearching()
+//            val showNotFound = list.isEmpty() && viewModel.isSearching()
+
+            if (list.isNotEmpty()) {
+                binding.contentMain.tvMessage.visibility = View.GONE
+                binding.contentMain.ivIllustration.visibility = View.GONE
+            } else {
+                // Delay showing empty state to avoid flash on initial load
+                pendingEmptyStateRunnable = Runnable {
+                    if (viewModel.filteredEntries.value?.isEmpty() == true) {
+                        binding.contentMain.tvMessage.visibility = View.VISIBLE
+                        binding.contentMain.ivIllustration.visibility = View.VISIBLE
+                        if (viewModel.isSearching()) {
+                            binding.contentMain.ivIllustration.setImageResource(R.drawable.il_not_found)
+                            binding.contentMain.tvMessage.text =
+                                getString(R.string.no_results_found)
+                        } else {
+                            binding.contentMain.ivIllustration.setImageResource(R.drawable.il_no_entries)
+                            binding.contentMain.tvMessage.text =
+                                getString(R.string.click_the_button_to_add_your_first_password)
+                        }
+                    }
+                }
+                binding.root.postDelayed(pendingEmptyStateRunnable, 150)
+            }
         }
 
         // Add entry

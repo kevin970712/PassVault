@@ -67,7 +67,9 @@ class BackupsFragment : Fragment() {
         adapter.setBackups(backups)
 
         adapter.backupItems.observe(this.requireActivity()) { items ->
-            binding.tvNoBackup.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+            val showEmpty = items.isEmpty()
+            binding.tvNoBackup.visibility = if (showEmpty) View.VISIBLE else View.GONE
+            binding.ivNoBackup.visibility = if (showEmpty) View.VISIBLE else View.GONE
         }
 
         adapter.onItemClick = { item ->
