@@ -15,14 +15,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/ivIllustration"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/click_the_button_to_add_your_first_password"
+        android:src="@drawable/il_no_entries"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tvMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.37"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="32dp"
+        android:paddingTop="16dp"
         android:text="@string/click_the_button_to_add_your_first_password"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/ivIllustration" />
 </androidx.constraintlayout.widget.ConstraintLayout>

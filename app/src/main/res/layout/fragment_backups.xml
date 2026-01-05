@@ -5,18 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/iv_no_backup"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="@string/no_backups_enable_automatic_backups_to_have_your_first_backup"
+        android:src="@drawable/il_no_backups"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tv_no_backup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <TextView
         android:id="@+id/tv_no_backup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingHorizontal="64dp"
+        android:paddingTop="16dp"
         android:text="@string/no_backups_enable_automatic_backups_to_have_your_first_backup"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_no_backup" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
