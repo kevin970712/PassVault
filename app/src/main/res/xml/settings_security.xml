@@ -36,4 +36,28 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Lockout Settings">
+
+        <ListPreference
+            app:defaultValue="5"
+            app:entries="@array/max_failed_attempts_entries"
+            app:entryValues="@array/max_failed_attempts_values"
+            app:iconSpaceReserved="false"
+            app:key="max_failed_attempts"
+            app:title="Max Failed Attempts"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="30000"
+            app:entries="@array/lockout_duration_entries"
+            app:entryValues="@array/lockout_duration_values"
+            app:iconSpaceReserved="false"
+            app:key="lockout_duration"
+            app:title="Lockout Duration"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
