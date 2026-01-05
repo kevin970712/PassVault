@@ -13,6 +13,93 @@ class PreferenceRepository(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
+    private val authPrefs: SharedPreferences =
+        context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+
+    /**
+     * Gets the max failed PIN attempts allowed.
+     * @return The max attempts. Default is 5.
+     */
+    fun getMaxFailedAttempts(): Int {
+        return try {
+            prefs.getString("max_failed_attempts", "5")?.toInt() ?: 5
+        } catch (e: Exception) {
+            5
+        }
+    }
+
+    /**
+     * Gets the lockout duration in milliseconds.
+     * @return The duration in milliseconds. Default is 30000 (30 seconds).
+     */
+    fun getLockoutDuration(): Long {
+        return try {
+            prefs.getString("lockout_duration", "30000")?.toLong() ?: 30000L
+        } catch (e: Exception) {
+            30000L
+        }
+    }
+
+    /**
+     * Gets the current number of failed PIN attempts.
+     * @return The number of failed attempts.
+     */
+    fun getFailedPinAttempts(): Int {
+        return authPrefs.getInt("failed_pin_attempts", 0)
+    }
+
+    /**
+     * Sets the number of failed PIN attempts.
+     * @param count The number of failed attempts.
+     */
+    fun setFailedPinAttempts(count: Int) {
+        authPrefs.edit { putInt("failed_pin_attempts", count) }
+    }
+
+    /**
+     * Increments the failed PIN attempts counter.
+     * @return The new count.
+     */
+    fun incrementFailedPinAttempts(): Int {
+        val current = getFailedPinAttempts()
+        val newCount = current + 1
+        setFailedPinAttempts(newCount)
+        return newCount
+    }
+
+    /**
+     * Gets the time when the PIN lockout ends.
+     * @return The timestamp in milliseconds.
+     */
+    fun getPinLockoutEndTime(): Long {
+        return authPrefs.getLong("pin_lockout_end_time", 0L)
+    }
+
+    /**
+     * Sets the time when the PIN lockout ends.
+     * @param time The timestamp in milliseconds.
+     */
+    fun setPinLockoutEndTime(time: Long) {
+        authPrefs.edit { putLong("pin_lockout_end_time", time) }
+    }
+
+    /**
+     * Checks if the PIN is currently locked out.
+     * @return True if locked out, false otherwise.
+     */
+    fun isPinLockedOut(): Boolean {
+        return System.currentTimeMillis() < getPinLockoutEndTime()
+    }
+
+    /**
+     * Gets the remaining lockout time in milliseconds.
+     * @return The remaining time, or 0 if not locked out.
+     */
+    fun getRemainingLockoutTime(): Long {
+        val remaining = getPinLockoutEndTime() - System.currentTimeMillis()
+        return if (remaining > 0) remaining else 0L
+    }
+
     /**
      * Sets the export format.
      * @param format The export format to set.
