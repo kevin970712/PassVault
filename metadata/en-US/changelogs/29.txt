@@ -1,0 +1,2 @@
+- implement categorized release notes
+- remove network permissions
