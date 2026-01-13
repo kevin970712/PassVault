@@ -1,2 +1,2 @@
-- Fix bottom appbar size when searching
-- Implement app shortcuts (generate password / add entry)
+- implement categorized release notes
+- remove network permissions

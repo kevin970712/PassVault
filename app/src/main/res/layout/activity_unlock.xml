@@ -101,6 +101,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilPin" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtPinMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/btnUnlock"
+            app:layout_constraintStart_toStartOf="@+id/btnUnlock"
+            app:layout_constraintTop_toBottomOf="@+id/btnUnlock" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUseBiometric"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
