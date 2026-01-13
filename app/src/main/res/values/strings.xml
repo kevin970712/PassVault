@@ -111,4 +111,9 @@
         <item>Delete</item>
         <item>Share</item>
     </string-array>
+
+    <string name="shortcut_add_password_short">Add Password</string>
+    <string name="shortcut_add_password_long">Quickly add a new password</string>
+    <string name="shortcut_generate_short">Generate</string>
+    <string name="shortcut_generate_long">Generate strong password</string>
 </resources>

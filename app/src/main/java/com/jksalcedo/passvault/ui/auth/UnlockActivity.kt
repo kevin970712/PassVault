@@ -1,21 +1,22 @@
 package com.jksalcedo.passvault.ui.auth
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
-import com.jksalcedo.passvault.repositories.PreferenceRepository
-import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.ui.main.MainActivity
+import com.jksalcedo.passvault.utils.SessionManager
 
 /**
  * An activity for unlocking the app.
  */
-class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
+class UnlockActivity : AppCompatActivity(), SetPinFragment.OnPinSetListener {
 
     lateinit var binding: ActivityUnlockBinding
     private val biometricAuthenticator = BiometricAuthenticator()
@@ -55,8 +56,7 @@ class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
             biometricAuthenticator.showBiometricPrompt(
                 activity = this,
                 onSuccess = {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    navigateToNextScreen()
                 },
                 onFailure = { _, errString ->
                     Toast.makeText(this, errString, Toast.LENGTH_SHORT).show()
@@ -94,10 +94,7 @@ class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
 
             // Compare the decrypted pin to the input pin
             if (input.isNotEmpty() && storedPin == input) {
-                prefsRepository.setFailedPinAttempts(0)
-                prefsRepository.setPinLockoutEndTime(0)
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                navigateToNextScreen()
             } else {
                 val newCount = prefsRepository.incrementFailedPinAttempts()
                 val maxAttempts = prefsRepository.getMaxFailedAttempts()
@@ -123,6 +120,33 @@ class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
         }
     }
 
+    @SuppressLint("UnsafeIntentLaunch")
+    private fun navigateToNextScreen() {
+        SessionManager.setUnlocked()
+
+        // Check if there is a pending intent passed from BaseActivity
+        val redirectIntent =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("EXTRA_REDIRECT_INTENT", Intent::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra("EXTRA_REDIRECT_INTENT")
+            }
+
+        if (redirectIntent != null) {
+            // Shortcut intent/task
+            redirectIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(redirectIntent)
+        } else {
+            // No pending task,
+            val homeIntent = Intent(this, MainActivity::class.java)
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(homeIntent)
+        }
+
+        finish()
+    }
+
     /**
      * Sets up the biometric authentication if it is available.
      * @param hasPin True if a PIN has been set, false otherwise.
@@ -142,8 +166,7 @@ class UnlockActivity : BaseActivity(), SetPinFragment.OnPinSetListener {
                 biometricAuthenticator.showBiometricPrompt(
                     activity = this,
                     onSuccess = {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                        navigateToNextScreen()
                     },
                     onFailure = { _, errString ->
                         Toast.makeText(this, errString, Toast.LENGTH_SHORT).show()
