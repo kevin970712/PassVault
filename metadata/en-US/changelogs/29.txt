@@ -1,0 +1,2 @@
+- Fix bottom appbar size when searching
+- Implement app shortcuts (generate password / add entry)
