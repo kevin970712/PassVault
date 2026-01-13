@@ -1,0 +1,36 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Quick Add Password -->
+    <shortcut
+        android:enabled="true"
+        android:icon="@android:drawable/ic_input_add"
+        android:shortcutId="add_password"
+        android:shortcutLongLabel="@string/shortcut_add_password_long"
+        android:shortcutShortLabel="@string/shortcut_add_password_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.jksalcedo.passvault.ui.addedit.AddEditActivity"
+            android:targetPackage="com.jksalcedo.passvault">
+
+            <extra
+                android:name="shortcut_action"
+                android:value="add_entry" />
+        </intent>
+    </shortcut>
+
+    <!-- Generate Password -->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_key"
+        android:shortcutId="generate_password"
+        android:shortcutLongLabel="@string/shortcut_generate_long"
+        android:shortcutShortLabel="@string/shortcut_generate_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.jksalcedo.passvault.ui.main.MainActivity"
+            android:targetPackage="com.jksalcedo.passvault">
+            <extra
+                android:name="shortcut_action"
+                android:value="generate_password" />
+        </intent>
+    </shortcut>
+</shortcuts>

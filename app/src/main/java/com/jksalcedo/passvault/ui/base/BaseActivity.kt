@@ -1,9 +1,12 @@
 package com.jksalcedo.passvault.ui.base
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.jksalcedo.passvault.repositories.PreferenceRepository
+import com.jksalcedo.passvault.ui.auth.UnlockActivity
+import com.jksalcedo.passvault.utils.SessionManager
 
 /**
  * Base activity that applies common security settings like screenshot blocking.
@@ -17,6 +20,33 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         applyTheme()
         applySecuritySettings()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLockStatus()
+    }
+
+    private fun checkLockStatus() {
+        if (!SessionManager.isUnlocked) {
+            goToUnlockScreen()
+        }
+    }
+
+    private fun goToUnlockScreen() {
+        val unlockIntent = Intent(this, UnlockActivity::class.java)
+        // Clear the stack
+        unlockIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        // Create a copy of the current intent to redirect to after unlock
+        val targetIntent = Intent(intent)
+        targetIntent.setClass(this, this::class.java)
+        targetIntent.flags = 0
+
+        unlockIntent.putExtra("EXTRA_REDIRECT_INTENT", targetIntent)
+
+        startActivity(unlockIntent)
+        finish()
     }
 
     private fun applyTheme() {

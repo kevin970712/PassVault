@@ -24,6 +24,7 @@ import com.jksalcedo.passvault.ui.base.BaseActivity
 import com.jksalcedo.passvault.ui.category.ManageCategoriesDialog
 import com.jksalcedo.passvault.ui.settings.SettingsActivity
 import com.jksalcedo.passvault.ui.view.ViewEntryActivity
+import com.jksalcedo.passvault.utils.SessionManager
 import com.jksalcedo.passvault.viewmodel.CategoryViewModel
 import com.jksalcedo.passvault.viewmodel.PasswordViewModel
 
@@ -43,6 +44,13 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (intent.getStringExtra("shortcut_action") == "generate_password") {
+            // Wait for UI to load
+            binding.root.post {
+                showPasswordGeneratorDialog()
+            }
+        }
 
         val prefsRepository = PreferenceRepository(this)
         val useBottomAppBar = prefsRepository.getUseBottomAppBar()
@@ -201,6 +209,28 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         viewModel.allEntries.observe(this) {
             updateCategoryCounts()
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // Update the intent
+        handleShortcutIntent(intent)
+    }
+
+    private fun handleShortcutIntent(intent: Intent?) {
+        // Only run this if we are actually unlocked
+        if (SessionManager.isUnlocked && intent?.getStringExtra("shortcut_action") == "generate_password") {
+            binding.root.post {
+                showPasswordGeneratorDialog()
+                intent.removeExtra("shortcut_action")
+            }
+        }
+    }
+
+    private fun showPasswordGeneratorDialog() {
+        val dialog = PasswordGenDialog()
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, null)
     }
 
     private fun updateCategoryCounts() {
