@@ -72,18 +72,19 @@ accessible.
 - [x] In-app Password Generator
 - [X] Encrypted Import/Export (for backups and transfer)
 - [X] Encrypted Automatic Backups
-- [X] Robust Import System (KeePass CSV/KDBX & Bitwarden JSON) with detailed status reporting
+- [X] Robust Import System (KeePass CSV/KDBX & Bitwarden JSON)
 - [X] Modern Material Design UI
 - [X] Categories/Labels
 - [X] Password strength scoring
+- [X] Custom field templates
 
 ## Planned Features
 
 - [ ] Secure Notes (for storing non-password secrets)
 - [ ] Desktop Version
 - [ ] QR Code Password Sharing
-- [ ] Custom field templates
 - [ ] TOTP generator
+- [ ] Migrate to Compose
 
 ## Tech Stack & Architecture
 
