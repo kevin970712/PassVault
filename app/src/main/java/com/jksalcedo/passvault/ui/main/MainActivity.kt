@@ -8,7 +8,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
@@ -274,9 +274,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             binding.fabAdd.visibility = View.VISIBLE
             false
         }
-        val searchPlateId =
-            searchView.context.resources.getIdentifier("android:id/search_plate", null, null)
-        val searchPlate = searchView.findViewById<View>(searchPlateId)
+        val searchPlate = searchView.findViewById<View>(androidx.appcompat.R.id.search_plate)
         searchPlate?.setBackgroundColor(Color.TRANSPARENT)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
