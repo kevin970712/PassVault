@@ -93,17 +93,17 @@ jobs:
           git log "${RANGE}" --no-merges --pretty=format:"- %s (%h)" > all_commits.txt
           
           # 2. Extract Features (looks for 'feat' or 'feat(' case-insensitive)
-          echo "### ✨ Features" >> RELEASE_NOTES.md
+          echo "### Features" >> RELEASE_NOTES.md
           grep -iE "^- feat" all_commits.txt >> RELEASE_NOTES.md || echo "_No new features._" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
           
           # 3. Extract Bug Fixes (looks for 'fix' or 'fix(')
-          echo "### 🐛 Bug Fixes" >> RELEASE_NOTES.md
+          echo "### Bug Fixes" >> RELEASE_NOTES.md
           grep -iE "^- fix" all_commits.txt >> RELEASE_NOTES.md || echo "_No bug fixes._" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
           
           # 4. Extract Others (Everything that is NOT feat or fix)
-          echo "### 📦 Other Changes" >> RELEASE_NOTES.md
+          echo "### Other Changes" >> RELEASE_NOTES.md
           grep -ivE "^- (feat|fix)" all_commits.txt >> RELEASE_NOTES.md || echo "_No other changes._" >> RELEASE_NOTES.md
           
           # Cleanup
