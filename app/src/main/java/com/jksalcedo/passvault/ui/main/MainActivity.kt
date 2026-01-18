@@ -9,6 +9,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
@@ -39,6 +43,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
     private lateinit var categoryViewModel: CategoryViewModel
 
 
+    @SuppressLint("InternalInsetResource")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,6 +57,27 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             }
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { view, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            val newBottomMargin = if (imeVisible) {
+                // Keyboard is OPEN: Move up by the difference
+                // We prevent negative numbers just in case
+                (imeHeight - navBarHeight).coerceAtLeast(0)
+            } else {
+                // Keyboard is CLOSED: Reset to 0 (let CoordinatorLayout handle the nav bar)
+                0
+            }
+
+            view.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                bottomMargin = newBottomMargin
+            }
+
+            insets
+        }
+
         val prefsRepository = PreferenceRepository(this)
         val useBottomAppBar = prefsRepository.getUseBottomAppBar()
 
@@ -62,21 +88,26 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
 
             // Ensure FAB is anchored to BottomAppBar
             val params =
-                binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+                binding.fabAdd.layoutParams as CoordinatorLayout.LayoutParams
             params.anchorId = binding.bottomAppBar.id
             params.setMargins(0, 0, 0, 0)
             binding.fabAdd.layoutParams = params
 
             // Add top padding to chips to avoid status bar overlap
-            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                val statusBarHeight = resources.getDimensionPixelSize(resourceId)
-                binding.chipScrollView.setPadding(
-                    binding.chipScrollView.paddingLeft,
-                    statusBarHeight + 16, // extra padding
-                    binding.chipScrollView.paddingRight,
-                    binding.chipScrollView.paddingBottom
+            ViewCompat.setOnApplyWindowInsetsListener(binding.chipScrollView) { view, insets ->
+                val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+
+                // Convert 16dp to pixels
+                val extraPadding = (16 * resources.displayMetrics.density).toInt()
+
+                view.setPadding(
+                    view.paddingLeft,
+                    statusBarHeight + extraPadding,
+                    view.paddingRight,
+                    view.paddingBottom
                 )
+
+                insets
             }
         } else {
             binding.toolbar.visibility = View.VISIBLE
@@ -85,7 +116,7 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
 
             // Remove FAB anchor
             val params =
-                binding.fabAdd.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+                binding.fabAdd.layoutParams as CoordinatorLayout.LayoutParams
             params.anchorId = View.NO_ID
             params.gravity = Gravity.BOTTOM or Gravity.END
             val margin = (16 * resources.displayMetrics.density).toInt()
@@ -266,16 +297,25 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
     @SuppressLint("DiscouragedApi")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        searchView.setOnSearchClickListener {
-            binding.fabAdd.visibility = View.INVISIBLE
-        }
-        searchView.setOnCloseListener {
-            binding.fabAdd.visibility = View.VISIBLE
-            false
-        }
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
         val searchPlate = searchView.findViewById<View>(androidx.appcompat.R.id.search_plate)
         searchPlate?.setBackgroundColor(Color.TRANSPARENT)
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                binding.fabAdd.hide()
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                binding.fabAdd.show()
+                return true
+            }
+        })
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
                 performSearch(newText)

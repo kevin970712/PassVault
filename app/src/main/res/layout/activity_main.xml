@@ -48,7 +48,10 @@
         android:layout_gravity="bottom"
         android:visibility="gone"
         app:fabAlignmentMode="center"
-        app:hideOnScroll="true"
+        app:fabAnchorMode="cradle"
+        app:fabCradleMargin="8dp"
+        app:fabCradleRoundedCornerRadius="10dp"
+        app:fabCradleVerticalOffset="0dp"
         app:menu="@menu/menu_main"
         app:menuAlignmentMode="auto" />
 
@@ -58,9 +61,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/add_new_entry"
         android:visibility="invisible"
+        app:backgroundTint="?attr/colorPrimary"
         app:layout_anchor="@id/bottomAppBar"
         app:shapeAppearanceOverlay="@style/CircleImage"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="?attr/colorOnPrimary" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
