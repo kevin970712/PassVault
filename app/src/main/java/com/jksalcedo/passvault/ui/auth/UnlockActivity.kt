@@ -10,6 +10,7 @@ import androidx.biometric.BiometricManager
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.crypto.Encryption
 import com.jksalcedo.passvault.databinding.ActivityUnlockBinding
+import com.jksalcedo.passvault.repositories.PreferenceRepository
 import com.jksalcedo.passvault.ui.main.MainActivity
 import com.jksalcedo.passvault.utils.SessionManager
 
