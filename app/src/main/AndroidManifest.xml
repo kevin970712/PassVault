@@ -40,7 +40,7 @@
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.PassVault"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustNothing" />
 
         <activity
             android:name=".ui.addedit.AddEditActivity"
