@@ -25,6 +25,12 @@
             app:summary="Prevent screenshots and screen recording for enhanced security"
             app:title="Block Screenshots" />
 
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="change_master_password"
+            app:summary="Update your master password/PIN"
+            app:title="Change Master Password" />
+
         <ListPreference
             app:defaultValue="60000"
             app:entries="@array/auto_lock_timeout_entries"

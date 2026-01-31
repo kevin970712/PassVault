@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.preference.EditTextPreference
@@ -59,6 +60,86 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
         }
+
+    @Suppress("DEPRECATION")
+    private fun setupChangePassword() {
+        findPreference<Preference>("change_master_password")?.setOnPreferenceClickListener {
+            val layout = layoutInflater.inflate(R.layout.dialog_change_password, null)
+            val etOld = layout.findViewById<TextInputEditText>(R.id.etOldPassword)
+            val etNew = layout.findViewById<TextInputEditText>(R.id.etNewPassword)
+            val etConfirm = layout.findViewById<TextInputEditText>(R.id.etConfirmNewPassword)
+            val tilOld = layout.findViewById<TextInputLayout>(R.id.tilOldPassword)
+            val tilNew = layout.findViewById<TextInputLayout>(R.id.tilNewPassword)
+            val tilConfirm = layout.findViewById<TextInputLayout>(R.id.tilConfirmNewPassword)
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Change Master Password")
+                .setView(layout)
+                .setPositiveButton("Save", null) // Overridden below
+                .setNegativeButton("Cancel", null)
+                .create().apply {
+                    setOnShowListener {
+                        getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                            val oldPass = etOld.text.toString()
+                            val newPass = etNew.text.toString()
+                            val confirmPass = etConfirm.text.toString()
+
+                            tilOld.error = null
+                            tilNew.error = null
+                            tilConfirm.error = null
+
+                            // Validate Old Password
+                            val prefs =
+                                requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+                            val cipher = prefs.getString("pin_cipher", null)
+                            val iv = prefs.getString("pin_iv", null)
+
+                            val storedPin = try {
+                                if (cipher != null && iv != null) {
+                                    com.jksalcedo.passvault.crypto.Encryption.decrypt(cipher, iv)
+                                } else {
+                                    ""
+                                }
+                            } catch (e: Exception) {
+                                ""
+                            }
+
+                            if (oldPass != storedPin) {
+                                tilOld.error = "Incorrect password"
+                                return@setOnClickListener
+                            }
+
+                            // Validate New Password
+                            if (newPass.length < 4) {
+                                tilNew.error = "Password must be at least 4 characters"
+                                return@setOnClickListener
+                            }
+
+                            if (newPass != confirmPass) {
+                                tilConfirm.error = "Passwords do not match"
+                                return@setOnClickListener
+                            }
+
+                            // Save New Password
+                            try {
+                                val (newCipher, newIv) = com.jksalcedo.passvault.crypto.Encryption.encrypt(
+                                    newPass
+                                )
+                                prefs.edit {
+                                    putString("pin_cipher", newCipher)
+                                    putString("pin_iv", newIv)
+                                }
+                                Utility.showToast(requireContext(), "Password changed successfully")
+                                dismiss()
+                            } catch (e: Exception) {
+                                Utility.showToast(requireContext(), "Error saving password")
+                            }
+                        }
+                    }
+                }.show()
+            true
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -556,6 +637,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         setupAutoLockTimeout()
+        setupChangePassword()
     }
 
     private fun setupAutoLockTimeout() {

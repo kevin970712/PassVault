@@ -1,0 +1,8 @@
+New Features:
+
+- Change master password
+- Support for alphanumeric master password
+
+Fixes:
+
+- Bottom Appbar and FAB
