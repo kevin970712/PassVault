@@ -116,4 +116,7 @@
     <string name="shortcut_add_password_long">Quickly add a new password</string>
     <string name="shortcut_generate_short">Generate</string>
     <string name="shortcut_generate_long">Generate strong password</string>
+    <string name="old_password_hint">Old Password</string>
+    <string name="new_password_hint">New Password</string>
+    <string name="confirm_new_password_hint">Confirm New Password</string>
 </resources>
