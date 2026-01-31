@@ -87,8 +87,8 @@ class SetPinFragment : Fragment() {
 
             when {
                 pin.isEmpty() -> binding.til1.error = "PIN cannot be empty!"
-                pin.length != 4 -> binding.til1.error = "PIN must be exactly 4 digits!"
-                !pin.all { it.isDigit() } -> binding.til1.error = "Only digits allowed!"
+                pin.length < 4 -> binding.til1.error = "PIN must be at least 4 characters!"
+                // !pin.all { it.isDigit() } -> binding.til1.error = "Only digits allowed!"
                 pin != confirm -> binding.til2.error = "PINs do not match!"
                 else -> {
                     val (cipher, iv) = Encryption.encrypt(pin)
