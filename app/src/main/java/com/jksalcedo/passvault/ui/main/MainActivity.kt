@@ -12,9 +12,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.chip.Chip
 import com.jksalcedo.passvault.R
 import com.jksalcedo.passvault.adapter.PVAdapter
@@ -82,6 +84,13 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
         val useBottomAppBar = prefsRepository.getUseBottomAppBar()
 
         if (useBottomAppBar) {
+            binding.bottomAppBar.apply {
+                fabCradleMargin = (8 * resources.displayMetrics.density)
+                fabAnchorMode = BottomAppBar.FAB_ANCHOR_MODE_CRADLE
+                fabCradleRoundedCornerRadius = (10 * resources.displayMetrics.density)
+                cradleVerticalOffset = 0F
+            }
+
             binding.toolbar.visibility = View.GONE
             binding.bottomAppBar.visibility = View.VISIBLE
             setSupportActionBar(binding.bottomAppBar)
@@ -174,7 +183,13 @@ class MainActivity : BaseActivity(), PasswordDialogListener {
             startActivity(Intent(this, AddEditActivity::class.java))
         }
         // Delay showing FAB until icon is loaded to prevent flash on older Android
-        binding.fabAdd.post { binding.fabAdd.visibility = View.VISIBLE }
+        binding.fabAdd.post {
+            binding.fabAdd.show()
+            if (binding.bottomAppBar.isVisible) {
+                // Re-set the anchor mode to force the cradle to be drawn
+                binding.bottomAppBar.fabAnchorMode = BottomAppBar.FAB_ANCHOR_MODE_CRADLE
+            }
+        }
 
         // Dynamically load category chips from database
         categoryViewModel.allCategories.observe(this) { categories ->
